@@ -19,7 +19,7 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/ormawa/{name}', 'Landing\ormawaController@index')->name('ormawa.index');
+Route::get('/ormawa/detail/{name}', 'Landing\ormawaController@index')->name('ormawa.index');
 
 // Kompetisi
 Route::group(['prefix' => 'kompetisi', 'namespace' => 'landing'], function () {
@@ -53,12 +53,12 @@ Route::group(['prefix' => 'passwordreset', 'namespace' => 'auth'], function () {
 
 
 # ======= Mahasiswa =========== #
-Route::group(['prefix' => 'mahasiswa'], function () {
-    Route::group(['prefix' => 'dashboard', 'namespace' => 'mahasiswa'], function () {
-        Route::get('/', 'HomeController@index')->name('mahasiswa.index');
-    });
+Route::group(['prefix' => 'mahasiswa', 'namespace' => 'mahasiswa'], function () {
 
-    Route::group(['prefix' => 'kompetisi', 'namespace' => 'mahasiswa'], function () {
+    Route::get('/dashboard', 'HomeController@index')->name('mahasiswa.index');
+
+
+    Route::group(['prefix' => 'kompetisi'], function () {
         Route::get('/', 'KompetisiController@index')->name('mahasiswa.kompetisi.index');
 
         Route::group(['prefix' => 'detail'], function () {
@@ -71,12 +71,24 @@ Route::group(['prefix' => 'mahasiswa'], function () {
         });
     });
 
-    Route::group(['prefix' => 'account', 'namespace' => 'mahasiswa'], function () {
+    Route::group(['prefix' => 'account'], function () {
         Route::get('/', 'AccountController@index')->name('mahasiswa.account.index');
     });
 
-    Route::group(['prefix' => 'team', 'namespace' => 'mahasiswa'], function () {
+
+    Route::group(['prefix' => 'team'], function () {
         Route::get('/', 'TeamController@index')->name('mahasiswa.team.index');
         Route::get('/detail/{id}', 'TeamController@detail')->name('mahasiswa.team.detail');
+    });
+});
+
+# ======= Ormawa =========== #
+Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
+    Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('/page', 'HomeController@index')->name('ormawa.index');
+    });
+
+    Route::group(['prefix' => 'kompetisi'], function () {
+        Route::get('/', 'KompetisiController@index')->name('ormawa.kompetisi.index');
     });
 });

@@ -9,6 +9,7 @@ class KompetisiController extends Controller
 {
     public function index()
     {
+        // dd(Request()->route()->getPrefix());
         return view('mahasiswa.kompetisi.index');
     }
 

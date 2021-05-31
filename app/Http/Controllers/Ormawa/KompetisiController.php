@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Http\Controllers\Ormawa;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class KompetisiController extends Controller
+{
+    public function index()
+    {
+        return view('ormawa.kompetisi.index');
+    }
+}
