@@ -7,6 +7,8 @@
 	<title>Kompetisi-corner - @yield('title') </title>
 
     @include('partials__.deskapp.header')
+
+	@stack('css')
 </head>
 <body>
 

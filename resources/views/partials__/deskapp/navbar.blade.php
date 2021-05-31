@@ -5,9 +5,12 @@
         <div class="header-search">
             @if (Request()->route()->getPrefix() === "mahasiswa/kompetisi/detail")
                 <h5 class="h4 text-secondary mt-2 ml-4" style="">{{$slug}}</h5>
-            @else
-            <h5 class="h4 text-secondary mt-2 ml-4" style="">Data Kompetisi Saya</h5>
+            @elseif(Request()->route()->getPrefix() === "mahasiswa/account")
+                <h5 class="h4 text-secondary mt-2 ml-4" style="">Profil Jhon Doe</h5>
+            @elseif(Request()->route()->getPrefix() === "mahasiswa/team")
+                <h5 class="h4 text-secondary mt-2 ml-4" style="">Team Saya</h5>
             @endif
+
         </div>
     </div>
     <div class="header-right">

@@ -70,4 +70,13 @@ Route::group(['prefix' => 'mahasiswa'], function () {
             Route::get('/timeline/{slug}', 'KompetisiController@timeline')->name('mahasiswa.kompetisi.timeline');
         });
     });
+
+    Route::group(['prefix' => 'account', 'namespace' => 'mahasiswa'], function () {
+        Route::get('/', 'AccountController@index')->name('mahasiswa.account.index');
+    });
+
+    Route::group(['prefix' => 'team', 'namespace' => 'mahasiswa'], function () {
+        Route::get('/', 'TeamController@index')->name('mahasiswa.team.index');
+        Route::get('/detail/{id}', 'TeamController@detail')->name('mahasiswa.team.detail');
+    });
 });

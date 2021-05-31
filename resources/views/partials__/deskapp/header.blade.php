@@ -16,6 +16,8 @@
 	<link rel="stylesheet" type="text/css" href="{{url('assets/deskapp/src/plugins/datatables/css/responsive.bootstrap4.min.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{url('assets/deskapp/vendors/styles/style.css')}}">
     <link rel="stylesheet" type="text/css" href="{{url('assets/deskapp/vendors/icofont/icofont.min.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{url('assets/deskapp/src/plugins/cropperjs/dist/cropper.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{url('assets/deskapp/vendors/styles/style.css')}}">
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
 
 	<!-- Global site tag (gtag.js) - Google Analytics -->

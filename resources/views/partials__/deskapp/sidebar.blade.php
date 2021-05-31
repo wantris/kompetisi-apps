@@ -28,12 +28,12 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="javascript:;" class="dropdown-toggle no-arrow">
+                        <a href="{{route('mahasiswa.team.index')}}" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-group"></span><span class="mtext">Tim Saya</span>
                         </a>
                     </li>
                     <li>
-                        <a href="javascript:;" class="dropdown-toggle no-arrow">
+                        <a href="{{route('mahasiswa.account.index')}}" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-settings2"></span><span class="mtext">Profil Saya</span>
                         </a>
                     </li>

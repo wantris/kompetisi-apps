@@ -15,3 +15,4 @@
 <script src="{{url('assets/deskapp/src/plugins/jvectormap/jquery-jvectormap-2.0.3.min.js')}}"></script>
 <script src="{{url('assets/deskapp/src/plugins/jvectormap/jquery-jvectormap-world-mill-en.js')}}"></script>
 <script src="{{url('assets/deskapp/vendors/scripts/dashboard2.js')}}"></script>
+
