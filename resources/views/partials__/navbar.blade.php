@@ -16,13 +16,14 @@
                         </div>  
                     </div>
                     <div class="col-lg-9 col-md-9">
+                        @if(\Route::current()->getName() !== 'ormawa.event.add')
                         <div class="menu-wrapper">
                             <!-- Main-menu -->
                             <div class="main-menu ">
                                 <nav class="d-none d-lg-block">
                                     <ul id="navigation">
                                         <li><a href="{{url('/')}}">Beranda</a></li>
-                                        <li><a href="{{route('kompetisi.index')}}">Kompetisi</a></li>
+                                        <li><a href="{{route('event.index')}}">Event</a></li>
                                         <li><a href="{{route('blog.index')}}">Blog</a>
                                         </li>
                                         <li><a href="{{route('contact.index')}}">Kontak</a></li>
@@ -60,11 +61,12 @@
                             @else         
                             <!-- Header-btn -->
                             <div class="header-btn d-none f-right d-lg-block">
-                                <a href="#" data-toggle="modal" data-target="#mahasiswaLoginModal" class="btn head-btn1">Mahasiswa</a>
+                                <a href="#" data-toggle="modal" data-target="#mahasiswaLoginModal" class="btn head-btn1">Peserta</a>
                                 <a href="#" data-toggle="modal" data-target="#ormawaLoginModal" class="btn head-btn2">Ormawa</a>
                             </div>
                             @endif
                         </div>
+                        @endif
                     </div>
                     <!-- Mobile Menu -->
                     <div class="col-12">

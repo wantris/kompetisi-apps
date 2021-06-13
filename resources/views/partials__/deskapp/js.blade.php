@@ -16,4 +16,12 @@
 <script src="{{url('assets/deskapp/src/plugins/jvectormap/jquery-jvectormap-world-mill-en.js')}}"></script>
 <script src="{{url('assets/deskapp/vendors/scripts/dashboard2.js')}}"></script>
 
-<script src="{{url('assets/deskapp/vendors/scripts/datatable-setting.js')}}"></script>
+<!-- buttons for Export datatable -->
+<script src="{{url('assets/deskapp/src/plugins/datatables/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{url('assets/deskapp/src/plugins/datatables/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{url('assets/deskapp/src/plugins/datatables/js/buttons.print.min.js')}}"></script>
+<script src="{{url('assets/deskapp/src/plugins/datatables/js/buttons.html5.min.js')}}"></script>
+<script src="{{url('assets/deskapp/src/plugins/datatables/js/buttons.flash.min.js')}}"></script>
+<script src="{{url('assets/deskapp/src/plugins/datatables/js/pdfmake.min.js')}}"></script>
+<script src="{{url('assets/deskapp/src/plugins/datatables/js/vfs_fonts.js')}}"></script>
+

@@ -2822,7 +2822,7 @@ body.IE .register-page-wrap .container {
     border-color: #dee2e6;
     color: #1b00ff;
 }
-.nav.vtabs.nav-pills .nav-link.active,
+.nav.vtabs.form-control-underlined .nav-link.active,
 .nav.vtabs.nav-pills .nav-item.show .nav-link {
     border-right: 0;
     border-color: #dee2e6;

@@ -135,7 +135,7 @@
                                     </div>
                                 </div>
                                 <div class="komp-title pl-3">
-                                    <a href="{{route('kompetisi.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
+                                    <a href="{{route('event.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
                                         Poster Design Competition 2021 
                                     </h1></a>
                                 </div>
@@ -165,7 +165,7 @@
                                     </div>
                                 </div>
                                 <div class="komp-title pl-3">
-                                    <a href="{{route('kompetisi.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
+                                    <a href="{{route('event.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
                                         Poster Design Competition 2021 
                                     </h1></a>
                                 </div>
@@ -195,7 +195,7 @@
                                     </div>
                                 </div>
                                 <div class="komp-title pl-3">
-                                    <a href="{{route('kompetisi.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
+                                    <a href="{{route('event.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
                                         Poster Design Competition 2021 
                                     </h1></a>
                                 </div>
@@ -225,7 +225,7 @@
                                     </div>
                                 </div>
                                 <div class="komp-title pl-3">
-                                    <a href="{{route('kompetisi.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
+                                    <a href="{{route('event.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
                                         Poster Design Competition 2021 
                                     </h1></a>
                                 </div>

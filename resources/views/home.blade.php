@@ -225,7 +225,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="section-tittle text-center">
-                            <h2>Eksplorasi Kategori Kompetisi</h2>
+                            <h2>Eksplorasi Kategori Event</h2>
                         </div>
                     </div>
                 </div>
@@ -338,7 +338,7 @@
                 <div class="row justify-content-center">
                     <div class="col-xl-10">
                         <div class="cv-caption text-center">
-                            <p class="pera2">Ayoo Ikut Kompetisi Sekarang!</p>
+                            <p class="pera2">Ayoo Ikut Event Sekarang!</p>
                             <a href="#" class="border-btn3">Login</a>
                         </div>
                     </div>
@@ -354,7 +354,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="section-tittle text-center">
-                            <h2>Kompetisi Terbaru</h2>
+                            <h2>Event Terbaru</h2>
                         </div>
                     </div>
                 </div>

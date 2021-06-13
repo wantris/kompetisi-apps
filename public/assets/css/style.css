@@ -1,5 +1,10 @@
 @import url("https://fonts.googleapis.com/css?family=Barlow:300,400,500,600,700,900|Muli:300,400,500,600,700,800,900&display=swap");
 @import url("https://fonts.googleapis.com/css?family=Nunito:400,300,700");
+
+.text-orange {
+    color: #fb8c00;
+}
+
 /* Carousel */
 .carousel-item img {
     width: 100% !important;
@@ -266,6 +271,20 @@
     line-height: 19px;
 }
 
+.detail-komp__ormawa-date a:before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f073";
+    margin-right: 10px;
+}
+
+.detail-komp__ormawa-date a {
+    font-family: "Nunito Sans";
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+}
+
 .detail-komp__ormawa-const p:before {
     font-family: "Font Awesome 5 Free";
     content: "\f0c0";
@@ -281,6 +300,21 @@
     line-height: 19px;
 }
 
+.detail-komp__ormawa-const a:before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f0c0";
+    margin-right: 10px;
+    font-weight: 900;
+}
+
+.detail-komp__ormawa-const a {
+    font-family: Nunito Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+}
+
 .detail-komp__ormawa-type p:before {
     font-family: "Font Awesome 5 Free";
     content: "\f2c1";
@@ -289,6 +323,52 @@
 }
 
 .detail-komp__ormawa-type p {
+    font-family: Nunito Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+.detail-komp__ormawa-type a:before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f2c1";
+    margin-right: 10px;
+    font-weight: 900;
+}
+
+.detail-komp__ormawa-type a {
+    font-family: Nunito Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+/*  */
+.detail-komp__ormawa-peserta p:before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f2bb";
+    margin-right: 10px;
+    font-weight: 900;
+}
+
+.detail-komp__ormawa-peserta p {
+    font-family: Nunito Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+.detail-komp__ormawa-peserta a:before {
+    font-family: "Font Awesome 5 Free";
+    content: "\f2bb";
+    margin-right: 10px;
+    font-weight: 900;
+}
+
+.detail-komp__ormawa-peserta a {
     font-family: Nunito Sans;
     font-style: normal;
     font-weight: normal;
@@ -348,7 +428,7 @@
     color: #ffffff;
 }
 
-.detail-komp__footer .col-lg-4 {
+.detail-komp__footer .col-lg-2 {
     display: grid;
 }
 
@@ -493,6 +573,62 @@
     border-radius: 5px;
     padding: 10px 10px;
     cursor: pointer;
+}
+
+/* input-dokumen */
+.inp-dokumen {
+    border: 0;
+    background: no-repeat bottom, 50% calc(100% - 1px);
+    background-image: none, none;
+    background-size: auto, auto;
+    background-size: 0 100%, 100% 100%;
+    padding-left: 0;
+    transition: background 0s ease-out;
+    background-image: linear-gradient(
+            0deg,
+            #007aff 2px,
+            rgba(156, 39, 176, 0) 0
+        ),
+        linear-gradient(0deg, #d2d2d2 1px, hsla(0, 0%, 82%, 0) 0);
+}
+
+.inp-dokumen:focus {
+    border-color: #007aff !important;
+    background-size: 100% 100%, 100% 100% !important;
+    transition-duration: 0.3s !important;
+    box-shadow: none !important;
+}
+
+/* poster bg upload */
+#poster-bg-upload {
+    width: 100%;
+    height: 410px;
+    position: relative;
+}
+
+#poster-bg-upload::before {
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: url("/assets/img/banner/poster-bg.png");
+    filter: grayscale(70%);
+    background-size: cover;
+}
+
+#poster-bg-upload a {
+    margin: 0;
+    text-decoration: none !important;
+    position: absolute;
+    top: 50%;
+    font-size: 35px;
+    color: #fb8c00;
+    left: 48%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    filter: grayscale(0%) !important;
 }
 
 .select2-container .select2-selection--single {

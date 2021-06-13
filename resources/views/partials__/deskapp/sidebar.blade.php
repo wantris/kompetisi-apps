@@ -1,4 +1,4 @@
-@if (Request()->route()->getPrefix() === "/mahasiswa" || Request()->route()->getPrefix() === "mahasiswa/kompetisi" || Request()->route()->getPrefix() === "mahasiswa/account" || Request()->route()->getPrefix() === "mahasiswa/team")
+@if (Request()->route()->getPrefix() === "/peserta" || Request()->route()->getPrefix() === "peserta/event" || Request()->route()->getPrefix() === "peserta/account" || Request()->route()->getPrefix() === "peserta/team")
 
 <div class="left-side-bar">
     <div class="brand-logo">
@@ -19,17 +19,17 @@
                     </a>
                 </li>
                 <li >
-                    <a href="{{route('mahasiswa.kompetisi.index')}}" class="dropdown-toggle no-arrow">
-                        <span class="micon dw dw-up-chevron-1"></span><span class="mtext">Kompetisi Saya</span>
+                    <a href="{{route('peserta.event.index')}}" class="dropdown-toggle no-arrow">
+                        <span class="micon dw dw-up-chevron-1"></span><span class="mtext">Event Saya</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{route('mahasiswa.team.index')}}" class="dropdown-toggle no-arrow">
+                    <a href="{{route('peserta.team.index')}}" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-group"></span><span class="mtext">Tim Saya</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{route('mahasiswa.account.index')}}" class="dropdown-toggle no-arrow">
+                    <a href="{{route('peserta.account.index')}}" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-settings2"></span><span class="mtext">Profil Saya</span>
                     </a>
                 </li>
@@ -38,7 +38,7 @@
     </div>
 </div>
 <div class="mobile-menu-overlay"></div>
-    @elseif (Request()->route()->getPrefix() === "mahasiswa/kompetisi/detail")
+    @elseif (Request()->route()->getPrefix() === "peserta/event/detail")
     <div class="left-side-bar">
         <div class="brand-logo">
             <a href="index.html" class="text-center">
@@ -58,17 +58,17 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('mahasiswa.kompetisi.submission','Design-Competition')}}" class="dropdown-toggle no-arrow">
+                        <a href="{{route('peserta.event.submission','Design-Competition')}}" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-startup"></span><span class="mtext">Submission</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('mahasiswa.kompetisi.notification','Design-Competition')}}" class="dropdown-toggle no-arrow">
+                        <a href="{{route('peserta.event.notification','Design-Competition')}}" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-speaker-1"></span><span class="mtext">Pengumuman</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('mahasiswa.kompetisi.timeline','Design-Competition')}}" class="dropdown-toggle no-arrow">
+                        <a href="{{route('peserta.event.timeline','Design-Competition')}}" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-calendar-7"></span><span class="mtext">Timeline</span>
                         </a>
                     </li>
@@ -79,7 +79,7 @@
     <div class="mobile-menu-overlay"></div>
 
     {{-- Ormawa sidebar --}}
-    @elseif(Request()->route()->getPrefix() == "ormawa/dashboard" || Request()->route()->getPrefix() == "ormawa/kompetisi")
+    @elseif(Request()->route()->getPrefix() == "ormawa/dashboard" || Request()->route()->getPrefix() == "ormawa/event" || Request()->route()->getPrefix() == "ormawa/settings" || Request()->route()->getPrefix() == "ormawa/steps")
 
     <div class="left-side-bar">
         <div class="brand-logo">
@@ -95,22 +95,27 @@
             <div class="sidebar-menu">
                 <ul id="accordion-menu">
                     <li>
-                        <a href="javascript:;" class="dropdown-toggle no-arrow">
+                        <a href="{{route('ormawa.index')}}" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-house-1"></span><span class="mtext">Dashboard</span>
                         </a>
                     </li>
-                    <li >
-                        <a href="{{route('ormawa.kompetisi.index')}}" class="dropdown-toggle no-arrow">
-                            <span class="micon dw dw-up-chevron-1"></span><span class="mtext">Kompetisi</span>
+                    <li>
+                        <a href="{{route('ormawa.event.index')}}" class="dropdown-toggle no-arrow">
+                            <span class="micon dw dw-up-chevron-1"></span><span class="mtext">Event</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('mahasiswa.team.index')}}" class="dropdown-toggle no-arrow">
+                        <a href="{{route('ormawa.step.index')}}" class="dropdown-toggle no-arrow">
+                            <span class="micon dw dw-startup-2"></span><span class="mtext">Tahapan</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{route('peserta.team.index')}}" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-group"></span><span class="mtext">Tim</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('mahasiswa.account.index')}}" class="dropdown-toggle no-arrow">
+                        <a href="{{route('ormawa.settings.index')}}" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-settings2"></span><span class="mtext">Profil Ormawa</span>
                         </a>
                     </li>

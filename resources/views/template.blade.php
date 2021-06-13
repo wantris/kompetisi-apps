@@ -25,7 +25,7 @@
     </main>
 
     <!-- Footer -->
-    @if(\Route::current()->getName() !== 'kompetisi.detail')
+    @if(\Route::current()->getName() !== 'event.detail' && \Route::current()->getName() !== 'ormawa.event.add')
         @include('partials__.footer')
     @endif
 

@@ -9,6 +9,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('ormawa.dashboard');
+        $navTitle = '<span class="micon dw dw-home mr-2"></span>Dashboard';
+        return view('ormawa.dashboard', compact('navTitle'));
     }
 }

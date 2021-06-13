@@ -21,6 +21,7 @@
         <script src="{{url('assets/js/jquery.scrollUp.min.js')}}"></script>
         {{-- <script src="{{url('assets/js/jquery.nice-select.min.js')}}"></script> --}}
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        
 		<script src="{{url('assets/js/jquery.sticky.js')}}"></script>
         
         <!-- contact js -->
@@ -33,7 +34,7 @@
 		<!-- Jquery Plugins, main Jquery -->	
         <script src="{{url('assets/js/plugins.js')}}"></script>
         <script src="{{url('assets/js/main.js')}}"></script>
-
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             $(document).ready(function() {
                 $('.select-single').select2();
