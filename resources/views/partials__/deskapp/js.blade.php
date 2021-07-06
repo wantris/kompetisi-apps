@@ -25,3 +25,18 @@
 <script src="{{url('assets/deskapp/src/plugins/datatables/js/pdfmake.min.js')}}"></script>
 <script src="{{url('assets/deskapp/src/plugins/datatables/js/vfs_fonts.js')}}"></script>
 
+<script src="{{url('assets/notiflix/dist/notiflix-2.7.0.min.js')}}"></script>
+<script src="{{url('assets/notiflix/dist/notiflix-aio-2.7.0.min.js')}}"></script>
+
+
+@if (session()->has('failed'))
+<script>
+    Notiflix.Notify.Failure("{{ Session::get('failed') }}");
+</script>
+@endif
+
+@if (session()->has('success'))
+<script>
+    Notiflix.Notify.Success("{{ Session::get('success') }}");
+</script>
+@endif

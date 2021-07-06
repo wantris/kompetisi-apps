@@ -4,20 +4,31 @@
         <div class="search-toggle-icon dw dw-tag-1" data-toggle="header_search"></div>
         <div class="header-search">
             @if (Request()->route()->getPrefix() === "mahasiswa/event/detail")
-                <h5 class="h4 text-secondary mt-2 ml-4" style="">{{$slug}}</h5>
+            <h5 class="h4 text-secondary mt-2 ml-4" style="">{{$slug}}</h5>
             @elseif(Request()->route()->getPrefix() === "mahasiswa/account")
-                <h5 class="h4 text-secondary mt-2 ml-4" style="">Profil Jhon Doe</h5>
+            <h5 class="h4 text-secondary mt-2 ml-4" style="">Profil Jhon Doe</h5>
             @elseif(Request()->route()->getPrefix() === "mahasiswa/team")
-                <h5 class="h4 text-secondary mt-2 ml-4" style="">Team Saya</h5>
+            <h5 class="h4 text-secondary mt-2 ml-4" style="">Team Saya</h5>
             @else
-                <h5 class="h4 text-secondary mt-2 ml-4" style="">{!!$navTitle!!}</h5>
+            <h5 class="h4 text-secondary mt-2 ml-4" style="">
+                @if (Session::get('is_ormawa') == "1")
+                @php
+                $ormawa = \App\Ormawa::where('id_ormawa', Session::get('id_ormawa'))->first();
+                @endphp
+                <span class="micon dw dw-home mr-2"></span>{{$ormawa->nama_ormawa}}
+                @else
+                {!!$navTitle!!}
+                @endif
+            </h5>
             @endif
 
         </div>
     </div>
     <div class="header-right">
         <div class="pt-3">
-            <a href="{{route('ormawa.event.add')}}" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2" style="border:none;padding:10px 25px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">Buat Event</a>
+            <a href="{{route('ormawa.event.add')}}" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+                style="border:none;padding:10px 25px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">Buat
+                Event</a>
         </div>
         <div class="user-notification">
             <div class="dropdown">
@@ -83,8 +94,9 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                     <a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i>Profil</a>
-                    <a class="dropdown-item" href="{{route('ormawa.settings.changepassword')}}"><i class="dw dw-settings2"></i>Ganti Password</a>
-                    <a class="dropdown-item" href="login.html"><i class="dw dw-logout"></i> Log Out</a>
+                    <a class="dropdown-item" href="{{route('ormawa.settings.changepassword')}}"><i
+                            class="dw dw-settings2"></i>Ganti Password</a>
+                    <a class="dropdown-item" href="{{route('ormawa.logout')}}"><i class="dw dw-logout"></i> Log Out</a>
                 </div>
             </div>
         </div>

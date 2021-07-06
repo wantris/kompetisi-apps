@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 # ======= Landing page =========== #
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', 'landing\homeController@index')->name('project.index');
 
 Route::get('/ormawa/detail/{name}', 'Landing\ormawaController@index')->name('ormawa.detail.index');
 
@@ -92,7 +90,13 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
 
 # ======= Ormawa =========== #
 Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
-    Route::group(['prefix' => 'dashboard'], function () {
+
+    Route::group(['prefix' => 'auth'], function () {
+        Route::post('/login', 'AuthController@postLogin')->name('ormawa.login.post');
+        Route::get('/logout', 'AuthController@logout')->name('ormawa.logout');
+    });
+
+    Route::group(['prefix' => 'dashboard', 'middleware' => 'ormawa'], function () {
         Route::get('/page', 'HomeController@index')->name('ormawa.index');
     });
 
@@ -109,6 +113,7 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
 
     Route::group(['prefix' => 'settings'], function () {
         Route::get('/profile', 'settingsController@index')->name('ormawa.settings.index');
+        Route::patch('/profile', 'settingsController@updateProfile')->name('ormawa.settings.index.update');
         Route::get('/changepassword', 'settingsController@changePassword')->name('ormawa.settings.changepassword');
     });
 });
