@@ -100,11 +100,18 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
         Route::get('/page', 'HomeController@index')->name('ormawa.index');
     });
 
-    Route::group(['prefix' => 'event'], function () {
-        Route::get('/', 'eventController@index')->name('ormawa.event.index');
-        Route::get('/add', 'eventController@add')->name('ormawa.event.add');
-        Route::post('/add', 'eventController@saveForm')->name('ormawa.event.save');
-        Route::get('detail/{event}/peserta', 'eventController@listPeserta')->name('ormawa.event.peserta');
+    Route::group(['prefix' => 'eventinternal'], function () {
+        Route::get('/', 'EventInternalController@index')->name('ormawa.eventinternal.index');
+        Route::get('/add', 'EventInternalController@add')->name('ormawa.eventinternal.add');
+        Route::post('/add', 'EventInternalController@saveForm')->name('ormawa.eventinternal.save');
+        Route::get('detail/{event}/peserta', 'EventInternalController@listPeserta')->name('ormawa.eventinternal.peserta');
+    });
+
+     Route::group(['prefix' => 'eventeksternal'], function () {
+        Route::get('/', 'EventEksternalController@index')->name('ormawa.eventeksternal.index');
+        Route::get('/add', 'EventEksternalController@add')->name('ormawa.eventeksternal.add');
+        Route::post('/add', 'EventEksternalController@saveForm')->name('ormawa.eventeksternal.save');
+        Route::get('detail/{event}/peserta', 'EventEksternalController@listPeserta')->name('ormawa.eventeksternal.peserta');
     });
 
     Route::group(['prefix' => 'steps'], function () {
@@ -114,6 +121,10 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
     Route::group(['prefix' => 'settings'], function () {
         Route::get('/profile', 'settingsController@index')->name('ormawa.settings.index');
         Route::patch('/profile', 'settingsController@updateProfile')->name('ormawa.settings.index.update');
+        Route::post('/profile/pembina', 'settingsController@tambahPembina')->name('ormawa.settings.tambah.pembina');
+        Route::get('/profile/pembina/{id_pembina}', 'settingsController@editPembina')->name('ormawa.settings.edit.pembina');
+        Route::patch('/profile/pembina/{id_pembina}', 'settingsController@updatePembina')->name('ormawa.settings.update.pembina');
+        Route::delete('/profile/pembina/{id_pembina}', 'settingsController@deletePembina')->name('ormawa.settings.delete.pembina');
         Route::get('/changepassword', 'settingsController@changePassword')->name('ormawa.settings.changepassword');
     });
 });

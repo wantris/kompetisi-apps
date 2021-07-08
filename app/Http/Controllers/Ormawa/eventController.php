@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Ormawa;
 
 use App\Http\Controllers\Controller;
+use App\KategoriEvent;
+use App\Ormawa;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 
 class eventController extends Controller
@@ -15,8 +18,15 @@ class eventController extends Controller
 
     public function add()
     {
-        $navTitle = '<span class="micon dw dw-clipboard1 mr-2"></span>Buat Event';
-        return view('ormawa.event.add', compact('navTitle'));
+        $ormawa = Ormawa::find(Session::get('id_ormawa'));
+        $kategori = KategoriEvent::all();
+        
+        if($ormawa){
+            $navTitle = '<span class="micon dw dw-clipboard1 mr-2"></span>Buat Event';
+            return view('ormawa.event.add', compact('navTitle','ormawa'));
+        }else{
+            return redirect()->back()->with('failed', 'Data ormawa invalid, harap login');
+        }
     }
 
     public function saveForm(Request $request)

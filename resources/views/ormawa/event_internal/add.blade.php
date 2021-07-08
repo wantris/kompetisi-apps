@@ -142,6 +142,9 @@
     color: #007AFF;
 }
 
+.tooltip-inner {
+  background-color: red !important;
+}
 </style>
     
 @endpush
@@ -177,10 +180,10 @@
                                 <div class="card-body px-5">
                                     <div class="row">
                                         <div class="col-lg-3 px-3 py-3 border-bottom text-center">
-                                            <img src="{{url('assets/img/ormawa-logo/himatif.png')}}" class="img-fluid detail-komp__image" alt="Responsive image">
+                                            <img src="{{url('assets/img/ormawa-logo/'.$ormawa->photo)}}" class="img-fluid detail-komp__image" alt="Responsive image">
                                         </div>
                                         <div class="col-lg-9 border-bottom">
-                                            <h1 class="detail-komp__title mt-4"><input type="text" onkeyup="changeText()" id="komp-title_inp" placeholder="Nama Event*"></h1>
+                                            <h1 class="detail-komp__title red-tooltip mt-4"><input type="text"  onkeyup="changeText()" id="komp-title_inp" placeholder="Nama Event*"></h1>
                                             <h2 class="detail-komp__category" id="div-category"><a href="#" data-toggle="modal" data-target="#category-modal" type="button" id="pilih-kategori" style="text-decoration: none;">Pilih Kategori</a></h2>
                                             <div class="mt-4">
                                                 <a href="#" class="detail-komp__const float-left" data-toggle="modal" data-target="#peserta-modal" type="button"  id="peserta-text">0/0 Peserta</a>
@@ -226,7 +229,7 @@
                     </div>
                     
                     {{-- form group --}}
-                    <form action="{{route('ormawa.event.save')}}" enctype="multipart/form-data" id="form-all" method="post">
+                    <form action="{{route('ormawa.eventinternal.save')}}" enctype="multipart/form-data" id="form-all" method="post">
                     <!-- Tabs Event -->
                     @csrf
                     <div class="row">
@@ -292,19 +295,9 @@
                     </div>
                 </div>
                 <div class="col-lg-4" id="div-poster">
-                    {{-- <div class="card shadow-sm">
-                        <div class="card-body px-0 py-0">
-                            <img src="{{url('assets/img/kompetisi-thumb/thumbnail.jpg')}}" alt="" class="img-fluid">
-                        </div>
-                        <div class="card-footer">
-                            <a href="#" class="btn float-left" style="padding: 10px 10px;background-color: #327657" title="Ganti Poster"><i class="fas fa-undo"></i></a>
-                            <a href="#" class="btn btn-danger float-right" style="padding: 10px 10px;background-color:red" title="Hapus Poster"><i class="fas fa-trash"></i></a>
-                        </div>
-                    </div> --}}
                     <div class="card shadow-sm" id="poster-bg-upload">
                         <a href="#" id="poster-upload" onclick="posterUpload()"><i class="fas fa-plus-square"></i></a>
                     </div>
-                    {{-- <img src="{{url('assets/img/kompetisi-thumb/thumbnail.jpg')}}" class="img-fluid" alt="Responsive image"> --}}
                 </div>
             </div>
             <div class="row mt-5 ">
@@ -366,18 +359,11 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-4">
-                                <button class="button-category" style="width: 100%" onclick="chooseCategory('Workshop')" data-value="Workshop">Workshop</button>
-                            </div>
-                            <div class="col-4">
-                                <button class="button-category" style="width: 100%" onclick="chooseCategory('Seminar')" data-value="Seminar">Seminar</button>
-                            </div>
-                            <div class="col-4">
-                                <button class="button-category" style="width: 100%" onclick="chooseCategory('Diesnatalis')" data-value="Diesnatalis">Diesnatalis</button>
-                            </div>
-                            <div class="col-4">
-                                <button class="button-category" style="width: 100%" onclick="chooseCategory('Kompetisi')" data-value="Kompetisi">Kompetisi</button>
-                            </div>
+                            @foreach ($kategoris as $kategori)
+                                <div class="col-4">
+                                    <button type="button" class="button-category" id="btn_kategori_{{$kategori->id_kategori}}" style="width: 100%" onclick="chooseCategory({{$kategori->id_kategori}})" data-value="{{$kategori->nama_kategori}}">{{$kategori->nama_kategori}}</button>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -450,10 +436,10 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-6">
-                                <button class="button-type" style="width: 100%" onclick="chooseType('Individu')" data-value="Individu">Individu</button>
+                                <button type="button" class="button-type" style="width: 100%" onclick="chooseType('Individu')" data-value="Individu">Individu</button>
                             </div>
                             <div class="col-6">
-                                <button class="button-type" style="width: 100%" onclick="chooseType('Team')" data-value="Team">Team</button>
+                                <button type="button" class="button-type" style="width: 100%" onclick="chooseType('Team')" data-value="Team">Team</button>
                             </div>
                         </div>
                     </div>
@@ -474,15 +460,11 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-4">
-                                <button class="button-peserta" style="width: 100%" onclick="choosePeserta('Internal')" data-value="Internal">Internal</button>
-                            </div>
-                            <div class="col-4">
-                                <button class="button-peserta" style="width: 100%" onclick="choosePeserta('External')" data-value="External">External</button>
-                            </div>
-                            <div class="col-4">
-                                <button class="button-peserta" style="width: 100%" onclick="choosePeserta('Umum')" data-value="Umum">Umum</button>
-                            </div>
+                            @foreach ($tipes as $tipe)
+                                <div class="col-4">
+                                    <button type="button" id="tipe_peserta_{{$tipe->id_tipe_peserta}}" class="button-peserta" style="width: 100%" onclick="choosePeserta('{{$tipe->id_tipe_peserta}}')" data-value="{{$tipe->nama_tipe}}">{{$tipe->nama_tipe}}</button>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -527,8 +509,10 @@
     CKEDITOR.replace( 'deskripsi-inp');
     CKEDITOR.replace( 'syarat-inp');
 </script>
+
 <script>
 
+   
     // submit form
     const submitForm = () => {
         $("#form-all").submit();
@@ -626,9 +610,13 @@
     // Input Category
     let tmpCategoryValue = "";
     let categoryValue = "";
+    let categoryId = "";
 
     const chooseCategory = (value) => {
-        tmpCategoryValue = value;
+        let valueText = "";
+        categoryId = value;
+        valueText = $('#btn_kategori_'+value).data('value');
+        tmpCategoryValue = valueText;
         toggleCategoryFunc();
     }
 
@@ -644,7 +632,7 @@
 
     const saveCategory = () => {
         categoryValue = tmpCategoryValue;
-        $('#category-inp').val(categoryValue);
+        $('#category-inp').val(categoryId);
         $('#pilih-kategori').text(categoryValue);
         $('#category-modal').modal('hide');
     }
@@ -744,10 +732,12 @@
     // Jenis Peserta input
     let tmpPesertaValue = "";
     let pesertaValue = "";
+    let pesertaId = "";
 
     const choosePeserta = (value) => {
-        tmpPesertaValue = value;
-        console.log(value);
+        pesertaId = value;
+        let pesertaText = $('#tipe_peserta_'+value).data('value');
+        tmpPesertaValue = pesertaText;
         togglePesertaFunc();
     }
 
@@ -764,7 +754,7 @@
 
     const saveJenisPeserta = () => {
         pesertaValue = tmpPesertaValue;
-        $('#jenis-peserta-inp').val(pesertaValue);
+        $('#jenis-peserta-inp').val(pesertaId);
         $('#jenis-peserta').text(pesertaValue);
         $('#jenis-peserta-modal').modal('hide');
     }
@@ -851,11 +841,64 @@
     //     // };
        
     // });
-    
-
-    
-
 </script>
+
+{{-- Validation --}}
+@if ($errors->has('event_title'))
+    <script>
+        $(document).ready(function(){
+            $('#komp-title_inp').tooltip('dispose').tooltip({title: "Nama Event Internal Required"}).tooltip('show');
+        });
+    </script>
+@endif
+
+@if ($errors->has('category'))
+    <script>
+        $(document).ready(function(){
+            $('#pilih-kategori').tooltip('dispose').tooltip({title: "Pilih Kategori Event Internal"}).tooltip('show');
+        });
+    </script>
+@endif
+
+@if ($errors->has('peserta'))
+    <script>
+        $(document).ready(function(){
+            $('.detail-komp__const').tooltip('dispose').tooltip({title: "Kuota Peserta Required"}).tooltip('show');
+        });
+    </script>
+@endif
+
+@if ($errors->has('tgl_mulai') && $errors->has('tgl_tutup'))
+    <script>
+        $(document).ready(function(){
+            $('#pilih-tanggal').tooltip('dispose').tooltip({title: "Tanggal Mulai & Tutup Pendaftaran Required"}).tooltip('show');
+        });
+    </script>
+@endif
+
+@if ($errors->has('jenis'))
+    <script>
+        $(document).ready(function(){
+            $('#jenis-text').tooltip('dispose').tooltip({title: "Jenis Event Required"}).tooltip('show');
+        });
+    </script>
+@endif
+
+@if ($errors->has('jenis_peserta'))
+    <script>
+        $(document).ready(function(){
+            $('#jenis-peserta').tooltip('dispose').tooltip({title: "Jenis Peserta Required"}).tooltip('show');
+        });
+    </script>
+@endif
+
+@if ($errors->has('deskripsi'))
+    <script>
+        $(document).ready(function(){
+            $('#jdeskripsi-inp').tooltip('dispose').tooltip({title: "Deskripsi Event Internal Required"}).tooltip('show');
+        });
+    </script>
+@endif
 
 
 @endpush

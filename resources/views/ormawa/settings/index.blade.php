@@ -98,7 +98,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="" class="font-weight-bold">Nama Akronim</label>
-                                        <input type="text" name="akronim" value="{{$ormawa->nama_akronim}}" disabled
+                                        <input type="text" name="akronim" value="{{$ormawa->nama_akronim}}"
                                             class="form-control">
                                     </div>
                                     <div class="form-group">
@@ -147,10 +147,98 @@
                 <div class="tab-pane fade" id="pembina" role="tabpanel">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12">
-                                <p class="h5 text-orange"><i class="icon-copy dw dw-user-2 mr-2"></i>Daftar Pembina
+                            <div class="col-6">
+                                <p class="h5 text-orange" id="title-pembina"><i class="icon-copy dw dw-user-2 mr-2"></i>Daftar Pembina
                                 </p>
+                            </div>
+                            <div class="col-6 text-right">
+                                <div id="container-btn">
+                                    <a href="#" onclick="showForm()" id="tambah-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+                                        style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                                        Tambah</a>
+                                </div>
+                            </div>
+                            <div class="col-12">
                                 <hr>
+                            </div>
+                        </div>
+
+                        <div class="row" id="table-pembina">
+                            <div class="col-12">
+                                 <table id="pembina-table" class="display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Dosen</th>
+                                            <th>Tahun Jabatan</th>
+                                            <th>Status Keaktifan</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($pembinas as $pembina)
+                                            <tr id="tr_{{$pembina->id_pembina}}">
+                                                <td>{{$loop->iteration}}</td>
+                                                <td>{{$pembina->nama_dosen}}</td>
+                                                <td>{{$pembina->tahun_jabatan}}</td>
+                                                <td>
+                                                    @if ($pembina->status == 1)
+                                                        <a href="#" style="font-size: 11px; margin-bottom:10px" class="btn btn-success btn-sm">Aktif</a>
+                                                    @else
+                                                        <a href="#" style="font-size: 11px;margin-bottom:10px"  class="btn btn-danger btn-sm">Tidak</a>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <a href="{{route('ormawa.settings.edit.pembina', $pembina->id_pembina)}}"  class="btn btn-info btn-sm d-inline"><i class="icofont-ui-edit"></i></a>
+                                                    <a href="#" onclick="deletePembina({{$pembina->id_pembina}})" class="btn btn-danger btn-sm d-inline"><i class="icofont-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row" id="form-pembina">
+                            <div class="col-12">
+                                <form action="{{route('ormawa.settings.tambah.pembina')}}" method="post">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="">Nama Dosen</label>
+                                        <select class="js-example-basic-single" style="width: 100%" name="nama_dosen">
+                                            <option selected>Pilih Dosen</option>
+                                            @foreach ($dosens as $dosen)
+                                                <option value="{{$dosen->nidn}}">{{$dosen->nama_dosen}}</option>
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->has('nama_dosen'))
+                                            <span class="text-danger">{{ $errors->first('nama_dosen') }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Tahun Jabatan</label>
+                                        <select name="tahun_jabatan" id="" class="form-control">
+                                            <option selected>Pilih Tahun</option>
+                                            @for ($i = 2015; $i <= date('Y'); $i++)
+                                                <option value="{{$i}}">{{$i}}</option>
+                                            @endfor
+                                        </select>
+                                        @if ($errors->has('tahun_jabatan'))
+                                            <span class="text-danger">{{ $errors->first('tahun_jabatan') }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Status Keaktifan</label>
+                                        <select name="status" id="" class="form-control">
+                                            <option value="0">Tidak</option>
+                                            <option value="1">Aktif</option>
+                                        </select>
+                                        @if ($errors->has('status'))
+                                            <span class="text-danger">{{ $errors->first('status') }}</span>
+                                        @endif
+                                    </div>
+                                    <input type="submit"  class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"  style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important" value="Submit">
+                        
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -164,36 +252,107 @@
 @push('script')
 <script src="{{ url('assets/ckeditor/ckeditor.js') }}"></script>
 <script>
-    CKEDITOR.replace( 'deskripsi-inp',{
-	customConfig: '/public/assets/ckeditor/ckeditor_ormawa_profil.js'
-});
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-// upload poster
-const bannerUpload = () => {
-        event.preventDefault();
-        $('#banner-inp').trigger('click');
-        return false;
-    } 
-const previewBannerImage = () => {
-        var oFReader = new FileReader();
-        oFReader.readAsDataURL(document.getElementById("banner-inp").files[0]);
-        oFReader.onload = (oFREvent) =>  {
-                document.getElementById("banner-image").src = oFREvent.target.result;
-            };
+    CKEDITOR.replace( 'deskripsi-inp',{
+        customConfig: '/public/assets/ckeditor/ckeditor_ormawa_profil.js'
+    });
+
+    $(document).ready( function () {
+        $('#pembina-table').DataTable();
+        $('#form-pembina').hide();
+        $('.js-example-basic-single').select2();
+    } );
+
+    const showForm = () => {
+        let html = `
+             <a href="#" onclick="showTable()" id="table-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+                style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                List</a>
+        `;
+        $('#table-pembina').hide(1000);
+        $('#form-pembina').show(1000);
+        $('#title-pembina').html('<i class="icon-copy dw dw-user-2 mr-2"></i>Tambah Pembina');
+        document.getElementById('container-btn').innerHTML = html;
     };
 
-const profilUpload = () => {
-    event.preventDefault();
-    $('#profil-inp').trigger('click');
-    return false;
-} 
-const previewProfilImage = () => {
+    const showTable = () => {
+        let html = `
+            <a href="#" onclick="showForm()" id="tambah-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+                style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                Tambah</a>
+        `;
+        $('#form-pembina').hide(1000);
+        $('#table-pembina').show(1000);
+        $('#title-pembina').html('<i class="icon-copy dw dw-user-2 mr-2"></i>Daftar Pembina');
+
+        document.getElementById('container-btn').innerHTML = html;
+    }
+
+    // upload poster
+    const bannerUpload = () => {
+            event.preventDefault();
+            $('#banner-inp').trigger('click');
+            return false;
+        } 
+    const previewBannerImage = () => {
+            var oFReader = new FileReader();
+            oFReader.readAsDataURL(document.getElementById("banner-inp").files[0]);
+            oFReader.onload = (oFREvent) =>  {
+                    document.getElementById("banner-image").src = oFREvent.target.result;
+                };
+        };
+
+    const profilUpload = () => {
+        event.preventDefault();
+        $('#profil-inp').trigger('click');
+        return false;
+    } 
+    const previewProfilImage = () => {
         var oFReader = new FileReader();
         oFReader.readAsDataURL(document.getElementById("profil-inp").files[0]);
         oFReader.onload = (oFREvent) =>  {
                 document.getElementById("profil-image").src = oFREvent.target.result;
             };
     };
+
+    const deletePembina = (id_pembina) => {
+        let url = "/ormawa/settings/profile/pembina/"+id_pembina;
+        event.preventDefault();
+        Notiflix.Confirm.Show( 
+            'Pembina',
+            'Apakah anda yakin ingin menghapus?',
+            'Yes',
+            'No',
+        function(){ 
+            $.ajax(
+                {
+                    url: url,
+                    type: 'delete', 
+                    dataType: "JSON",
+                    data: {
+                        "id_pembina": id_pembina
+                    },
+                    success: function (response){
+                        console.log(response.status); 
+                        if(response.status == 1){
+                            Notiflix.Notify.Success(response.message);
+                            $('#tr_' + id_pembina).remove();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                        Notiflix.Notify.Failure('Ooopss');
+                    }
+            });
+        }, function(){
+                // No button callback alert('If you say so...'); 
+        } ); 
+    }
 </script>
 
 @endpush

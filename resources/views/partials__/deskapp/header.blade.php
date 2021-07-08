@@ -18,7 +18,11 @@
     <link rel="stylesheet" type="text/css" href="{{url('assets/deskapp/vendors/icofont/icofont.min.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{url('assets/deskapp/src/plugins/cropperjs/dist/cropper.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{url('assets/deskapp/vendors/styles/style.css')}}">
+	<link rel="stylesheet" href="{{url('assets/icofont/icofont.min.css')}}">
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+
+	{{-- Select2 --}}
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>

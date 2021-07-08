@@ -22,6 +22,6 @@ class EventInternalDetail extends Model
 
     public function filePengajuan()
     {
-        return $this->hasMany(FileEventInternalDetail::class, 'event_internal_detail_id', 'id_event_internal_detail',);
+        return $this->hasMany(FileEventInternalDetail::class, 'event_internal_detail_id', 'id_event_internal_detail');
     }
 }

@@ -100,7 +100,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('ormawa.event.index')}}" class="dropdown-toggle no-arrow">
+                        <a href="#" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-up-chevron-1"></span><span class="mtext">Event</span>
                         </a>
                     </li>

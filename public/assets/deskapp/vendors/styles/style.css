@@ -41,6 +41,28 @@ body {
     text-decoration: none;
 }
 
+.button-choose-event:hover{
+    border: 1px solid #fb8c00;
+    background-color: #fb8c00;
+    color: #fff;
+}
+
+.button-choose-event{
+    display:inline-block;
+    width: 100%;
+    margin: 5px 5px 0 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    /* padding: 8px 15px; */
+    color: #fb8c00;
+    border: 1px solid #fb8c00;
+    border-radius: 40px;
+    text-transform: capitalize;
+    font-size: .775rem;
+    background: #fff;
+}
+
 .card-body-number {
     font-family: "Roboto", sans-serif;
     font-size: 60px;

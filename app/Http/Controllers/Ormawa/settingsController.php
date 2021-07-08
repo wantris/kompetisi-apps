@@ -3,17 +3,49 @@
 namespace App\Http\Controllers\Ormawa;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PembinaStoreRequest;
 use Illuminate\Support\Facades\Session;
 use App\Ormawa;
+use App\Pembina;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class settingsController extends Controller
 {
     public function index()
     {
-        $ormawa = Ormawa::find(Session::get('id_ormawa'));
-        $navTitle = '<i class="icon-copy dw dw-settings mr-2"></i>Pengaturan Profil';
-        return view('ormawa.settings.index', compact('navTitle', 'ormawa'));
+        try{
+            $ormawa = Ormawa::find(Session::get('id_ormawa'));
+            $pembinas = Pembina::where('ormawa_id', Session::get('id_ormawa'))->get();
+            $client = new Client();
+            $url = env("SOURCE_API") . "dosen/";
+            $rDosens = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $dosens = json_decode($rDosens->getBody());
+
+            if($pembinas->count() > 0){
+                foreach($pembinas as $pembina){
+                    // call API
+                    $client = new Client();
+                    $url = env("SOURCE_API") . "dosen/" . $pembina->nidn;
+                    $response = $client->request('GET', $url, [
+                        'verify'  => false,
+                    ]);
+                    $dosen = json_decode($response->getBody());
+
+                    if ($dosen) {
+                        $pembina->nama_dosen = $dosen->nama_dosen;
+                    }
+                }
+            }
+
+            $navTitle = '<i class="icon-copy dw dw-settings mr-2"></i>Pengaturan Profil';
+            return view('ormawa.settings.index', compact('navTitle', 'ormawa', 'pembinas','dosens'));
+        }catch(\Throwable $err){
+            return redirect()->route('project.index')->with('failed', 'Terjadi Error');
+        }
+
     }
 
     public function updateProfile(Request $request)
@@ -37,6 +69,7 @@ class settingsController extends Controller
 
         if ($ck) {
             try {
+                $ck->nama_akronim = $request->akronim;
                 $ck->email = $request->email;
                 $ck->deskripsi = $request->deskripsi;
                 $ck->website = $request->website;
@@ -56,5 +89,99 @@ class settingsController extends Controller
     {
         $navTitle = '<i class="icon-copy dw dw-password mr-2"></i>Ganti Password';
         return view('ormawa.settings.change_password', compact('navTitle'));
+    }
+
+    public function tambahPembina(PembinaStoreRequest $req){
+        $validated = $req->validated();
+       
+        $status = $req->status;
+        if($status == 1){
+            $pembinas = Pembina::where('ormawa_id', Session::get('id_ormawa'))->get();
+            if($pembinas){
+                foreach($pembinas as $pembina){
+                    Pembina::where('id_pembina', $pembina->id_pembina)->update([
+                        'status' => 0,
+                    ]);
+                }
+            }
+        }
+        try{
+            $pb = new Pembina();
+            $pb->nidn = $req->nama_dosen;
+            $pb->ormawa_id = Session::get('id_ormawa');
+            $pb->tahun_jabatan = $req->tahun_jabatan;
+            $pb->status = $status;
+            $pb->save();
+
+            return redirect()->back()->with('success', 'Tambah pembina berhasil');
+        }catch(\Throwable $err){
+            return redirect()->route('ormawa.settings.index')->with('failed','Upps error');
+        }
+    }
+
+    public function editPembina($id_pembina){
+        $pb = Pembina::find($id_pembina);
+        if($pb){
+            try{
+            // Semua dosen
+            $client = new Client();
+            $url = env("SOURCE_API") . "dosen/" .$pb->nidn;
+            $rDosen = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $dosen = json_decode($rDosen->getBody());
+
+            // all dosen
+            $client = new Client();
+            $url = env("SOURCE_API") . "dosen/";
+            $rDosens = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $dosens = json_decode($rDosens->getBody());
+
+            return view('ormawa.settings.pembina_edit', compact('navTitle','pb','dosens', 'dosen'));
+
+            }catch(\Throwable $err){
+                 return redirect()->route('ormawa.settings.index')->with('failed', 'Data tidak ada');
+            }
+        }
+    }
+
+    public function updatePembina(PembinaStoreRequest $req, $id_pembina){
+        $validated = $req->validated();
+       
+        $status = $req->status;
+        if($status == 1){
+            $pembinas = Pembina::where('ormawa_id', Session::get('id_ormawa'))->get();
+            if($pembinas){
+                foreach($pembinas as $pembina){
+                    Pembina::where('id_pembina', $pembina->id_pembina)->update([
+                        'status' => 0,
+                    ]);
+                }
+            }
+        }
+        try{
+            $pb = Pembina::find($id_pembina);
+            $pb->nidn = $req->nama_dosen;
+            $pb->ormawa_id = Session::get('id_ormawa');
+            $pb->tahun_jabatan = $req->tahun_jabatan;
+            $pb->status = $status;
+            $pb->save();
+
+            return redirect()->back()->with('success', 'Update pembina berhasil');
+        }catch(\Throwable $err){
+            dd($err);
+            return redirect()->route('ormawa.settings.index')->with('failed','Update pembina gagal');
+        }
+    }
+
+    public function deletePembina(Request $request, $id_pembina)
+    {
+        Pembina::destroy($id_pembina);
+        return response()->json([
+            "status" => 1,
+            "message" => "pembina berhasil dihapus",
+        ]);
     }
 }
