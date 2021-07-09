@@ -27,7 +27,9 @@ class CreateEventInternalsTable extends Migration
             $table->text('ketentuan')->nullable();
             $table->string('poster_image', 255);
             $table->string('banner_image', 255);
-            $table->char('status', 100);
+            $table->boolean('status');
+            $table->boolean('status_validasi');
+            
             $table->timestamps();
 
             $table->foreign('ormawa_id')->references('id_ormawa')->on('ormawas')->onDelete('cascade');

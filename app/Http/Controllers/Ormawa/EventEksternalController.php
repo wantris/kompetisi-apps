@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\{Ormawa, KategoriEvent};
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 
 class EventEksternalController extends Controller
 {

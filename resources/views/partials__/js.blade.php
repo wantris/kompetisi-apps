@@ -1,6 +1,6 @@
 <!-- All JS Custom Plugins Link Here here -->
 <script src="{{url('assets/js/vendor/modernizr-3.5.0.min.js')}}"></script>
-</script>
+
 <!-- Jquery, Popper, Bootstrap -->
 <script src="{{url('assets/js/vendor/jquery-1.12.4.min.js')}}"></script>
 <script src="{{url('assets/js/popper.min.js')}}"></script>

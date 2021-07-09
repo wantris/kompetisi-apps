@@ -79,7 +79,7 @@
     <div class="mobile-menu-overlay"></div>
 
     {{-- Ormawa sidebar --}}
-    @elseif(Request()->route()->getPrefix() == "ormawa/dashboard" || Request()->route()->getPrefix() == "ormawa/event" || Request()->route()->getPrefix() == "ormawa/settings" || Request()->route()->getPrefix() == "ormawa/steps")
+    @elseif(Session::get('is_ormawa') == 1)
 
     <div class="left-side-bar">
         <div class="brand-logo">
@@ -99,14 +99,28 @@
                             <span class="micon dw dw-house-1"></span><span class="mtext">Dashboard</span>
                         </a>
                     </li>
+                    <li class="dropdown">
+						<a href="javascript:;" class="dropdown-toggle">
+							<span class="micon dw dw-rocket"></span><span class="mtext"> Event </span>
+						</a>
+						<ul class="submenu">
+							<li><a href="{{route('ormawa.eventinternal.index')}}">Event Internal</a></li>
+							<li><a href="ui-cards.html">Event Eksternal</a></li>
+						</ul>
+					</li>
+                    {{-- <li>
+                        <a href="{{route('ormawa.step.index')}}" class="dropdown-toggle no-arrow">
+                            <span class="micon dw dw-startup-2"></span><span class="mtext">Tahapan</span>
+                        </a>
+                    </li> --}}
                     <li>
-                        <a href="#" class="dropdown-toggle no-arrow">
-                            <span class="micon dw dw-up-chevron-1"></span><span class="mtext">Event</span>
+                        <a href="{{route('ormawa.timeline.index')}}" class="dropdown-toggle no-arrow">
+                            <span class="micon dw dw-time-management"></span><span class="mtext">Timeline</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{route('ormawa.step.index')}}" class="dropdown-toggle no-arrow">
-                            <span class="micon dw dw-startup-2"></span><span class="mtext">Tahapan</span>
+                            <span class="micon dw dw-notification1"></span><span class="mtext">Pengumuman</span>
                         </a>
                     </li>
                     <li>

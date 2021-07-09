@@ -15,8 +15,8 @@ class CreateTimelinesTable extends Migration
     {
         Schema::create('timelines', function (Blueprint $table) {
             $table->id('id_timeline');
-            $table->bigInteger('event_internal_id')->unsigned();
-            $table->bigInteger('event_eksternal_id')->unsigned();
+            $table->bigInteger('event_internal_id')->unsigned()->nullable();
+            $table->bigInteger('event_eksternal_id')->unsigned()->nullable();
             $table->date('tgl_jadwal');
             $table->char('title', 100);
             $table->text('deskripsi');

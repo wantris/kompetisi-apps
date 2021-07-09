@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class EventInternalStoreRequest extends FormRequest
+class TimelineStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,20 +24,20 @@ class EventInternalStoreRequest extends FormRequest
     public function rules()
     {
          return [
-            'category' => 'required|integer',
-            'event_title' => 'required',
-            'peserta' => 'required|integer',
-            'tgl_mulai' => 'required',
-            'tgl_tutup' => 'required',
-            'jenis' => 'required',
-            'jenis_peserta' => 'required|integer'
+            'event_id' => 'required|integer',
+            'title' => 'required',
+            'tgl_jadwal' => 'required',
+            'deskripsi' => 'required',
         ];
     }
 
     public function messages()
     {
         return [
-            'category.integer' => 'Pilih Kategori Event Internal!',
+            'event_id.integer' => 'Pilih Event!',
+            'title.required' => 'Judul Timeline Required!',
+            'tgl_jadwal.required' => 'Jadwal Timeline Required!',
+            'deskripsi.required' => 'Deskripsi Timeline Required!',
         ];
     }
 }

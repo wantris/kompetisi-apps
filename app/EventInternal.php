@@ -30,6 +30,7 @@ class EventInternal extends Model
 
     public function pengajuanRef()
     {
-        return $this->belongsTo(EventInternalDetail::class, 'event_internal_id',  'id_event_internal');
+        return $this->hasOne(EventInternalDetail::class, 'event_internal_id',  'id_event_internal');
     }
+
 }

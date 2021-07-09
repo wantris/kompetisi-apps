@@ -18,7 +18,10 @@
 <body>
 
     <!-- Navbar -->
-    @include('partials__.navbar')
+    @if (Route::currentRouteName() != "ormawa.eventinternal.publik")
+        @include('partials__.navbar')
+    @endif
+    
 
     <main>
         @yield('content')

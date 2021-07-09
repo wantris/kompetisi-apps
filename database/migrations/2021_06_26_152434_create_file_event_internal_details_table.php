@@ -13,8 +13,8 @@ class CreateFileEventInternalDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('file_event__internal_details', function (Blueprint $table) {
-            $table->id('id_berkas_event_detail');
+        Schema::create('file_event_internal_details', function (Blueprint $table) {
+            $table->id('id_file_event_internal_detail');
             $table->bigInteger('event_internal_detail_id')->unsigned();
             $table->string('filename', 255);
             $table->timestamps();

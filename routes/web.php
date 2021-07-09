@@ -103,15 +103,31 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
     Route::group(['prefix' => 'eventinternal'], function () {
         Route::get('/', 'EventInternalController@index')->name('ormawa.eventinternal.index');
         Route::get('/add', 'EventInternalController@add')->name('ormawa.eventinternal.add');
+        Route::get('/edit/{id_eventinternal}', 'EventInternalController@edit')->name('ormawa.eventinternal.edit');
+        Route::get('/publik/{id_eventinternal}', 'EventInternalController@lihatPublik')->name('ormawa.eventinternal.publik');
+        Route::get('/pendaftar/{id_eventinternal}', 'EventInternalController@lihatPendaftar')->name('ormawa.eventinternal.pendaftar');
         Route::post('/add', 'EventInternalController@saveForm')->name('ormawa.eventinternal.save');
+        Route::patch('/status', 'EventInternalController@updateStatus')->name('ormawa.eventinternal.statusupdate');
+        Route::delete('/delete/{id_eventinternal}', 'EventInternalController@delete')->name('ormawa.eventinternal.delete');
         Route::get('detail/{event}/peserta', 'EventInternalController@listPeserta')->name('ormawa.eventinternal.peserta');
     });
 
-     Route::group(['prefix' => 'eventeksternal'], function () {
+    Route::group(['prefix' => 'eventeksternal'], function () {
         Route::get('/', 'EventEksternalController@index')->name('ormawa.eventeksternal.index');
         Route::get('/add', 'EventEksternalController@add')->name('ormawa.eventeksternal.add');
         Route::post('/add', 'EventEksternalController@saveForm')->name('ormawa.eventeksternal.save');
         Route::get('detail/{event}/peserta', 'EventEksternalController@listPeserta')->name('ormawa.eventeksternal.peserta');
+    });
+
+    Route::group(['prefix' => 'timeline'], function () {
+        Route::get('/', 'timelineController@index')->name('ormawa.timeline.index');
+        Route::get('/add/{type}', 'timelineController@add')->name('ormawa.timeline.add');
+        Route::post('/add/{type}', 'timelineController@save')->name('ormawa.timeline.save');
+        Route::get('/edit/eventinternal/{id_timeline}', 'timelineController@editInternal')->name('ormawa.timeline.editinternal');
+        Route::get('/edit/eventeksternal/{id_timeline}', 'timelineController@editEksternal')->name('ormawa.timeline.editeksternal');
+        Route::patch('/update/{type}', 'timelineController@update')->name('ormawa.timeline.update');
+        Route::delete('/delete/{id_timeline}', 'timelineController@delete')->name('ormawa.timeline.delete');
+        Route::get('detail/{event}/peserta', 'timelineController@listPeserta')->name('ormawa.timeline.peserta');
     });
 
     Route::group(['prefix' => 'steps'], function () {

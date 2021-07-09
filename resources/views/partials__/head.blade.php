@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="{{url('assets/css/owl.carousel.min.css')}}">
 <link rel="stylesheet" href="{{url('assets/css/flaticon.css')}}">
 <link rel="stylesheet" href="{{url('assets/css/price_rangs.css')}}">
+<link rel="stylesheet" href="{{url('assets/icofont/icofont.min.css')}}">
 <link rel="stylesheet" href="{{url('assets/css/slicknav.css')}}">
 <link rel="stylesheet" href="{{url('assets/css/animate.min.css')}}">
 <link rel="stylesheet" href="{{url('assets/css/magnific-popup.css')}}">

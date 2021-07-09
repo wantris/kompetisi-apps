@@ -272,14 +272,14 @@
                                                             <a href="" class="float-right btn" style="background-color: #fb8c00;padding: 10px 10px" title="Tambah dokumen">-</a>
                                                         </div>
                                                         <div class="col-lg-4">
-                                                            <input type="text" name="" placeholder="Nama Dokumen" class="inp-dokumen" style="width:100%" id="">
+                                                            <input type="text" name="nama_dokumen[]" placeholder="Nama Dokumen" class="inp-dokumen" style="width:100%" id="">
                                                         </div>
                                                         <div class="col-lg-4">
-                                                            <input type="text" name="" placeholder="Format .pdf, .docx, .zip"  class="inp-dokumen" disabled style="width:100%" id="nama_file_1">
+                                                            <input type="text" placeholder="Format .pdf, .docx, .zip"  class="inp-dokumen" disabled style="width:100%" id="nama_file_1">
                                                         </div>
                                                         <div class="col-lg-3">
                                                             <a href="#" class="float-right btn" onclick="uploadFile(1)" style="background-color: #fb8c00;padding: 20px 30px" title="Tambah dokumen">Upload</a>
-                                                            <input type="file" class="d-none" id="file_dokumen_1" name="file_dokumen_1">
+                                                            <input type="file" class="d-none" id="file_dokumen_1" name="file_dokumen[]">
                                                         </div>
                                                     </div>
                                                     <div id="dokumen-div">
@@ -515,6 +515,7 @@
    
     // submit form
     const submitForm = () => {
+        event.preventDefault();
         $("#form-all").submit();
     }
 
@@ -777,14 +778,14 @@
                         <a href="#" class="float-right btn" onclick="removeDokumen(${countUpload})" id="remove_button_${countUpload}" style="background-color: #fb8c00;padding: 10px 10px" title="Hapus dokumen">-</a>
                     </div>
                     <div class="col-lg-4">
-                        <input type="text" placeholder="Nama Dokumen" class="inp-dokumen" style="width:100%" id="">
+                        <input type="text" placeholder="Nama Dokumen" name="nama_dokumen[]" class="inp-dokumen" style="width:100%" id="">
                     </div>
                     <div class="col-lg-4">
                         <input type="text" name="" placeholder="Format .pdf, .docx, .zip" class="inp-dokumen" disabled style="width:100%" id="nama_file_${countUpload}">
                     </div>
                     <div class="col-lg-3">
                         <a href="#" class="float-right btn" onclick="uploadFile(${countUpload})" id="upload_btn_${countUpload}" style="background-color: #fb8c00;padding: 20px 30px" title="Tambah dokumen">Upload</a>
-                        <input type="file" id="file_dokumen_${countUpload}" name="file_dokumen_${countUpload}" class="d-none">
+                        <input type="file" id="file_dokumen_${countUpload}" name="file_dokumen[]" class="d-none">
                     </div>
                 </div>
             `;

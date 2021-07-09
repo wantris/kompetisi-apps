@@ -11,7 +11,7 @@
             <h5 class="h4 text-secondary mt-2 ml-4" style="">Team Saya</h5>
             @else
             <h5 class="h4 text-secondary mt-2 ml-4" style="">
-                @if (Session::get('is_ormawa') == "1")
+                @if (Session::get('is_ormawa') == "1" && Request()->route()->getPrefix() == "ormawa/dashboard" )
                 @php
                 $ormawa = \App\Ormawa::where('id_ormawa', Session::get('id_ormawa'))->first();
                 @endphp

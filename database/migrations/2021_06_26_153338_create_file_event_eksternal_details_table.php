@@ -14,13 +14,12 @@ class CreateFileEventEksternalDetailsTable extends Migration
     public function up()
     {
         Schema::create('file_event_eksternal_details', function (Blueprint $table) {
-            $table->id('id_event_eksternal_detail');
-            $table->bigInteger('event_eksternal_id')->unsigned();
-            $table->boolean('is_validated_pembina');
-            $table->boolean('is_validated_wadir3');
+            $table->id('id_file_event_eksternal_detail');
+            $table->bigInteger('event_eksternal_detail_id')->unsigned();
+            $table->string('filename', 255);
             $table->timestamps();
 
-            $table->foreign('event_eksternal_id')->references('id_event_eksternal')->on('event_eksternals')->onDelete('cascade');
+            $table->foreign('event_eksternal_detail_id')->references('id_event_eksternal_detail')->on('event_eksternal_details')->onDelete('cascade');
         });
     }
 
