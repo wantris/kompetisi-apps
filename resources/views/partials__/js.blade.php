@@ -40,6 +40,29 @@
 <script src="{{url('assets/notiflix/dist/notiflix-aio-2.7.0.min.js')}}"></script>
 <script>
     $(document).ready(function() {
-                $('.select-single').select2();
-            });
+        $('.select-single').select2();
+
+    });
+
+    const showPasswordOrmawa = () => {
+            let html = `
+                <button type="button" onclick="hidePasswordOrmawa()" style="cursor: pointer" class="input-group-text"><i class="fas fa-eye-slash"></i></button>;
+            `;
+            if(!$('#btn-pw-ormawa').hasClass('show')){
+                $('#password-ormawa-inp').attr('type','text');
+                $('#btn-pw-ormawa').addClass('show');
+                $('#btn-pw-ormawa').html(html);
+            }
+        } 
+
+        const hidePasswordOrmawa = () => {
+            let html = `
+                <button type="button" onclick="showPasswordOrmawa()" style="cursor: pointer" class="input-group-text"><i class="fas fa-eye"></i></button>;
+            `;
+            if($('#btn-pw-ormawa').hasClass('show')){
+                $('#password-ormawa-inp').attr('type','password');
+                $('#btn-pw-ormawa').removeClass('show');
+                $('#btn-pw-ormawa').html(html);
+            }
+        }
 </script>

@@ -1,6 +1,6 @@
 @extends('ormawa.app')
 
-@section('title','Kompetisi')
+@section('title','Event Internal')
 
 @push('css')
 <style>
@@ -25,13 +25,13 @@
             <div class="card-body">
                  <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active text-blue" data-toggle="tab" href="#active" role="tab" aria-selected="true">Event Aktif</a>
+                        <a class="nav-link active text-orange" data-toggle="tab" href="#active" role="tab" aria-selected="true">Event Aktif</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-blue" data-toggle="tab" href="#all" role="tab" aria-selected="false">Semua Event</a>
+                        <a class="nav-link text-orange" data-toggle="tab" href="#all" role="tab" aria-selected="false">Semua Event</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-blue" data-toggle="tab" href="#draft" role="tab" aria-selected="false">Event Tidak Aktif</a>
+                        <a class="nav-link text-orange" data-toggle="tab" href="#draft" role="tab" aria-selected="false">Event Tidak Aktif</a>
                     </li>
                 </ul>
             </div>

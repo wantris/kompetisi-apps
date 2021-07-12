@@ -12,7 +12,9 @@
 
 @section('content')
 
-
+@php
+    $eiJson = json_encode($ei);
+@endphp
 <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-12 mb-30">
         <div class="card mb-2">
@@ -41,7 +43,7 @@
                             </div>
                             <div class="col-6 text-right">
                                 <div id="container-btn">
-                                    <a href="{{route('ormawa.timeline.index')}}" id="tambah-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+                                    <a href="{{route('ormawa.eventinternal.index')}}" id="tambah-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
                                         style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
                                         Kembali</a>
                                 </div>
@@ -51,20 +53,24 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-lg-12">
-                                <div class="ormawa-banner_inp_profil shadow-sm mb-2">
-                                    <img src="{{url('assets/img/banner-komp/'.$ei->banner_image)}}"
+                            <div class="col-lg-12 mb-3">
+                                <div class="ormawa-banner_inp_profil shadow-sm mb-1">
+                                    <img data-filename="{{$eiJson}}" src="{{url('assets/img/banner-komp/'.$ei->banner_image)}}"
                                         id="banner-image" style="width: 100%" alt="" class="img-fluid">
+                                </div>
+                                <div id="btn-hapus-container_banner" class="mt-2">
+                                    
                                 </div>
                             </div>
                             <div class="col-lg-8 col-12">
-                                <form action="" method="post">
+                                <form action="{{route('ormawa.eventinternal.update', $ei->id_event_internal)}}" enctype="multipart/form-data" method="post">
                                     @csrf
+                                    @method('patch')
                                     <div class="form-group">
                                         <label for="">Nama Event</label>
-                                        <input type="text" name="nama_event" class="form-control" value="{{$ei->nama_event}}" id="">
-                                        @if ($errors->has('nama_event'))
-                                            <span class="text-danger">{{ $errors->first('nama_event') }}</span>
+                                        <input type="text" name="event_title" class="form-control" value="{{$ei->nama_event}}" id="">
+                                        @if ($errors->has('event_title'))
+                                            <span class="text-danger">{{ $errors->first('event_title') }}</span>
                                         @endif
                                     </div>
                                     <div class="form-group">
@@ -149,11 +155,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="">Banner Event</label>
-                                        <input type="file" name="banner" class="form-control" id="">
+                                        <input type="file" name="banner" onchange="previewBannerImage()" class="form-control" id="banner-inp">
                                     </div>
                                     <div class="form-group">
                                         <label for="">Poster Event</label>
-                                        <input type="file" name="poster" class="form-control" id="">
+                                        <input type="file" name="poster" onchange="previewPosterImage()" class="form-control" id="poster-inp">
                                     </div>
                                     <input type="hidden" name="oldBanner" value="{{$ei->banner_image}}">
                                     <input type="hidden" name="oldPoster" value="{{$ei->poster_image}}">
@@ -163,9 +169,12 @@
                             </div>
                             <div class="col-lg-4 col-12">
                                 <div class="border mb-3 ormawa-banner_inp_profil shadow-sm px-4 py-4 mt-2">
-                                        <img src="{{url('assets/img/kompetisi-thumb/'.$ei->poster_image)}}" id="profil-image"
-                                            style="width: 100%" alt="" class="img-fluid">
-                            </div>
+                                    <img data-filename="{{$eiJson}}" src="{{url('assets/img/kompetisi-thumb/'.$ei->poster_image)}}" id="poster-image"
+                                        style="width: 100%" alt="" class="img-fluid">
+                                </div>
+                                <div id="btn-hapus-container_poster" class="mt-2">
+                                    
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -174,12 +183,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-6">
-                                <p class="h5 text-orange" id="title-pembina"><i class="icon-copy dw dw-user-2 mr-2"></i>{{$title}}
+                                <p class="h5 text-orange" id="title-pembina"><i class="icon-copy dw dw-user-2 mr-2"></i>Status Validasi {{$ei->nama_event}}
                                 </p>
                             </div>
                             <div class="col-6 text-right">
                                 <div id="container-btn">
-                                    <a href="{{route('ormawa.timeline.index')}}" id="tambah-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+                                    <a href="{{route('ormawa.eventinternal.index')}}" id="tambah-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
                                         style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
                                         Kembali</a>
                                 </div>
@@ -212,16 +221,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade show active" id="berkas-event" role="tabpanel">
+                <div class="tab-pane fade" id="berkas-event" role="tabpanel">
                     <div class="card-body">
                         <div class="row clearfix">
                             <div class="col-md-3 col-sm-12 ">
                                 <ul class="nav flex-column vtabs nav-tabs customtab" style="width: 100%" role="tablist">
-                                    <li class="nav-item mb-2">
-                                        <a class="nav-link active" data-toggle="tab" href="#pengajuan" role="tab" aria-selected="true">Berkas Pengajuan</a>
+                                    <li class="nav-item mb-4 text-center">
+                                        <a class="nav-link active py-2" data-toggle="tab" href="#pengajuan" role="tab" aria-selected="true">Berkas Pengajuan</a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#pendaftaran" role="tab" aria-selected="false">Berkas Pendaftaran</a>
+                                    <li class="nav-item text-center">
+                                        <a class="nav-link py-2" data-toggle="tab" href="#pendaftaran" role="tab" aria-selected="false">Berkas Pendaftaran</a>
                                     </li>
                                 </ul>
                             </div>
@@ -229,12 +238,87 @@
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="pengajuan" role="tabpanel">
                                         <div class="pd-20">
-                                            
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <p class="h5 text-orange" id="title-pembina"><i class="icon-copy dw dw-file mr-2"></i>Berkas Pengajuan
+                                                    </p>
+                                                </div>
+                                                <div class="col-6 text-right">
+                                                    <div id="container-btn">
+                                                        <a onclick="uploadPengajuan({{$eiJson}})" data-values="{{$eiJson}}" type="button" id="tambah-pengajuan-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2 text-white"
+                                                            style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                                                            Tambah</a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <hr>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    @foreach ($feips as $feip)
+                                                        <div class="row mb-4" id="tr_pengajuan_{{$feip->id_file_event_internal_detail }}">
+                                                            <div class="col-10">
+                                                                <div class="py-2 px-2" style="width:100%; border-bottom:1px solid #fb8c00 !important;">
+                                                                    {{$feip->nama_file}}
+                                                                </div>
+                                                            </div>
+                                                            @php
+                                                                $pengajuanJson = json_encode($feip);
+                                                            @endphp
+                                                            <div class="col-2 pt-2">
+                                                                <a data-toggle="collapse" href="#collapseExample_{{$feip->id_file_event_internal_detail }}" role="button" aria-expanded="false" aria-controls="collapseExample" class="text-orange d-inline mr-2" style="font-size:22px"><i class="icon-copy dw dw-eye" ></i></a>
+                                                                <a href="#" onclick="hapusBerkas({{$pengajuanJson}},'pengajuan')" class="text-orange d-inline" style="font-size:22px"><i class="icon-copy dw dw-trash1"></i></a>
+                                                            </div>
+                                                            <div class="collapse col-12 mt-3" id="collapseExample_{{$feip->id_file_event_internal_detail }}">
+                                                                <div style="width: 100%; height:400px" class="pengajuan-container border" data-id="{{$feip->id_file_event_internal_detail}}" data-filename="{{$feip->filename}}" id="pengajuan_container_{{$feip->id_file_event_internal_detail}}">
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="pendaftaran" role="tabpanel">
                                         <div class="pd-20">
-
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <p class="h5 text-orange" id="title-pembina"><i class="icon-copy dw dw-file mr-2"></i>Berkas Kebtuhan Pendaftaran
+                                                    </p>
+                                                </div>
+                                                <div class="col-6 text-right">
+                                                    <div id="container-btn">
+                                                        <a onclick="uploadPendaftaran({{$eiJson}})" data-values="{{$eiJson}}" type="button" id="tambah-pengajuan-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2 text-white"
+                                                            style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                                                            Tambah</a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <hr>
+                                                </div>
+                                            </div>
+                                             <div class="row">
+                                                <div class="col-12">
+                                                    @foreach ($feids as $feid)
+                                                        <div class="row mb-4" id="tr_pendaftaran_{{$feid->id_file_event_internal_detail }}">
+                                                            <div class="col-10">
+                                                                <div class="py-2 px-2" style="width:100%; border-bottom:1px solid #fb8c00 !important;">
+                                                                    {{$feid->nama_file}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-2 pt-2">
+                                                                <a target="_blank" href="{{url('assets/file/dokumen-event/'.$feid->filename)}}" class="text-orange d-inline mr-2" title="Download" style="font-size:22px"><i class="icon-copy dw dw-download"></i></a>
+                                                                @php
+                                                                    $pendaftaranJson = json_encode($feid);
+                                                                @endphp
+                                                                <a href="#" onclick="hapusBerkas({{$pendaftaranJson}},'pendaftaran')" class="text-orange d-inline" title="Hapus" style="font-size:22px"><i class="icon-copy dw dw-trash1"></i></a>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -246,10 +330,86 @@
         </div>
     </div>
 </div>
+
+{{-- Modal upload pengajuan --}}
+<div class="modal fade" id="upload-pengajuan-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-secondary" id="berkas-upload-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <form action="{{route('ormawa.eventinternal.save.pengajuan')}}" enctype="multipart/form-data" method="post">
+                    @csrf
+                    <div class="modal-body">
+                            <div class="form-group">
+                                <label for="">Nama Berkas</label>
+                                <input type="text" disabled id="keterangan-text" class="form-control">
+                                <input type="hidden" name="keterangan" id="keterangan-inp">
+                                <input type="hidden" name="id_event" id="id-inp">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Berkas</label>
+                                <input type="file" name="berkas" id="" class="form-control">
+                                @if ($errors->has('berkas'))
+                                    <span class="text-danger">{{ $errors->first('berkas') }}</span>
+                                @endif
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal upload berkas pendaftaran --}}
+    <div class="modal fade" id="upload-pendaftaran-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-secondary" id="pendaftaran-upload-title">Upload Berkas Keperluan Pendaftaran</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <form action="{{route('ormawa.eventinternal.save.pendaftaran')}}" enctype="multipart/form-data" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="">Keterangan Berkas</label>
+                                    <input type="text" name="keterangan_pendaftaran" class="form-control">
+                                    <input type="hidden" name="id_event" id="id-event-inp">
+                                    @if ($errors->has('keterangan_pendaftaran'))
+                                        <span class="text-danger">{{ $errors->first('keterangan_pendaftaran') }}</span>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Berkas</label>
+                                    <input type="file" name="berkas_pendaftaran" class="form-control">
+                                    @if ($errors->has('berkas_pendaftaran'))
+                                        <span class="text-danger">{{ $errors->first('berkas_pendaftaran') }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('script')
 <script src="{{ url('assets/ckeditor/ckeditor.js') }}"></script>
+<script src="https://unpkg.com/pdfobject@2.2.5/pdfobject.min.js"></script>
+
 <script>
     $.ajaxSetup({
         headers: {
@@ -269,7 +429,152 @@
         $('#pembina-table').DataTable();
         $('#form-pembina').hide();
         $('.js-example-basic-single').select2();
+      
     } );
+
+    const uploadPengajuan = (values) => {
+        $('#upload-pengajuan-modal').modal('show');
+        $('#berkas-upload-title').text('Upload Pengajuan '+values.nama_event);
+        $('#keterangan-text').val('Berkas Pengajuan '+values.nama_event);
+        $('#keterangan-inp').val('Berkas Pengajuan '+values.nama_event);
+        $('#id-inp').val(values.id_event_internal);
+    } 
+
+    const uploadPendaftaran = (values) => {
+        $('#upload-pendaftaran-modal').modal('show');
+        $('#id-event-inp').val(values.id_event_internal);
+    }
+
+    if(PDFObject.supportsPDFs){
+        console.log("Yay, this browser supports inline PDFs.");
+    } else {
+        Notiflix.Notify.Failure("Harap matikan capture download Internet Download Manager");
+    }
+
+    // var status = (PDFObject.supportsPDFs) ? "supports" : "does not support";
+    
+
+    $('.pengajuan-container').each(function(){
+        let id = $(this).data('id');
+        let url = "/assets/file/pengajuan_event/" + $(this).data('filename');
+        let container = "#pengajuan_container_"+id;
+        PDFObject.embed(url, container);
+    });
+
+    const previewBannerImage = () => {
+        var oFReader = new FileReader();
+        oFReader.readAsDataURL(document.getElementById("banner-inp").files[0]);
+        oFReader.onload = (oFREvent) =>  {
+                document.getElementById("banner-image").src = oFREvent.target.result;
+        };
+
+        let html = `
+            <a id="hapus-banner" onclick="hapusBanner()" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2 text-white"
+                style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                <i class="icon-copy dw dw-trash1"></i></a>
+        `;
+        $('#btn-hapus-container_banner').html(html);
+    };
+
+    const previewPosterImage = () => {
+        var oFReader = new FileReader();
+        oFReader.readAsDataURL(document.getElementById("poster-inp").files[0]);
+        oFReader.onload = (oFREvent) =>  {
+                document.getElementById("poster-image").src = oFREvent.target.result;
+        };
+
+        let html = `
+            <a id="hapus-poster" onclick="hapusPoster()" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2 text-white"
+                style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                <i class="icon-copy dw dw-trash1"></i></a>
+        `;
+        $('#btn-hapus-container_poster').html(html);
+    };
+
+    const hapusPoster = () => {
+        let value = $('#poster-image').data('filename');
+        console.log(value);
+        let url = "/assets/img/kompetisi-thumb/"+value.poster_image;
+
+        $("#poster-image").attr("src", url);
+        $('#poster-inp').val('');
+        // $('.custom-file-label').html(fileName);
+        $('#btn-hapus-container_poster').html(''); 
+    }
+
+    const hapusBanner = () => {
+        let value = $('#banner-image').data('filename');
+        console.log(value);
+        let url = "/assets/img/banner-komp/"+value.banner_image;
+
+        $("#banner-image").attr("src", url);
+        $('#banner-inp').val('');
+        // $('.custom-file-label').html(fileName);
+        $('#btn-hapus-container_banner').html(''); 
+    }
+
+    const hapusBerkas = (values, type) => {
+        let url = "";
+        let remove = "";
+        if(type == "pendaftaran"){
+            url = "/ormawa/eventinternal/pendaftaran/detele/"+values.id_file_event_internal_detail ;
+            remove = $('#tr_pendaftaran_' + values.id_file_event_internal_detail);
+        }else{
+            url = "/ormawa/eventinternal/pengajuan/detele/"+values.id_file_event_internal_detail ;
+            remove = $('#tr_pengajuan_' + values.id_file_event_internal_detail);
+        }
+        
+        console.log(url);
+        event.preventDefault();
+        Notiflix.Confirm.Show( 
+            values.nama_file,
+            'Apakah anda yakin ingin menghapus?',
+            'Yes',
+            'No',
+        function(){ 
+            $.ajax(
+                {
+                    url: url,
+                    type: 'delete', 
+                    dataType: "JSON",
+                    data: {
+                        "id_berkas": values.id_file_event_internal_detail
+                    },
+                    success: function (response){
+                        console.log(response.status); 
+                        if(response.status == 1){
+                            Notiflix.Notify.Success(response.message);
+                            remove.remove();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                        Notiflix.Notify.Failure('Ooopss');
+                    }
+            });
+        }, function(){
+                // No button callback alert('If you say so...'); 
+        } ); 
+    }
+
+
 </script>
+
+
+
+@if ($errors->has('berkas'))
+    <script>
+        let values = $('#tambah-pengajuan-btn').data('values');
+        uploadPengajuan(values);
+    </script>
+@endif
+
+@if ($errors->has('berkas_pendaftaran') || $errors->has('keterangan_pendaftaran'))
+    <script>
+        let values = $('#tambah-pendaftaran-btn').data('values');
+        uploadPendaftaran(values);
+    </script>
+@endif
+
 
 @endpush

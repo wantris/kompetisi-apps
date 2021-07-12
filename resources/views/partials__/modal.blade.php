@@ -70,9 +70,9 @@
                 <div class="form-group mt-4">
                   <label for="exampleInputEmail1">Password</label>
                   <div class="input-group">
-                    <input type="text" name="password" class="form-control" placeholder="Masukan Password...">
-                    <div class="input-group-append bg-white">
-                      <span class="input-group-text"><i class="fas fa-eye-slash"></i></span>
+                    <input type="password" name="password" id="password-ormawa-inp" class="form-control" placeholder="Masukan Password...">
+                    <div class="input-group-append bg-white" id="btn-pw-ormawa">
+                      <button type="button" onclick="showPasswordOrmawa()" style="cursor: pointer" class="input-group-text"><i class="fas fa-eye"></i></button>
                     </div>
                   </div>
                 </div>

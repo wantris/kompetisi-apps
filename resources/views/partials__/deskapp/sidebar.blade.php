@@ -119,7 +119,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('ormawa.step.index')}}" class="dropdown-toggle no-arrow">
+                        <a href="{{route('ormawa.pengumuman.index')}}" class="dropdown-toggle no-arrow">
                             <span class="micon dw dw-notification1"></span><span class="mtext">Pengumuman</span>
                         </a>
                     </li>

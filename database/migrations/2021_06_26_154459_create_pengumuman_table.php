@@ -15,8 +15,8 @@ class CreatePengumumanTable extends Migration
     {
         Schema::create('pengumumans', function (Blueprint $table) {
             $table->id('id_pengumuman');
-            $table->bigInteger('event_internal_id')->unsigned();
-            $table->bigInteger('event_eksternal_id')->unsigned();
+            $table->bigInteger('event_internal_id')->unsigned()->nullable();
+            $table->bigInteger('event_eksternal_id')->unsigned()->nullable();
             $table->string('photo', 255)->nullable();
             $table->char('title', 100);
             $table->text('deskripsi');
