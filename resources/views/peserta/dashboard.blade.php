@@ -10,7 +10,7 @@
                 <div class="row mt-2">
                     <div class="col-8">
                         <img src="{{url('assets/deskapp/vendors/images/icon/competition.svg')}}" width="20" class="img-fluid ml-2 d-inline" alt="">
-                        <span class="d-inline ml-2 text-secondary mt-2">Kompetisi Aktif</span>
+                        <span class="d-inline ml-2 text-secondary mt-2">Event Aktif</span>
                     </div>
                     <div class="col-4 text-right ">
                         <a href="#" class="card-dash-link">Detail <i class="icofont-caret-right"></i></a>
@@ -19,7 +19,7 @@
             </div>
             <div class="card-dash-body mt-4">
                 <span class="d-inline card-body-number ml-2" >0</span>
-                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Kompetisi</span>
+                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Event</span>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
                 <div class="row mt-2">
                     <div class="col-8">
                         <img src="{{url('assets/deskapp/vendors/images/icon/trophy.svg')}}" width="20" class="img-fluid ml-2 d-inline" alt="">
-                        <span class="d-inline ml-2 text-secondary mt-2">Total Kompetisi</span>
+                        <span class="d-inline ml-2 text-secondary mt-2">Total Event</span>
                     </div>
                     <div class="col-4 text-right ">
                         <a href="#" class="card-dash-link">Detail <i class="icofont-caret-right"></i></a>
@@ -38,7 +38,7 @@
             </div>
             <div class="card-dash-body mt-4">
                 <span class="d-inline card-body-number ml-2" >0</span>
-                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Kompetisi</span>
+                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Event</span>
             </div>
         </div>
     </div>
@@ -76,7 +76,7 @@
                 <div class="row mt-2">
                     <div class="col-8">
                         <img src="{{url('assets/deskapp/vendors/images/icon/win.svg')}}" width="20" class="img-fluid ml-2 d-inline" alt="">
-                        <span class="d-inline ml-2 text-secondary mt-2">Kompetisi Menang</span>
+                        <span class="d-inline ml-2 text-secondary mt-2">Event Menang</span>
                     </div>
                     <div class="col-4 text-right ">
                         <a href="#" class="card-dash-link">Detail <i class="icofont-caret-right"></i></a>
@@ -85,7 +85,7 @@
             </div>
             <div class="card-dash-body mt-4">
                 <span class="d-inline card-body-number ml-2" >0</span>
-                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Kompetisi</span>
+                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Event</span>
             </div>
         </div>
     </div>
@@ -95,7 +95,7 @@
                 <div class="row mt-2">
                     <div class="col-8">
                         <img src="{{url('assets/deskapp/vendors/images/icon/medal.svg')}}" width="20" class="img-fluid ml-2 d-inline" alt="">
-                        <span class="d-inline ml-2 text-secondary mt-2">Kompetisi Favorit</span>
+                        <span class="d-inline ml-2 text-secondary mt-2">Event Favorit</span>
                     </div>
                     <div class="col-4 text-right ">
                         <a href="#" class="card-dash-link">Detail <i class="icofont-caret-right"></i></a>
@@ -104,7 +104,7 @@
             </div>
             <div class="card-dash-body mt-4">
                 <span class="d-inline card-body-number ml-2" >0</span>
-                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Kompetisi</span>
+                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Event</span>
             </div>
         </div>
     </div>

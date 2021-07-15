@@ -5,6 +5,11 @@
     color: #fb8c00;
 }
 
+/* modal */
+.modal-content {
+    border: 0px solid rgba(0, 0, 0, 0.2);
+}
+
 /* Carousel */
 .carousel-item img {
     width: 100% !important;
@@ -510,6 +515,8 @@
     position: relative;
     display: inline-block;
     padding: 8px 24px;
+    width: 100%;
+    border-radius: 5px !important;
     border: 1px solid transparent;
     border-radius: 2px;
     outline: 1px solid transparent !important;

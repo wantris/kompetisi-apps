@@ -29,6 +29,6 @@ class EventEksternal extends Model
 
     public function pengajuanRef()
     {
-        return $this->belongsTo(EventInternalDetail::class, 'event_internal_id',  'id_event_internal');
+        return $this->hasOne(EventEksternalDetail::class, 'event_eksternal_id',  'id_event_eksternal');
     }
 }

@@ -18,7 +18,10 @@
                     <div class="row mt-3">
                         <div class="col-12">
                             <h1 class="registration-komp-title float-left">Pendaftaran Tim</h1>
-                            <a href="#" id="add-button" class="btn-add-person float-right"><i class="fas fa-plus"></i></a>
+                            @php
+                                $pengguna_json = json_encode($penggunas);
+                            @endphp
+                            <a href="#" id="add-button" onclick="addAnggota({{$pengguna_json}})" class="btn-add-person float-right"><i class="fas fa-plus"></i></a>
                         </div>
                         <div class="col-12">
                             <hr>
@@ -27,7 +30,12 @@
                     <div class="row mt-3">
                         <div class="col-12">
                             <label for="" class="registration-komp-label">Ketua Tim</label>
-                            <input type="text" disabled value="Jhon Doe" class="form-control">
+                            @if ($user_logged->nim)
+                                <input type="text" disabled value="{{$user_logged->nama_mhs}}" class="form-control">
+                            @else
+                            <input type="text" disabled value="{{$user_logged->participantRef->nama_participant}}" class="form-control">
+                            @endif
+                            
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -35,11 +43,14 @@
                             <label for="" class="registration-komp-label">Anggota 1</label>
                             <div class="form-group">
                                 <select name="ketua" class="select-single" style="width: 100%">
-                                    <option value="">Jhon Doe</option>
-                                    <option value="">Category 1</option>
-                                    <option value="">Category 2</option>
-                                    <option value="">Category 3</option>
-                                    <option value="">Category 4</option>
+                                    <option selected>Pilih Anggota</option>
+                                    @foreach ($penggunas as $pengguna)
+                                        @if ($pengguna->nim)
+                                            <option value="{{$pengguna->nim}}">{{$pengguna->nama_mhs}}</option>
+                                        @else
+                                            <option value="{{$pengguna->participant_id}}">{{$pengguna->participantRef->nama_participant}}</option>
+                                        @endif
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -67,7 +78,7 @@
         let id = 1;
 
         // add row func
-        $("#add-button").click(function () {
+        const addAnggota = (values) => {
             event.preventDefault();
             id = id +1;
             var html = '';
@@ -75,21 +86,33 @@
                         <div class="col-12">
                             <label for="" class="registration-komp-label">Anggota ${id}</label>
                             <a href="#" id="remove-button" class="btn-add-person float-right" style="padding: 4px 4px; background-color:red !important; border-color:red"><i class="fas fa-trash"></i></a>
-                            <select name="anggota_${id}" class="select-single" style="width: 100%">
-                                <option value="">Jhon Doe</option>
-                                <option value="">Category 1</option>
-                                <option value="">Category 2</option>
-                                <option value="">Category 3</option>
-                                <option value="">Category 4</option>
+                            <select name="anggota_${id}" id="select_anggota_${id}" class="select-single" style="width: 100%">
+                                <option selected>Pilih Anggota</option>
+                   
                             </select>
                         </div>
                     </div>`;
 
             $('#add-anggota').append(html);
+
+            $.each(values, function (i, item) {
+                if(item.nim){
+                    $('#select_anggota_'+id).append($('<option>', { 
+                        value: item.nim,
+                        text : item.nama_mhs 
+                    }));
+                }else{
+                    $('#select_anggota_'+id).append($('<option>', { 
+                        value: item.participant_id,
+                        text : item.participantRef.nama_participant 
+                    }));
+                }
+            });
+            
             $('.select-single').each(function () {
                 $('.select-single').select2();
             });
-        });
+        };
 
          // remove row
          $(document).on('click', '#remove-button', function () {

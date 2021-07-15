@@ -29,13 +29,16 @@ class PenggunaController extends Controller
     public function detail($id_pengguna)
     {
         $pengguna = Pengguna::with('wadir3Ref', 'pembinaRef', 'participantRef')->where('id_pengguna', $id_pengguna)->first();
+        $pengguna->mahasiswa_ref = null;
+        $pengguna->dosen_ref = null;
+
 
         if ($pengguna) {
             // Jika ada pembina
             if ($pengguna->pembinaRef && !$pengguna->nim) {
                 try {
                     $client = new Client();
-                    $url = "http://localhost:7000/dosen/" . $pengguna->pembinaRef->nidn;
+                    $url = env('SOURCE_API') . "dosen/" . $pengguna->pembinaRef->nidn;
                     $response = $client->request('GET', $url, [
                         'verify'  => false,
                     ]);
@@ -51,7 +54,7 @@ class PenggunaController extends Controller
             } else if ($pengguna->wadir3Ref && !$pengguna->nim) {
                 try {
                     $client = new Client();
-                    $url = "http://localhost:7000/dosen/" . $pengguna->wadir3Ref->nidn;
+                    $url = env('SOURCE_API') . "dosen/" . $pengguna->wadir3Ref->nidn;
                     $response = $client->request('GET', $url, [
                         'verify'  => false,
                     ]);
@@ -67,12 +70,12 @@ class PenggunaController extends Controller
             } else if ($pengguna->nim) {
                 try {
                     $client = new Client();
-                    $urlM = env('SECOND_BACKEND_URL') . "mahasiswa/detail/" . $pengguna->nim;
+                    $urlM = env('SOURCE_API') . "mahasiswa/detail/" . $pengguna->nim;
                     $responseM = $client->request('GET', $urlM, [
                         'verify'  => false,
                     ]);
                     $mhs = json_decode($responseM->getBody());
-                    $pengguna->mahasiswaRef->nama_mhs = $mhs->nama;
+                    $pengguna->mahasiswa_ref = $mhs->nama;
                 } catch (\Throwable $err) {
                     return response()->json([
                         "success" => false,
@@ -80,7 +83,24 @@ class PenggunaController extends Controller
                         "message" => $err,
                     ], 404);
                 }
+            } else if ($pengguna->nidn) {
+                try {
+                    $client = new Client();
+                    $url = env('SOURCE_API') . "dosen/" . $pengguna->nidn;
+                    $response = $client->request('GET', $url, [
+                        'verify'  => false,
+                    ]);
+                    $dosen = json_decode($response->getBody());
+                    $pengguna->dosen_ref = $dosen->nama_dosen;
+                } catch (\GuzzleHttp\Exception\RequestException $err) {
+                    return response()->json([
+                        "success" => false,
+                        "status" => 404,
+                        "message" => $err,
+                    ], 404);
+                }
             }
+
 
 
             return response()->json($pengguna, 200);

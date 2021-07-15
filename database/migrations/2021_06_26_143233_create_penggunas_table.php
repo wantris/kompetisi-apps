@@ -21,10 +21,12 @@ class CreatePenggunasTable extends Migration
             $table->boolean('is_participant');
             $table->boolean('is_wadir3');
             $table->boolean('is_pembina');
-            $table->char('nim', 20);
-            $table->bigInteger('pembina_id')->unsigned();
-            $table->bigInteger('wadir3_id')->unsigned();
-            $table->bigInteger('participant_id')->unsigned();
+            $table->boolean('is_dosen');
+            $table->char('nim', 20)->nullable();
+            $table->char('nidn', 20)->nullable();
+            $table->bigInteger('pembina_id')->unsigned()->nullable();
+            $table->bigInteger('wadir3_id')->unsigned()->nullable();
+            $table->bigInteger('participant_id')->unsigned()->nullable();
             $table->string('email', 100)->nullable();
             $table->char('phone', 20)->nullable();
             $table->text('alamat')->nullable();

@@ -15,13 +15,14 @@ use Illuminate\Support\Facades\Session;
 class EventInternalController extends Controller
 {
     // ==================================== BASIC CRUD =======================================
-    public function index(){
+    public function index()
+    {
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Event Internal';
-        $eias = EventInternal::with('kategoriRef','tipePesertaRef')->where('ormawa_id', Session::get('id_ormawa'))->where('status', 1)->get();
-        $eis = EventInternal::with('kategoriRef','tipePesertaRef')->where('ormawa_id', Session::get('id_ormawa'))->get();
-        $eiss = EventInternal::with('kategoriRef','tipePesertaRef')->where('ormawa_id', Session::get('id_ormawa'))->where('status', 0)->get();
+        $eias = EventInternal::with('kategoriRef', 'tipePesertaRef')->where('ormawa_id', Session::get('id_ormawa'))->where('status', 1)->get();
+        $eis = EventInternal::with('kategoriRef', 'tipePesertaRef')->where('ormawa_id', Session::get('id_ormawa'))->get();
+        $eiss = EventInternal::with('kategoriRef', 'tipePesertaRef')->where('ormawa_id', Session::get('id_ormawa'))->where('status', 0)->get();
 
-        return view('ormawa.event_internal.index', compact('eis','navTitle', 'eias','eiss'));
+        return view('ormawa.event_internal.index', compact('eis', 'navTitle', 'eias', 'eiss'));
     }
 
     public function add()
@@ -29,21 +30,22 @@ class EventInternalController extends Controller
         $ormawa = Ormawa::find(Session::get('id_ormawa'));
         $kategoris = KategoriEvent::all();
         $tipes = TipePeserta::all();
-        
-        if($ormawa){
+
+        if ($ormawa) {
             $navTitle = '<span class="micon dw dw-clipboard1 mr-2"></span>Buat Event';
-            return view('ormawa.event_internal.add', compact('navTitle','ormawa','kategoris','tipes'));
-        }else{
+            return view('ormawa.event_internal.add', compact('navTitle', 'ormawa', 'kategoris', 'tipes'));
+        } else {
             return redirect()->back()->with('failed', 'Data ormawa invalid, harap login');
         }
     }
 
-    public function saveForm(EventInternalStoreRequest $req){
+    public function saveForm(EventInternalStoreRequest $req)
+    {
         $validated = $req->validated();
-        
+
         $nameBanner = null;
         $namePoster = null;
-        
+
         if ($req->file('poster')) {
             $resorcePoster = $req->file('poster');
             $namePoster   = "poster_" . rand(0000, 9999) . "." . $resorcePoster->getClientOriginalExtension();
@@ -54,8 +56,8 @@ class EventInternalController extends Controller
             $nameBanner   = "banner_" . rand(0000, 9999) . "." . $resorceBanner->getClientOriginalExtension();
             $resorceBanner->move(\base_path() . "/public/assets/img/banner-komp/", $nameBanner);
         }
-        
-        try{
+
+        try {
             $ei = new EventInternal();
             $ei->ormawa_id = Session::get('id_ormawa');
             $ei->nama_event = $req->event_title;
@@ -74,7 +76,7 @@ class EventInternalController extends Controller
             $ei->save();
 
             // Store event internal detail
-            if($ei){
+            if ($ei) {
                 $eid = new EventInternalDetail();
                 $eid->event_internal_id = $ei->id_event_internal;
                 $eid->is_validated_pembina = 0;
@@ -83,8 +85,8 @@ class EventInternalController extends Controller
             }
 
             // Jika ada berkas untuk pendaftaran
-            if($req->file('file_dokumen')){
-                foreach($req->file_dokumen as $key => $item){
+            if ($req->file('file_dokumen')) {
+                foreach ($req->file_dokumen as $key => $item) {
                     $resorcedokumen = $item;
                     $namedokumen   = "dokumen_" . rand(0000, 9999) . "." . $resorcedokumen->getClientOriginalExtension();
                     $resorcedokumen->move(\base_path() . "/public/assets/file/dokumen-event/", $namedokumen);
@@ -98,30 +100,36 @@ class EventInternalController extends Controller
                 $feid->save();
             }
 
-            return "berhasil";
-        }catch(\Throwable $err){
+            return redirect()->route('ormawa.eventinternal.index')->with('success', 'Event internal berhasil disimpan');
+        } catch (\Throwable $err) {
             dd($err);
         }
     }
 
-    public function edit($id_eventinternal){
+    public function edit($id_eventinternal)
+    {
         $ei = EventInternal::find($id_eventinternal);
 
-        if(!$ei){
-            return redirect()->back()->with('failed','Data event internal tidak ada');
+        if (!$ei) {
+            return redirect()->back()->with('failed', 'Data event internal tidak ada');
         }
 
-        $navTitle = '<i class="icon-copy dw dw-rocket mr-2"></i>Update Event internal';
-        $title = "Update ". $ei->nama_event;
+        if (Session::get('is_pembina') == "0") {
+            $navTitle = '<i class="icon-copy dw dw-rocket mr-2"></i>Update Event internal';
+            $title = "Update " . $ei->nama_event;
+        } else {
+            $navTitle = '<i class="icon-copy dw dw-rocket mr-2"></i>Detail Event internal';
+            $title = "Detail " . $ei->nama_event;
+        }
 
         $kategoris = KategoriEvent::all();
         $tipes = TipePeserta::all();
-        $feids = FileEventInternalDetail::whereHas('eventDetailRef', function($q) use($id_eventinternal){
+        $feids = FileEventInternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventinternal) {
             $q->where('event_internal_id', '=', $id_eventinternal);
-        })->where('tipe','pendaftaran')->get();
-        $feips = FileEventInternalDetail::whereHas('eventDetailRef', function($q) use($id_eventinternal){
+        })->where('tipe', 'pendaftaran')->get();
+        $feips = FileEventInternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventinternal) {
             $q->where('event_internal_id', '=', $id_eventinternal);
-        })->where('tipe','pengajuan')->get();
+        })->where('tipe', 'pengajuan')->get();
 
         return view('ormawa.event_internal.edit', compact(
             'ei',
@@ -134,12 +142,13 @@ class EventInternalController extends Controller
         ));
     }
 
-    public function update(EventInternalUpdateRequest $req, $id_eventinternal){
-         $validated = $req->validated();
-        
+    public function update(EventInternalUpdateRequest $req, $id_eventinternal)
+    {
+        $validated = $req->validated();
+
         $nameBanner = $req->oldBanner;
         $namePoster = $req->oldPoster;
-        
+
         if ($req->file('poster')) {
             $resorcePoster = $req->file('poster');
             $namePoster   = "poster_" . rand(0000, 9999) . "." . $resorcePoster->getClientOriginalExtension();
@@ -150,8 +159,8 @@ class EventInternalController extends Controller
             $nameBanner   = "banner_" . rand(0000, 9999) . "." . $resorceBanner->getClientOriginalExtension();
             $resorceBanner->move(\base_path() . "/public/assets/img/banner-komp/", $nameBanner);
         }
-        
-        try{
+
+        try {
             $ei = EventInternal::find($id_eventinternal);
             $ei->ormawa_id = Session::get('id_ormawa');
             $ei->nama_event = $req->event_title;
@@ -167,9 +176,9 @@ class EventInternalController extends Controller
             $ei->banner_image = $nameBanner;
             $ei->save();
 
-            return redirect()->back()->with('success','Update event internal berhasil');
-        }catch(\Throwable $err){
-            return redirect()->back()->with('failed','Update event internal gagal');
+            return redirect()->back()->with('success', 'Update event internal berhasil');
+        } catch (\Throwable $err) {
+            return redirect()->back()->with('failed', 'Update event internal gagal');
         }
     }
 
@@ -179,75 +188,80 @@ class EventInternalController extends Controller
         EventInternal::destroy($id_eventinternal);
         return response()->json([
             "status" => 1,
-            "message" => $ei->nama_event." berhasil dihapus",
+            "message" => $ei->nama_event . " berhasil dihapus",
         ]);
     }
 
     // ==================================== END BASIC CRUD =======================================
 
-    public function lihatPublik($id_eventinternal){
-        $ei = EventInternal::with('kategoriRef','tipePesertaRef','ormawaRef','pengajuanRef')->find($id_eventinternal);
-        $feis = FileEventInternalDetail::whereHas('eventDetailRef', function($q) use($id_eventinternal){
+    public function lihatPublik($id_eventinternal)
+    {
+        $ei = EventInternal::with('kategoriRef', 'tipePesertaRef', 'ormawaRef', 'pengajuanRef')->find($id_eventinternal);
+        $feis = FileEventInternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventinternal) {
             $q->where('event_internal_id', '=', $id_eventinternal);
-        })->where('tipe','pendaftaran')->get();
-    
-        if($ei){
+        })->where('tipe', 'pendaftaran')->get();
+
+        if ($ei) {
             $slug = Str::slug($ei->nama_event);
-            return view('ormawa.event_internal.publik_detail', compact('ei','slug','feis'));
-        } 
+            return view('ormawa.event_internal.publik_detail', compact('ei', 'slug', 'feis'));
+        }
     }
 
-    public function lihatPendaftar($id_eventinternal){
+    public function lihatPendaftar($id_eventinternal)
+    {
         $ei = EventInternal::find($id_eventinternal);
-        $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Pendaftar '.$ei->nama_event;
+        $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Pendaftar ' . $ei->nama_event;
         $eir = EventInternalRegistration::where('event_internal_id', $id_eventinternal)->get();
 
-        return view('ormawa.event_internal.list_peserta', compact('navTitle', 'navTitle','eir'));
+        return view('ormawa.event_internal.list_peserta', compact('navTitle', 'navTitle', 'eir'));
     }
 
-    public function listPeserta($slug){
+    public function listPeserta($slug)
+    {
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Event Internal';
 
-        return view('ormawa.event_internal.list_peserta', compact('slug','navTitle'));
+        return view('ormawa.event_internal.list_peserta', compact('slug', 'navTitle'));
     }
 
-    public function updateStatus(Request $req){
-        if($req->status == null){
-            return redirect()->back()->with('failed','Error');
+    public function updateStatus(Request $req)
+    {
+        if ($req->status == null) {
+            return redirect()->back()->with('failed', 'Error');
         }
 
         $status = $req->status;
         $ei = EventInternal::find($req->id_eventinternal);
 
-        if(!$ei){
-            return redirect()->back()->with('failed','Event internal tidak ada');
+        if (!$ei) {
+            return redirect()->back()->with('failed', 'Event internal tidak ada');
         }
 
-        if($status == 1 && $ei->status_validasi == 0){
-            return redirect()->back()->with('failed','Event harus divalidasi terlebih dahulu');
+        if ($status == 1 && $ei->status_validasi == 0) {
+            return redirect()->back()->with('failed', 'Event harus divalidasi terlebih dahulu');
         }
 
         $ei->status = $status;
         $ei->save();
-        return redirect()->back()->with('success','Update status berhasil');
+        return redirect()->back()->with('success', 'Update status berhasil');
     }
 
     // Berkas pengajuan event
 
-    public function savePengajuan(Request $req){
+    public function savePengajuan(Request $req)
+    {
         $validated = $req->validate([
             'berkas' => 'required|mimes:pdf|max:2048'
         ]);
-        
+
         $ei = EventInternal::find($req->id_event);
-        if($ei){
+        if ($ei) {
             if ($req->file('berkas')) {
                 $resorceBerkas = $req->file('berkas');
                 $nameBerkas   = "berkas_" . rand(00000, 99999) . "." . $resorceBerkas->getClientOriginalExtension();
                 $resorceBerkas->move(\base_path() . "/public/assets/file/pengajuan_event/", $nameBerkas);
             }
 
-            try{
+            try {
                 $file = new FileEventInternalDetail();
                 $file->event_internal_detail_id = $ei->pengajuanRef->id_event_internal_detail;
                 $file->nama_file = $req->keterangan;
@@ -255,13 +269,13 @@ class EventInternalController extends Controller
                 $file->filename = $nameBerkas;
                 $file->save();
 
-                return redirect()->back()->with('success','Upload berkas pengajuan berhasil');
-            }catch(\Throwable $err){
+                return redirect()->back()->with('success', 'Upload berkas pengajuan berhasil');
+            } catch (\Throwable $err) {
                 dd($err);
             }
         }
 
-        return redirect()->back()->with('failed','Data event internal tidak ada');   
+        return redirect()->back()->with('failed', 'Data event internal tidak ada');
     }
 
     public function deletePengajuan(Request $request, $id_berkas)
@@ -270,28 +284,29 @@ class EventInternalController extends Controller
         FileEventInternalDetail::destroy($id_berkas);
         return response()->json([
             "status" => 1,
-            "message" => $ei->nama_file." berhasil dihapus",
+            "message" => $ei->nama_file . " berhasil dihapus",
         ]);
     }
 
 
     // Berkas Keperluan pendaftaran
 
-    public function savePendaftaran(Request $req){
+    public function savePendaftaran(Request $req)
+    {
         $validated = $req->validate([
             'keterangan_pendaftaran' => 'required',
             'berkas_pendaftaran' => 'required|mimes:pdf,docx|max:2048'
         ]);
-        
+
         $ei = EventInternal::find($req->id_event);
-        if($ei){
+        if ($ei) {
             if ($req->file('berkas_pendaftaran')) {
                 $resorceBerkas = $req->file('berkas_pendaftaran');
                 $nameBerkas   = "berkas_" . rand(00000, 99999) . "." . $resorceBerkas->getClientOriginalExtension();
                 $resorceBerkas->move(\base_path() . "/public/assets/file/dokumen_event/", $nameBerkas);
             }
 
-            try{
+            try {
                 $file = new FileEventInternalDetail();
                 $file->event_internal_detail_id = $ei->pengajuanRef->id_event_internal_detail;
                 $file->nama_file = $req->keterangan_pendaftaran;
@@ -299,13 +314,13 @@ class EventInternalController extends Controller
                 $file->filename = $nameBerkas;
                 $file->save();
 
-                return redirect()->back()->with('success','Upload berkas pendaftaran berhasil');
-            }catch(\Throwable $err){
+                return redirect()->back()->with('success', 'Upload berkas pendaftaran berhasil');
+            } catch (\Throwable $err) {
                 dd($err);
             }
         }
 
-        return redirect()->back()->with('failed','Data event internal tidak ada');   
+        return redirect()->back()->with('failed', 'Data event internal tidak ada');
     }
 
     public function deletePendaftaran(Request $request, $id_berkas)
@@ -314,9 +329,20 @@ class EventInternalController extends Controller
         FileEventInternalDetail::destroy($id_berkas);
         return response()->json([
             "status" => 1,
-            "message" => $ei->nama_file." berhasil dihapus",
+            "message" => $ei->nama_file . " berhasil dihapus",
         ]);
     }
 
-
+    public function updateValidasiPembina(Request $req)
+    {
+        try {
+            EventInternalDetail::where('id_event_internal_detail', $req->id_eid)->update([
+                'is_validated_pembina' => $req->status
+            ]);
+            return redirect()->back()->with('success', 'Update validasi berhasil');
+        } catch (\Throwable $err) {
+            dd($err);
+            return redirect()->back()->with('failed', 'Update validasi gagal');
+        }
+    }
 }

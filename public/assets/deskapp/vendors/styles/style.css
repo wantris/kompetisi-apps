@@ -808,6 +808,8 @@ p {
 .card-img-top {
     border-radius: 10px 10px 0 0;
     max-height: 235px;
+    object-fit: cover;
+    object-position: top;
 }
 .card-img-bottom {
     border-radius: 0 0 10px 10px;

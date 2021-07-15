@@ -1,4 +1,3 @@
-        
 @extends('template')
 
 @section('title', 'Kompetisi')
@@ -58,10 +57,9 @@
                             <div class="select-job-items2">
                                 <select name="select" class="select-single" style="width: 100%">
                                     <option value="">Semua Kategori</option>
-                                    <option value="">Category 1</option>
-                                    <option value="">Category 2</option>
-                                    <option value="">Category 3</option>
-                                    <option value="">Category 4</option>
+                                    @foreach ($kategoris as $kategori)
+                                        <option value="{{$kategori->id_kategori}}">{{$kategori->nama_kategori}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <!--  Select job items End-->
@@ -90,10 +88,9 @@
                             <div class="select-job-items2">
                                 <select name="select" class="select-single" style="width: 100%">
                                     <option value="">Semua</option>
-                                    <option value="">Category 1</option>
-                                    <option value="">Category 2</option>
-                                    <option value="">Category 3</option>
-                                    <option value="">Category 4</option>
+                                    @foreach ($ormawas as $ormawa)
+                                        <option value="{{$ormawa->id_ormawa}}">{{$ormawa->nama_ormawa}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <!--  Select job items End-->
@@ -153,126 +150,64 @@
                                 </div>
                             </div>
                             <!-- Count of Job list End -->
-                            <div class="row border">
+                            <div class="row">
+                                @foreach ($events as $event)
                                 <div class="col-lg-6 col-md-6 col-12 mt-5">
                                     <div class="komp-card2 mx-auto">
-                                        <div class="komp-thumbnail" data-background="assets/img/kompetisi-thumb/thumbnail.jpg">
+                                        <div class="komp-thumbnail" data-background="{{asset('assets/img/kompetisi-thumb/'.$event->poster_image)}}">
                                         </div>
                                         <div class="komp-banner">
                                             <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                                    May 07, 2021
+                                                @php
+                                                    $tgl_buka = Carbon\Carbon::parse($event->tgl_buka)->toDatetime()->format('M, d Y');
+                                                @endphp
+                                                {{$tgl_buka}}
                                             </div>
-                                            <div class="komp-banner__date text-right pr-2 pt-1">
-                                                Kotak Pena
+                                            <div class="komp-banner__date text-right pr-2 pt-1" data-toggle="tooltip" data-placement="top" title="{{$event->ormawaRef->nama_ormawa}}">
+                                                @php
+                                                    $count = str_word_count($event->ormawaRef->nama_ormawa);
+                                                    $nama_ormawa = $event->ormawaRef->nama_ormawa;
+                                                    if($count > 3){
+                                                        $nama_ormawa = $event->ormawaRef->nama_akronim;
+                                                    }
+                                                @endphp
+                                                {{$nama_ormawa}}
                                             </div>
                                         </div>
                                         <div class="komp-title pl-3">
-                                            <a href="{{route('event.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
-                                                Poster Design Competition 2021 
+                                            @php
+                                                 $slug = \Str::slug($event->nama_event);
+                                            @endphp
+                                            <a href="{{route('event.detail', $slug)}}"><h1 class="mt-3">
+                                                {{$event->nama_event}} 
                                             </h1></a>
                                         </div>
                                         <div class="komp-description pl-3 pr-3">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                            </p>
+                                            {!!$event->deskripsi_excerpt!!}
                                         </div>
                                         <div class="komp-created pl-3 pr-3">
                                             <i class="far fa-clock text-secondary mr-1 d-inline"></i>
                                             <p class="text-secondary d-inline">
-                                                May 02, 2021
+                                                {{$event->created_at->isoFormat('MMM, d Y')}}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-md-6 col-12 mt-5">
-                                    <div class="komp-card2 mx-auto">
-                                        <div class="komp-thumbnail" data-background="assets/img/kompetisi-thumb/thumbnail.jpg">
-                                        </div>
-                                        <div class="komp-banner">
-                                            <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                                    May 07, 2021
-                                            </div>
-                                            <div class="komp-banner__date text-right pr-2 pt-1">
-                                                Kotak Pena
-                                            </div>
-                                        </div>
-                                        <div class="komp-title pl-3">
-                                            <a href="#"><h1 class="mt-3">
-                                                Poster Design Competition 2021 
-                                            </h1></a>
-                                        </div>
-                                        <div class="komp-description pl-3 pr-3">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                            </p>
-                                        </div>
-                                        <div class="komp-created pl-3 pr-3">
-                                            <i class="far fa-clock text-secondary mr-1 d-inline"></i>
-                                            <p class="text-secondary d-inline">
-                                                May 02, 2021
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-12 mt-5">
-                                    <div class="komp-card2 mx-auto">
-                                        <div class="komp-thumbnail" data-background="assets/img/kompetisi-thumb/thumbnail.jpg">
-                                        </div>
-                                        <div class="komp-banner">
-                                            <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                                    May 07, 2021
-                                            </div>
-                                            <div class="komp-banner__date text-right pr-2 pt-1">
-                                                Kotak Pena
+                                @endforeach
+                            </div>
+                            <div class="row mt-5">
+                                <div class="col-12">
+                                        <!--Pagination Start  -->
+                                        <div class="pagination-area pb-115 text-center">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-xl-12">
+                                                        {{ $events->links('vendor.pagination.event_pagination') }}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="komp-title pl-3">
-                                            <a href="#"><h1 class="mt-3">
-                                                Poster Design Competition 2021 
-                                            </h1></a>
-                                        </div>
-                                        <div class="komp-description pl-3 pr-3">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                            </p>
-                                        </div>
-                                        <div class="komp-created pl-3 pr-3">
-                                            <i class="far fa-clock text-secondary mr-1 d-inline"></i>
-                                            <p class="text-secondary d-inline">
-                                                May 02, 2021
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-12 mt-5">
-                                    <div class="komp-card2 mx-auto">
-                                        <div class="komp-thumbnail" data-background="assets/img/kompetisi-thumb/thumbnail.jpg">
-                                        </div>
-                                        <div class="komp-banner">
-                                            <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                                    May 07, 2021
-                                            </div>
-                                            <div class="komp-banner__date text-right pr-2 pt-1">
-                                                Kotak Pena
-                                            </div>
-                                        </div>
-                                        <div class="komp-title pl-3">
-                                            <a href="#"><h1 class="mt-3">
-                                                Poster Design Competition 2021 
-                                            </h1></a>
-                                        </div>
-                                        <div class="komp-description pl-3 pr-3">
-                                            <p>
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                            </p>
-                                        </div>
-                                        <div class="komp-created pl-3 pr-3">
-                                            <i class="far fa-clock text-secondary mr-1 d-inline"></i>
-                                            <p class="text-secondary d-inline">
-                                                May 02, 2021
-                                            </p>
-                                        </div>
-                                    </div>
+                                        <!--Pagination End  -->
                                 </div>
                             </div>
                         </div>
@@ -283,26 +218,7 @@
         </div>
     </div>
     <!-- Job List Area End -->
-    <!--Pagination Start  -->
-    <div class="pagination-area pb-115 text-center">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="single-wrap d-flex justify-content-center">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-start">
-                                <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                                <li class="page-item"><a class="page-link" href="#">02</a></li>
-                                <li class="page-item"><a class="page-link" href="#">03</a></li>
-                            <li class="page-item"><a class="page-link" href="#"><span class="ti-angle-right"></span></a></li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--Pagination End  -->
+
 
 
 @endsection

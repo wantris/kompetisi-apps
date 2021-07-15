@@ -25,11 +25,14 @@
         </div>
     </div>
     <div class="header-right">
+        @if (Session::get('is_pembina') == "0")
         <div class="pt-3">
-            <a href="#" data-toggle="modal" type="button" data-target="#event-add-modal" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+            <a href="#" data-toggle="modal" type="button" data-target="#event-add-modal"
+                class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
                 style="border:none;padding:10px 25px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">Buat
                 Event</a>
         </div>
+        @endif
         <div class="user-notification">
             <div class="dropdown">
                 <a class="dropdown-toggle no-arrow" href="#" role="button" data-toggle="dropdown">

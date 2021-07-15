@@ -551,6 +551,8 @@ p {
     -webkit-border-radius: 10px 10px 0 0;
     -moz-border-radius: 10px 10px 0 0;
     border-radius: 10px 10px 0 0;
+    object-fit: cover;
+    object-position: top;
 }
 .card-img-bottom {
     -webkit-border-radius: 0 0 10px 10px;

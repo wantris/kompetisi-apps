@@ -44,25 +44,63 @@
 
     });
 
-    const showPasswordOrmawa = () => {
-            let html = `
-                <button type="button" onclick="hidePasswordOrmawa()" style="cursor: pointer" class="input-group-text"><i class="fas fa-eye-slash"></i></button>;
-            `;
-            if(!$('#btn-pw-ormawa').hasClass('show')){
-                $('#password-ormawa-inp').attr('type','text');
-                $('#btn-pw-ormawa').addClass('show');
-                $('#btn-pw-ormawa').html(html);
-            }
-        } 
+    const failureAlert = (message) => {
+        console.log(message);
+        Notiflix.Report.Failure( 'Oooopss', message, 'Ok' ); 
+    }
 
-        const hidePasswordOrmawa = () => {
-            let html = `
-                <button type="button" onclick="showPasswordOrmawa()" style="cursor: pointer" class="input-group-text"><i class="fas fa-eye"></i></button>;
-            `;
-            if($('#btn-pw-ormawa').hasClass('show')){
-                $('#password-ormawa-inp').attr('type','password');
-                $('#btn-pw-ormawa').removeClass('show');
-                $('#btn-pw-ormawa').html(html);
-            }
+    const showPasswordOrmawa = () => {
+        let html = `
+            <button type="button" onclick="hidePasswordOrmawa()" style="cursor: pointer" class="input-group-text"><i class="fas fa-eye-slash"></i></button>
+        `;
+        if(!$('#btn-pw-ormawa').hasClass('show')){
+            $('#password-ormawa-inp').attr('type','text');
+            $('#btn-pw-ormawa').addClass('show');
+            $('#btn-pw-ormawa').html(html);
         }
+    } 
+
+    const hidePasswordOrmawa = () => {
+        let html = `
+            <button type="button" onclick="showPasswordOrmawa()" style="cursor: pointer" class="input-group-text"><i class="fas fa-eye"></i></button>
+        `;
+        if($('#btn-pw-ormawa').hasClass('show')){
+            $('#password-ormawa-inp').attr('type','password');
+            $('#btn-pw-ormawa').removeClass('show');
+            $('#btn-pw-ormawa').html(html);
+        }
+    }
+
+    const showPasswordParticipant = () => {
+        let html = `
+            <button type="button" onclick="hidePasswordParticipant()" style="cursor: pointer" class="input-group-text"><i class="fas fa-eye-slash"></i></button>
+        `;
+        if(!$('#btn-pw-participant').hasClass('show')){
+            $('#password-participant-inp').attr('type','text');
+            $('#btn-pw-participant').addClass('show');
+            $('#btn-pw-participant').html(html);
+        }
+    } 
+
+    const hidePasswordParticipant = () => {
+        let html = `
+            <button type="button" onclick="showPasswordParticipant()" style="cursor: pointer" class="input-group-text"><i class="fas fa-eye"></i></button>
+        `;
+        if($('#btn-pw-participant').hasClass('show')){
+            $('#password-participant-inp').attr('type','password');
+            $('#btn-pw-participant').removeClass('show');
+            $('#btn-pw-participant').html(html);
+        }
+    }
+
+    $('#navbar-menu-login').on('click', function(){
+        if($('#arrow-icon').hasClass('icofont-rounded-down')){
+            $('#arrow-icon').removeClass('icofont-rounded-down');
+            $('#arrow-icon').addClass('icofont-rounded-up');
+        }else{
+            $('#arrow-icon').addClass('icofont-rounded-down');
+            $('#arrow-icon').removeClass('icofont-rounded-up');
+        }
+    });
+    
 </script>

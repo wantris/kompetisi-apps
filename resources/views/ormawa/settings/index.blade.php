@@ -23,10 +23,12 @@
                             <a class="nav-link active text-orange" data-toggle="tab" href="#profil" role="tab"
                                 aria-selected="true">Profil</a>
                         </li>
+                        @if (Session::get('is_pembina') == "0")
                         <li class="nav-item">
                             <a class="nav-link text-orange" data-toggle="tab" href="#pembina" role="tab"
                                 aria-selected="false">Pembina</a>
                         </li>
+                        @endif
                     </ul>
                 </div>
             </div>
@@ -110,18 +112,6 @@
                                         <textarea name="deskripsi" class="form-control" id="deskripsi-inp"
                                             name="syarat">{{$ormawa->deskripsi}}</textarea>
                                     </div>
-                                    {{-- <div class="form-group">
-                                    <label for="" class="font-weight-bold">Alamat Facebook</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="" class="font-weight-bold">Alamat Instagram</label>
-                                    <input type="text" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <label for="" class="font-weight-bold">Alamat Youtube</label>
-                                    <input type="text" class="form-control">
-                                </div> --}}
                                     <div class="form-group">
                                         <label for="" class="font-weight-bold">Website</label>
                                         <input type="text" name="website" value="{{$ormawa->website}}"
@@ -133,12 +123,13 @@
                                         class="d-none">
                                     <input type="hidden" name="oldPhoto" value="{{$ormawa->photo}}">
                                     <input type="hidden" name="oldBanner" value="{{$ormawa->photo}}">
-
+                                    @if (Session::get('is_pembina') == "0")
                                     <div class="form-group">
                                         <input type="submit" value="Submit"
                                             class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
                                             style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                         </form>
@@ -148,12 +139,14 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-6">
-                                <p class="h5 text-orange" id="title-pembina"><i class="icon-copy dw dw-user-2 mr-2"></i>Daftar Pembina
+                                <p class="h5 text-orange" id="title-pembina"><i
+                                        class="icon-copy dw dw-user-2 mr-2"></i>Daftar Pembina
                                 </p>
                             </div>
                             <div class="col-6 text-right">
                                 <div id="container-btn">
-                                    <a href="#" onclick="showForm()" id="tambah-btn" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+                                    <a href="#" onclick="showForm()" id="tambah-btn"
+                                        class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
                                         style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
                                         Tambah</a>
                                 </div>
@@ -165,7 +158,7 @@
 
                         <div class="row" id="table-pembina">
                             <div class="col-12">
-                                 <table id="pembina-table" class="display" style="width:100%">
+                                <table id="pembina-table" class="display" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th>No</th>
@@ -177,22 +170,28 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($pembinas as $pembina)
-                                            <tr id="tr_{{$pembina->id_pembina}}">
-                                                <td>{{$loop->iteration}}</td>
-                                                <td>{{$pembina->nama_dosen}}</td>
-                                                <td>{{$pembina->tahun_jabatan}}</td>
-                                                <td>
-                                                    @if ($pembina->status == 1)
-                                                        <a href="#" style="font-size: 11px; margin-bottom:10px" class="btn btn-success btn-sm">Aktif</a>
-                                                    @else
-                                                        <a href="#" style="font-size: 11px;margin-bottom:10px"  class="btn btn-danger btn-sm">Tidak</a>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a href="{{route('ormawa.settings.edit.pembina', $pembina->id_pembina)}}"  class="btn btn-info btn-sm d-inline"><i class="icofont-ui-edit"></i></a>
-                                                    <a href="#" onclick="deletePembina({{$pembina->id_pembina}})" class="btn btn-danger btn-sm d-inline"><i class="icofont-trash"></i></a>
-                                                </td>
-                                            </tr>
+                                        <tr id="tr_{{$pembina->id_pembina}}">
+                                            <td>{{$loop->iteration}}</td>
+                                            <td>{{$pembina->nama_dosen}}</td>
+                                            <td>{{$pembina->tahun_jabatan}}</td>
+                                            <td>
+                                                @if ($pembina->status == 1)
+                                                <a href="#" style="font-size: 11px; margin-bottom:10px"
+                                                    class="btn btn-success btn-sm">Aktif</a>
+                                                @else
+                                                <a href="#" style="font-size: 11px;margin-bottom:10px"
+                                                    class="btn btn-danger btn-sm">Tidak</a>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a href="{{route('ormawa.settings.edit.pembina', $pembina->id_pembina)}}"
+                                                    class="btn btn-info btn-sm d-inline"><i
+                                                        class="icofont-ui-edit"></i></a>
+                                                <a href="#" onclick="deletePembina({{$pembina->id_pembina}})"
+                                                    class="btn btn-danger btn-sm d-inline"><i
+                                                        class="icofont-trash"></i></a>
+                                            </td>
+                                        </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -207,23 +206,23 @@
                                         <select class="js-example-basic-single" style="width: 100%" name="nama_dosen">
                                             <option selected>Pilih Dosen</option>
                                             @foreach ($dosens as $dosen)
-                                                <option value="{{$dosen->nidn}}">{{$dosen->nama_dosen}}</option>
+                                            <option value="{{$dosen->nidn}}">{{$dosen->nama_dosen}}</option>
                                             @endforeach
                                         </select>
                                         @if ($errors->has('nama_dosen'))
-                                            <span class="text-danger">{{ $errors->first('nama_dosen') }}</span>
+                                        <span class="text-danger">{{ $errors->first('nama_dosen') }}</span>
                                         @endif
                                     </div>
                                     <div class="form-group">
                                         <label>Tahun Jabatan</label>
                                         <select name="tahun_jabatan" id="" class="form-control">
                                             <option selected>Pilih Tahun</option>
-                                            @for ($i = 2015; $i <= date('Y'); $i++)
-                                                <option value="{{$i}}">{{$i}}</option>
-                                            @endfor
+                                            @for ($i = 2015; $i <= date('Y'); $i++) <option value="{{$i}}">{{$i}}
+                                                </option>
+                                                @endfor
                                         </select>
                                         @if ($errors->has('tahun_jabatan'))
-                                            <span class="text-danger">{{ $errors->first('tahun_jabatan') }}</span>
+                                        <span class="text-danger">{{ $errors->first('tahun_jabatan') }}</span>
                                         @endif
                                     </div>
                                     <div class="form-group">
@@ -233,11 +232,13 @@
                                             <option value="1">Aktif</option>
                                         </select>
                                         @if ($errors->has('status'))
-                                            <span class="text-danger">{{ $errors->first('status') }}</span>
+                                        <span class="text-danger">{{ $errors->first('status') }}</span>
                                         @endif
                                     </div>
-                                    <input type="submit"  class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"  style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important" value="Submit">
-                        
+                                    <input type="submit" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+                                        style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important"
+                                        value="Submit">
+
                                 </form>
                             </div>
                         </div>

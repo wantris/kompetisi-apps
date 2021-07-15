@@ -53,6 +53,13 @@
     </script>
     @endif
 
+    {{-- Validation --}}
+    @if ($errors->has('username_mhs') || $errors->has('password_mhs'))
+    <script>
+        $('#mahasiswaLoginModal').modal('show');
+    </script>
+    @endif
+
 </body>
 
 </html>

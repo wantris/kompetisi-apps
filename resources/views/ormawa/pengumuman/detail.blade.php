@@ -21,7 +21,11 @@
             <div class="col-md-8 col-sm-12">
                 <div class="blog-detail card-box overflow-hidden mb-30">
                     <div class="blog-img">
-                        <img src="{{asset('assets/img/notif-event/'. $pn->photo)}}" alt="">
+                        @if ($pn->photo)
+                            <img src="{{asset('assets/img/notif-event/'. $pn->photo)}}" alt="">
+                        @else
+                            <img src="{{asset('assets/img/banner-komp/'. $pn->eventInternalRef->banner_image)}}" alt="">
+                        @endif
                     </div>
                     <div class="blog-caption">
                         <h4 class="mb-10">{{$pn->title}}</h4>

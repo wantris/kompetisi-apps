@@ -24,6 +24,7 @@ Route::group(['prefix' => 'event', 'namespace' => 'landing'], function () {
     Route::get('/', 'eventController@index')->name('event.index');
     Route::get('/detail/{slug}', 'eventController@detail')->name('event.detail');
     Route::get('/timeline/{slug}', 'eventController@timeline')->name('event.timeline');
+    Route::get('/registration/{slug}', 'eventController@registration')->name('event.registration.get');
     Route::get('/registration/team/{slug}', 'eventController@registrationTeam')->name('event.registration.team');
 });
 
@@ -61,19 +62,27 @@ Route::group(['prefix' => 'admin', 'namespace' => 'admin'], function () {
 # ======= peserta =========== #
 Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
 
+    Route::group(['prefix' => 'auth'], function () {
+        Route::post('/login', 'AuthController@postLogin')->name('peserta.login.post');
+        Route::get('/logout', 'AuthController@logout')->name('peserta.logout');
+    });
+
     Route::get('/dashboard', 'HomeController@index')->name('peserta.index');
 
 
-    Route::group(['prefix' => 'event'], function () {
-        Route::get('/', 'eventController@index')->name('peserta.event.index');
+    Route::group(['prefix' => 'eventinternal'], function () {
+        Route::get('/', 'eventInternalController@index')->name('peserta.eventinternal.index');
+
+        Route::post('/filter/active', 'eventInternalController@filterEventAktif')->name('peserta.eventinternal.filterkategori.aktif');
 
         Route::group(['prefix' => 'detail'], function () {
-            Route::get('/title/{slug}', 'eventController@detail')->name('peserta.event.detail');
-            Route::get('/submission/{slug}/all', 'eventController@submission')->name('peserta.event.submission');
-            Route::get('/submission/{slug}/info', 'eventController@info')->name('peserta.event.submission.info');
+            Route::get('/{slug}', 'eventInternalController@detail')->name('peserta.eventinternal.detail');
+            Route::get('/submission/{slug}/all', 'eventInternalController@submission')->name('peserta.event.submission');
+            Route::get('/submission/{slug}/info', 'eventInternalController@info')->name('peserta.event.submission.info');
 
-            Route::get('/notification/{slug}', 'eventController@notification')->name('peserta.event.notification');
-            Route::get('/timeline/{slug}', 'eventController@timeline')->name('peserta.event.timeline');
+            Route::get('/notification/{slug}', 'eventInternalController@notification')->name('peserta.eventinternal.notification');
+            Route::get('/notification/detail/{slug}', 'eventInternalController@detailNotification')->name('peserta.eventinternal.notification.detail');
+            Route::get('/timeline/{slug}', 'eventInternalController@timeline')->name('peserta.eventinternal.timeline');
         });
     });
 
@@ -108,17 +117,45 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
         Route::patch('/edit/{id_eventinternal}', 'EventInternalController@update')->name('ormawa.eventinternal.update');
         Route::post('/add', 'EventInternalController@saveForm')->name('ormawa.eventinternal.save');
         Route::delete('/delete/{id_eventinternal}', 'EventInternalController@delete')->name('ormawa.eventinternal.delete');
-        
+
         // ADDITIONAL CRUD
         Route::get('/pendaftar/{id_eventinternal}', 'EventInternalController@lihatPendaftar')->name('ormawa.eventinternal.pendaftar');
         Route::get('detail/{event}/peserta', 'EventInternalController@listPeserta')->name('ormawa.eventinternal.peserta');
         Route::get('/publik/{id_eventinternal}', 'EventInternalController@lihatPublik')->name('ormawa.eventinternal.publik');
         Route::patch('/status', 'EventInternalController@updateStatus')->name('ormawa.eventinternal.statusupdate');
-    
+
         Route::post('/pengajuan/save', 'EventInternalController@savePengajuan')->name('ormawa.eventinternal.save.pengajuan');
         Route::post('/pendaftaran/save', 'EventInternalController@savePendaftaran')->name('ormawa.eventinternal.save.pendaftaran');
         Route::delete('/pendaftaran/detele/{id_berkas}', 'EventInternalController@deletePendaftaran')->name('ormawa.eventinternal.delete.pendaftaran');
         Route::delete('/pengajuan/detele/{id_berkas}', 'EventInternalController@deletePengajuan')->name('ormawa.eventinternal.delete.pengajuan');
+
+        // validate pembina
+        Route::patch('/vallidasipembina', 'EventInternalController@updateValidasiPembina')->name('ormawa.eventinternal.validasi.pembina');
+    });
+
+    Route::group(['prefix' => 'eventeksternal', 'middleware' => 'ormawa'], function () {
+        // CRUD BASIC
+        Route::get('/', 'EventEksternalController@index')->name('ormawa.eventeksternal.index');
+        Route::get('/add', 'EventEksternalController@add')->name('ormawa.eventeksternal.add');
+        Route::get('/edit/{id_eventeksternal}', 'EventEksternalController@edit')->name('ormawa.eventeksternal.edit');
+        Route::patch('/edit/{id_eventeksternal}', 'EventEksternalController@update')->name('ormawa.eventeksternal.update');
+        Route::post('/add', 'EventEksternalController@saveForm')->name('ormawa.eventeksternal.save');
+        Route::delete('/delete/{id_eventeksternal}', 'EventEksternalController@delete')->name('ormawa.eventeksternal.delete');
+
+        // ADDITIONAL CRUD
+        Route::get('/pendaftar/{id_eventeksternal}', 'EventEksternalController@lihatPendaftar')->name('ormawa.eventeksternal.pendaftar');
+        Route::get('detail/{event}/peserta', 'EventEksternalController@listPeserta')->name('ormawa.eventeksternal.peserta');
+        Route::get('/publik/{id_eventeksternal}', 'EventEksternalController@lihatPublik')->name('ormawa.eventeksternal.publik');
+        Route::patch('/status', 'EventEksternalController@updateStatus')->name('ormawa.eventeksternal.statusupdate');
+
+        Route::post('/pengajuan/save', 'EventEksternalController@savePengajuan')->name('ormawa.eventeksternal.save.pengajuan');
+        Route::post('/pendaftaran/save', 'EventEksternalController@savePendaftaran')->name('ormawa.eventeksternal.save.pendaftaran');
+        Route::get('/pendaftaran/download/{id_berkas}', 'EventEksternalController@downloadPendaftaran')->name('ormawa.eventeksternal.download.pendaftaran');
+        Route::delete('/pendaftaran/detele/{id_berkas}', 'EventEksternalController@deletePendaftaran')->name('ormawa.eventeksternal.delete.pendaftaran');
+        Route::delete('/pengajuan/detele/{id_berkas}', 'EventEksternalController@deletePengajuan')->name('ormawa.eventeksternal.delete.pengajuan');
+
+        // validate pembina
+        Route::patch('/vallidasipembina', 'EventEksternalController@updateValidasiPembina')->name('ormawa.eventeksternal.validasi.pembina');
     });
 
     Route::group(['prefix' => 'eventeksternal', 'middleware' => 'ormawa'], function () {
@@ -148,10 +185,6 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
         Route::delete('/delete/{id_pengumuman}', 'PengumumanController@delete')->name('ormawa.pengumuman.delete');
     });
 
-    // Route::group(['prefix' => 'steps'], function () {
-    //     Route::get('/list', 'stepController@index')->name('ormawa.step.index');
-    // });
-
     Route::group(['prefix' => 'settings', 'middleware' => 'ormawa'], function () {
         Route::get('/profile', 'settingsController@index')->name('ormawa.settings.index');
         Route::patch('/profile', 'settingsController@updateProfile')->name('ormawa.settings.index.update');
@@ -160,5 +193,15 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
         Route::patch('/profile/pembina/{id_pembina}', 'settingsController@updatePembina')->name('ormawa.settings.update.pembina');
         Route::delete('/profile/pembina/{id_pembina}', 'settingsController@deletePembina')->name('ormawa.settings.delete.pembina');
         Route::get('/changepassword', 'settingsController@changePassword')->name('ormawa.settings.changepassword');
+    });
+});
+
+// Dosen
+Route::group(['prefix' => 'dosen', 'namespace' => 'Dosen'], function () {
+
+    Route::get('/dashboard', 'HomeController@index')->name('dosen.index');
+
+    Route::group(['prefix' => 'riwayat'], function () {
+        Route::get('/', 'riwayatController@index')->name('riwayat.dosen.index');
     });
 });

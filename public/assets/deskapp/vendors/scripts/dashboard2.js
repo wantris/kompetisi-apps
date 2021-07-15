@@ -1,14 +1,4 @@
-$(".dial1").knob();
-$({ animatedVal: 0 }).animate(
-    { animatedVal: 80 },
-    {
-        duration: 3000,
-        easing: "swing",
-        step: function () {
-            $(".dial1").val(Math.ceil(this.animatedVal)).trigger("change");
-        },
-    }
-);
+
 
 $(".dial2").knob();
 $({ animatedVal: 0 }).animate(

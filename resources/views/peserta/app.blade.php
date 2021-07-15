@@ -7,6 +7,7 @@
 	<title>Kompetisi-corner - @yield('title') </title>
 
     @include('partials__.deskapp.header')
+	<meta name="csrf-token" content="{{ csrf_token() }}">
 
 	@stack('css')
 </head>

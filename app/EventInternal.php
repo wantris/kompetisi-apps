@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\EventInternalDetail;
+use Illuminate\Support\Str;
 
 class EventInternal extends Model
 {
@@ -12,6 +13,11 @@ class EventInternal extends Model
     protected $casts = [
         'created_at' => 'date:Y-m-d',
     ];
+
+    public function getDeskripsiExcerptAttribute()
+    {
+        return Str::words($this->deskripsi, '15');
+    }
 
     public function ormawaRef()
     {
@@ -32,5 +38,4 @@ class EventInternal extends Model
     {
         return $this->hasOne(EventInternalDetail::class, 'event_internal_id',  'id_event_internal');
     }
-
 }

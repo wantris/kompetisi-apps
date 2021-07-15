@@ -121,7 +121,7 @@
                     </div>
                     <div class="col-lg-6 col-md-6 col-12 pr-5">
                         <div class="section-tittle text-left">
-                            <h1>Pojok Kompetisi</h1>
+                            <h1>SIEVENT</h1>
                         </div>
                         <div class="section-desc">
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus et rutrum nibh, ac elementum orci. Praesent metus dui, blandit at rutrum a, dapibus eget diam. Curabitur a nunc luctus, pretium mi vel, vulputate libero. Curabitur finibus quam quis ipsum blandit, eget scelerisque turpis ornare.</p>
@@ -143,80 +143,17 @@
                     </div>
                 </div>
                 <div class="row pb-3">
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
-                            <img src="{{url('assets/img/ormawa-logo/himatif.png')}}" class="img-fluid" alt="Responsive image">
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
+                    @foreach ($ormawas as $ormawa)
+                        <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="{{$ormawa->nama_ormawa}}">
                             <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/himra.png')}}" class="img-fluid" alt="Responsive image">
+                                <img src="{{url('assets/img/ormawa-logo/'.$ormawa->photo)}}" class="img-fluid" alt="Responsive image">
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
-                            <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/kotak-pena.png')}}" class="img-fluid" alt="Responsive image">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
-                            <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/rpi.png')}}" class="img-fluid" alt="Responsive image">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
-                            <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/bem.png')}}" class="img-fluid" alt="Responsive image">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
-                            <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/folafo.png')}}" class="img-fluid" alt="Responsive image">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
-                            <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/kompa.png')}}" class="img-fluid" alt="Responsive image">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
-                            <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/hmm.png')}}" class="img-fluid" alt="Responsive image">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
-                            <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/sebura.png')}}" class="img-fluid" alt="Responsive image">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-                        <div class="card-ormawa mx-auto">
-                            <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/popi.png')}}" class="img-fluid" alt="Responsive image">
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
         <!-- End Ormawa -->
-
-
 
         <!-- Our Services Start -->
         <div class="our-services section-pad-t30">
@@ -359,66 +296,46 @@
                     </div>
                 </div>
                 <div class="row" id="komp-container">
-                    <div class="col-lg-6 col-md-6 mt-4">
-                        <div class="komp-card2 mx-auto">
-                            <div class="komp-thumbnail" data-background="assets/img/kompetisi-thumb/thumbnail.jpg">
-                            </div>
-                            <div class="komp-banner">
-                                <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                        May 07, 2021
+                    @foreach ($events as $event)
+                        <div class="col-lg-6 col-md-6 mt-4">
+                            <div class="komp-card2 mx-auto">
+                                <div class="komp-thumbnail" data-background="{{asset('assets/img/kompetisi-thumb/'.$event->poster_image)}}">
                                 </div>
-                                <div class="komp-banner__date text-right pr-2 pt-1">
-                                    Kotak Pena
+                                <div class="komp-banner">
+                                    <div class="komp-banner__date text-left pl-2 pt-1" >  
+                                        @php
+                                            $tgl_buka = Carbon\Carbon::parse($event->tgl_buka)->toDatetime()->format('M, d Y');
+                                        @endphp
+                                        {{$tgl_buka}}
+                                    </div>
+                                    <div class="komp-banner__date text-right pr-2 pt-1" data-toggle="tooltip" data-placement="top" title="{{$event->ormawaRef->nama_ormawa}}">
+                                        @php
+                                            $count = str_word_count($event->ormawaRef->nama_ormawa);
+                                            $nama_ormawa = $event->ormawaRef->nama_ormawa;
+                                            if($count > 3){
+                                                $nama_ormawa = $event->ormawaRef->nama_akronim;
+                                            }
+                                        @endphp
+                                        {{$nama_ormawa}}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="komp-title pl-3">
-                                <a href="#"><h1 class="mt-3">
-                                    Poster Design Competition 2021 
-                                </h1></a>
-                            </div>
-                            <div class="komp-description pl-3 pr-3">
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                </p>
-                            </div>
-                            <div class="komp-created pl-3 pr-3">
-                                <i class="far fa-clock text-secondary mr-1 d-inline"></i>
-                                <p class="text-secondary d-inline">
-                                    May 02, 2021
-                                </p>
+                                <div class="komp-title pl-3">
+                                    <a href="#"><h1 class="mt-3">
+                                        {{$event->nama_event}} 
+                                    </h1></a>
+                                </div>
+                                <div class="komp-description pl-3 pr-3">
+                                    {!!$event->deskripsi_excerpt!!}
+                                </div>
+                                <div class="komp-created pl-3 pr-3">
+                                    <i class="far fa-clock text-secondary mr-1 d-inline"></i>
+                                    <p class="text-secondary d-inline">
+                                        {{$event->created_at->isoFormat('MMM, d Y')}}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 mt-4">
-                        <div class="komp-card2 mx-auto">
-                            <div class="komp-thumbnail" data-background="assets/img/kompetisi-thumb/thumbnail.jpg">
-                            </div>
-                            <div class="komp-banner">
-                                <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                        May 07, 2021
-                                </div>
-                                <div class="komp-banner__date text-right pr-2 pt-1">
-                                    Kotak Pena
-                                </div>
-                            </div>
-                            <div class="komp-title pl-3">
-                                <a href="#"><h1 class="mt-3">
-                                    Poster Design Competition 2021 
-                                </h1></a>
-                            </div>
-                            <div class="komp-description pl-3 pr-3">
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                </p>
-                            </div>
-                            <div class="komp-created pl-3 pr-3">
-                                <i class="far fa-clock text-secondary mr-1 d-inline"></i>
-                                <p class="text-secondary d-inline">
-                                    May 02, 2021
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -502,7 +419,7 @@
                 <div id="accordion" class="accordion">
                     <div class="card mb-0">
                         <div class="card-header collapsed" data-toggle="collapse" href="#collapseOne">
-                            <a class="card-title">Apa itu website pojok kompetisi?</a>
+                            <a class="card-title">Apa itu website SIEVENT?</a>
                         </div>
                         <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
                             <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS. </p>
