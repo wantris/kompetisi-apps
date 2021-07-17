@@ -1578,7 +1578,7 @@ table.dataTable.dtr-inline.collapsed
 .contact-directory-box:hover .view-contact a,
 .header-left .header-search .dropdown .dropdown-toggle:hover,
 .header-left .header-search .dropdown.show .dropdown-toggle {
-    background: #1b00ff;
+    background: #fb8c00;
     color: #fff;
 }
 .header-left .header-search .dropdown .dropdown-menu {
@@ -2775,6 +2775,10 @@ body.IE .register-page-wrap .container {
     background: #fff;
     color: #1b00ff;
 }
+.nav-link {
+    font-size: 14px !important;
+}
+
 .nav-tabs.customtab .nav-item.show .nav-link,
 .nav-tabs.customtab .nav-link.active {
     color: #fb8c00;
@@ -3080,6 +3084,8 @@ body.IE .register-page-wrap .container {
     overflow: hidden;
 }
 .producct-img img {
+    max-height: 270px;
+    width: 100%;
     position: relative;
     border-radius: 10px 10px 0 0;
     -webkit-transition: all 0.8s ease-in-out;
@@ -3342,8 +3348,8 @@ body.IE .register-page-wrap .container {
     text-align: center;
 }
 .profile-photo {
-    width: 160px;
-    height: 160px;
+    width: 200px;
+    height: 180px;
     margin: 0 auto 15px;
     position: relative;
 }
@@ -3359,9 +3365,43 @@ body.IE .register-page-wrap .container {
     -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
+
+.profile-photo .hapus-avatar {
+    position: absolute;
+    right: -15px;
+    top: 25%;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    text-align: center;
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.profile-photo .upload-avatar {
+    position: absolute;
+    right: -15px;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+    text-align: center;
+    -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.avatar-photo {
+    width: 160px;
+    height: 160px;
+}
+
 .contact-directory-box .contact-avatar span img,
 .profile-photo .avatar-photo,
-.profile-photo .edit-avatar {
+.profile-photo .edit-avatar,
+.profile-photo .hapus-avatar,
+.profile-photo .upload-avatar {
     border-radius: 100%;
 }
 .profile-info,
@@ -3600,7 +3640,7 @@ body.IE .register-page-wrap .container {
 }
 .contact-directory-box {
     background: #fff;
-    min-height: 400px;
+    /* min-height: 400px; */
     -webkit-box-shadow: 0 0 28px rgba(0, 0, 0, 0.08);
     box-shadow: 0 0 28px rgba(0, 0, 0, 0.08);
     border-radius: 10px;
@@ -3611,8 +3651,8 @@ body.IE .register-page-wrap .container {
 .contact-directory-box .contact-avatar span {
     display: block;
     margin: 0 auto 20px;
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     border-radius: 100%;
@@ -3624,7 +3664,7 @@ body.IE .register-page-wrap .container {
 }
 .contact-directory-box .contact-name h4 {
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
 }
 .contact-directory-box .contact-name p {
     margin-bottom: 2px;
@@ -3645,6 +3685,7 @@ body.IE .register-page-wrap .container {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 .contact-directory-box .profile-sort-desc {
+    font-size: 14px;
     font-weight: 400;
     color: #6f7c8d;
 }
@@ -3652,7 +3693,7 @@ body.IE .register-page-wrap .container {
     display: block;
     text-align: center;
     text-transform: uppercase;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     padding: 20px 5px;
     letter-spacing: 0.05em;
@@ -3672,7 +3713,7 @@ body.IE .register-page-wrap .container {
     content: "";
     width: 80px;
     height: 1px;
-    background: #1b00ff;
+    background: #fb8c00;
     position: absolute;
     left: 0;
     right: 0;

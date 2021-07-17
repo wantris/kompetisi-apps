@@ -14,6 +14,7 @@
     border: 5px solid #e68004;
 }
 .ribbon span {
+    font-size: 16px !important;
     position: absolute;
     display: block;
     width: 225px;

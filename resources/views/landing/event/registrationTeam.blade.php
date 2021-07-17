@@ -8,64 +8,67 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-12 col-md-6 offset-md-3 white-bg pad-4">
-            <div class="card border">
-                <div class="card-body" id="">
-                    <div class="row">
-                        <div class="col-12 text-center">
-                            <img src="{{url('assets/img/banner-komp/example.jpeg')}}" class="img-fluid registration-komp-banner" alt="Responsive image">
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <h1 class="registration-komp-title float-left">Pendaftaran Tim</h1>
-                            @php
-                                $pengguna_json = json_encode($penggunas);
-                            @endphp
-                            <a href="#" id="add-button" onclick="addAnggota({{$pengguna_json}})" class="btn-add-person float-right"><i class="fas fa-plus"></i></a>
-                        </div>
-                        <div class="col-12">
-                            <hr>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <label for="" class="registration-komp-label">Ketua Tim</label>
-                            @if ($user_logged->nim)
-                                <input type="text" disabled value="{{$user_logged->nama_mhs}}" class="form-control">
-                            @else
-                            <input type="text" disabled value="{{$user_logged->participantRef->nama_participant}}" class="form-control">
-                            @endif
-                            
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <label for="" class="registration-komp-label">Anggota 1</label>
-                            <div class="form-group">
-                                <select name="ketua" class="select-single" style="width: 100%">
-                                    <option selected>Pilih Anggota</option>
-                                    @foreach ($penggunas as $pengguna)
-                                        @if ($pengguna->nim)
-                                            <option value="{{$pengguna->nim}}">{{$pengguna->nama_mhs}}</option>
-                                        @else
-                                            <option value="{{$pengguna->participant_id}}">{{$pengguna->participantRef->nama_participant}}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
+            <div class="card shadow">
+                <form action="{{route('event.registration.team.save', $slug)}}" method="post">
+                    @csrf
+                    <div class="card-body" id="">
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <img src="{{url('assets/img/banner-komp/'.$event->banner_image)}}" class="img-fluid registration-komp-banner" alt="Responsive image">
                             </div>
                         </div>
-                    </div>
-                    <div id="add-anggota">
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h1 class="registration-komp-title float-left">Pendaftaran Tim</h1>
+                                @php
+                                    $pengguna_json = json_encode($penggunas);
+                                @endphp
+                                <a href="#" id="add-button" onclick="addAnggota({{$pengguna_json}})" class="btn-add-person float-right"><i class="fas fa-plus"></i></a>
+                            </div>
+                            <div class="col-12">
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="" class="registration-komp-label">Ketua Tim</label>
+                                @if ($user_logged->nim)
+                                    <input type="text" disabled value="{{$user_logged->nama_mhs}}" class="form-control">
+                                @else
+                                    <input type="text" disabled value="{{$user_logged->participantRef->nama_participant}}" class="form-control">
+                                @endif
+                                <input type="hidden" name="ketua" value="{{$user_logged->id_pengguna}}">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <label for="" class="registration-komp-label">Anggota 1</label>
+                                <div class="form-group">
+                                    <select name="anggota[]" class="select-single" style="width: 100%">
+                                        <option selected>Pilih Anggota</option>
+                                        @foreach ($penggunas as $pengguna)
+                                            @if ($pengguna->nim)
+                                                <option value="{{$pengguna->id_pengguna}}">{{$pengguna->nama_mhs}} ({{$pengguna->username}})</option>
+                                            @else
+                                                <option value="{{$pengguna->id_pengguna}}">{{$pengguna->participantRef->nama_participant}} ({{$pengguna->username}})</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="add-anggota">
 
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group mt-4 text-center">
-                                <input type="submit" class="btn-login-mhs mt-3" style="background-color: #fb8c00 !important; border-color:#fb8c00 " value="Daftarkan Tim">
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group mt-4 text-center">
+                                    <input type="submit" class="btn-login-mhs mt-3" style="background-color: #fb8c00 !important; border-color:#fb8c00 " value="Daftarkan Tim">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -86,7 +89,7 @@
                         <div class="col-12">
                             <label for="" class="registration-komp-label">Anggota ${id}</label>
                             <a href="#" id="remove-button" class="btn-add-person float-right" style="padding: 4px 4px; background-color:red !important; border-color:red"><i class="fas fa-trash"></i></a>
-                            <select name="anggota_${id}" id="select_anggota_${id}" class="select-single" style="width: 100%">
+                            <select name="anggota_${id}" id="select_anggota_${id}" name="anggota[]" class="select-single" style="width: 100%">
                                 <option selected>Pilih Anggota</option>
                    
                             </select>
@@ -99,12 +102,12 @@
                 if(item.nim){
                     $('#select_anggota_'+id).append($('<option>', { 
                         value: item.nim,
-                        text : item.nama_mhs 
+                        text : item.nama_mhs + " ("+item.username+")"
                     }));
                 }else{
                     $('#select_anggota_'+id).append($('<option>', { 
                         value: item.participant_id,
-                        text : item.participantRef.nama_participant 
+                        text : item.participant_ref.nama_participant + " ("+item.username+")"
                     }));
                 }
             });

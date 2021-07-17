@@ -12,6 +12,7 @@ class HomeController extends Controller
 {
     public function index()
     {
+
         $navTitle = '<span class="micon dw dw-home mr-2"></span>Dashboard';
         // $pos_info =  DB::select(DB::raw('SHOW COLUMNS FROM PENGGUNAS'));
         // $base_columns = count($pos_info);

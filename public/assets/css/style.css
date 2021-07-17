@@ -4,7 +4,10 @@
 .text-orange {
     color: #fb8c00;
 }
-
+.control-label {
+    font-weight: 600;
+    color: #3d3d3d;
+}
 /* modal */
 .modal-content {
     border: 0px solid rgba(0, 0, 0, 0.2);

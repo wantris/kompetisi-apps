@@ -26,6 +26,8 @@ Route::group(['prefix' => 'event', 'namespace' => 'landing'], function () {
     Route::get('/timeline/{slug}', 'eventController@timeline')->name('event.timeline');
     Route::get('/registration/{slug}', 'eventController@registration')->name('event.registration.get');
     Route::get('/registration/team/{slug}', 'eventController@registrationTeam')->name('event.registration.team');
+    Route::post('/registration/team/save/{slug}', 'eventController@saveRegistrationTeam')->name('event.registration.team.save');
+    Route::get('/registration/team/invite/sendmail', 'eventController@sendMail')->name('event.registration.team.sendmail');
 });
 
 // Blog
@@ -65,6 +67,9 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
     Route::group(['prefix' => 'auth'], function () {
         Route::post('/login', 'AuthController@postLogin')->name('peserta.login.post');
         Route::get('/logout', 'AuthController@logout')->name('peserta.logout');
+        Route::get('/register', 'AuthController@register')->name('peserta.register');
+        Route::post('/register', 'AuthController@registerSave')->name('peserta.register.save');
+        Route::get('/register/success', 'AuthController@registerSuccess')->name('peserta.register.success');
     });
 
     Route::get('/dashboard', 'HomeController@index')->name('peserta.index');
@@ -88,12 +93,16 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
 
     Route::group(['prefix' => 'account'], function () {
         Route::get('/', 'AccountController@index')->name('peserta.account.index');
+        Route::patch('/save', 'AccountController@postAccount')->name('peserta.account.save');
+        Route::patch('/savephoto', 'AccountController@savePhoto')->name('peserta.account.save.photo');
+        Route::patch('/save/socialmedia', 'AccountController@saveSocialMedia')->name('peserta.account.save.socialmedia');
     });
 
 
     Route::group(['prefix' => 'team'], function () {
         Route::get('/', 'TeamController@index')->name('peserta.team.index');
         Route::get('/detail/{id}', 'TeamController@detail')->name('peserta.team.detail');
+        Route::get('/users/search/{id}', 'TeamController@searchPengguna')->name('peserta.team.detail.search');
     });
 });
 

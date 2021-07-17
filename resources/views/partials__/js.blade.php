@@ -102,5 +102,7 @@
             $('#arrow-icon').removeClass('icofont-rounded-up');
         }
     });
+
+    
     
 </script>

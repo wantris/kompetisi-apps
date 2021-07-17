@@ -4,8 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TimEventDetail extends Model
+class TmpTimEventDetail extends Model
 {
+    protected $primaryKey = "id_tmp_tim_event_detail";
+
     public function participantRef()
     {
         return $this->belongsTo(Participant::class, 'participant_id', 'id_participant');

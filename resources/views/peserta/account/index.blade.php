@@ -1,4 +1,4 @@
-@extends('mahasiswa.app')
+@extends('peserta.app')
 
 @section('title','Account')
 
@@ -7,9 +7,18 @@
 <div class="row">
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 mb-30">
         <div class="pd-20 card-box height-100-p">
-            <div class="profile-photo">
-                <a href="modal" data-toggle="modal" data-target="#modal" class="edit-avatar"><i class="fa fa-pencil"></i></a>
-                <img src="{{url('assets/deskapp/vendors/images/photo1.jpg')}}" alt="" class="avatar-photo">
+            <div class="profile-photo text-center">
+                <a href="#" onclick="savePhoto()" class="upload-avatar d-none"><i class="icon-copy dw dw-upload1"></i></a>
+                <a href="#" onclick="hapusPhoto()" class="hapus-avatar d-none"><i class="fa fa-trash"></i></a>
+                <a href="#" onclick="uploadPhoto()" class="edit-avatar"><i class="fa fa-pencil"></i></a>
+              
+                @if ($pengguna->photo)
+                    <img src="{{asset('assets/img/photo-pengguna/'.$pengguna->photo)}}" data-photo="1" data-filename="{{$pengguna->photo}}" id="profil-image" alt="" class="avatar-photo">
+                @else
+                    <img src="{{asset('assets/img/user.svg')}}" id="profil-image" data-photo="0" data-filename="user.svg" alt="" class="avatar-photo">
+                @endif
+              
+                
                 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
@@ -26,37 +35,42 @@
                     </div>
                 </div>
             </div>
-            <h5 class="text-center h5 mb-0">Hifni Alimudin</h5>
-            <p class="text-center text-muted font-14">Lorem ipsum dolor sit amet</p>
+            <h5 class="text-center h5 mb-0">
+                @if ($pengguna->is_mahasiswa)
+                    {{$pengguna->nama_mhs}}
+                @else
+                    {{$pengguna->participantRef->nama_participant}}
+                @endif
+            </h5>
+            {{-- <p class="text-center text-muted font-14">Lorem ipsum dolor sit amet</p> --}}
             <div class="profile-info">
-                <h5 class="mb-20 h5 text-blue">Informasi Kontak</h5>
+                <h5 class="mb-20 h5 text-blue">Informasi Profil</h5>
                 <ul>
-                    <li>
+                    {{-- <li>
                         <span>Jurusan:</span>
                         Teknik Informatika
-                    </li>
+                    </li> --}}
                     <li>
                         <span>Alamat Email:</span>
-                        hifni@gmail.com
+                        {{$pengguna->email}}
                     </li>
                     <li>
                         <span>Nomor Telepon:</span>
-                        619-229-0054
+                        {{$pengguna->phone}}
                     </li>
                     <li>
                         <span>Alamat:</span>
-                        1807 Holden Street<br>
-                        San Diego, CA 92115
+                        {{$pengguna->alamat}}
                     </li>
                 </ul>
             </div>
             <div class="profile-social">
                 <h5 class="mb-20 h5 text-blue">Sosial Media</h5>
                 <ul class="clearfix">
-                    <li><a href="#" class="btn" data-bgcolor="#3b5998" data-color="#ffffff"><i class="fa fa-facebook"></i></a></li>
-                    <li><a href="#" class="btn" data-bgcolor="#1da1f2" data-color="#ffffff"><i class="fa fa-twitter"></i></a></li>
-                    <li><a href="#" class="btn" data-bgcolor="#007bb5" data-color="#ffffff"><i class="fa fa-linkedin"></i></a></li>
-                    <li><a href="#" class="btn" data-bgcolor="#c0406c" data-color="#ffffff"><i class="fa fa-instagram"></i></a></li>
+                    <li><a @if($pengguna->facebook_url) href="{{$pengguna->facebook_url}}" @else href="#" @endif class="btn" data-bgcolor="#3b5998" data-color="#ffffff"><i class="fa fa-facebook"></i></a></li>
+                    <li><a @if($pengguna->twitter_url) href="{{$pengguna->twitter_url}}" @else href="#" @endif class="btn" data-bgcolor="#1da1f2" data-color="#ffffff"><i class="fa fa-twitter"></i></a></li>
+                    <li><a @if($pengguna->linkedin_url) href="{{$pengguna->linkedin_url}}" @else href="#" @endif class="btn" data-bgcolor="#007bb5" data-color="#ffffff"><i class="fa fa-linkedin"></i></a></li>
+                    <li><a @if($pengguna->insta_url) href="{{$pengguna->insta_url}}" @else href="#" @endif class="btn" data-bgcolor="#c0406c" data-color="#ffffff"><i class="fa fa-instagram"></i></a></li>
                 </ul>
             </div>
         </div>
@@ -208,77 +222,97 @@
                         <!-- Setting Tab start -->
                         <div class="tab-pane fade height-100-p" id="setting" role="tabpanel">
                             <div class="profile-setting">
-                                <form>
                                     <ul class="profile-edit-list row">
                                         <li class="weight-500 col-md-6">
                                             <h4 class="text-blue h5 mb-20">Pengaturan Akun</h4>
-                                            <div class="form-group">
-                                                <label>Nama Lengkap</label>
-                                                <input class="form-control form-control-lg" value="Hifni Alimudin" disabled type="text">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Jurusan</label>
-                                                <input class="form-control form-control-lg" value="Teknik Informatika" disabled type="text">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Email</label>
-                                                <input class="form-control form-control-lg"  type="email">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Tanggal Lahir</label>
-                                                <input class="form-control form-control-lg date-picker" type="text">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Gender</label>
-                                                <div class="d-flex">
-                                                <div class="custom-control custom-radio mb-5 mr-20">
-                                                    <input type="radio" id="customRadio4" disabled name="customRadio" class="custom-control-input">
-                                                    <label class="custom-control-label weight-400" for="customRadio4">Laki-laki</label>
+                                            <form action="{{route('peserta.account.save')}}" method="post" enctype="multipart/form-data">
+                                                @csrf
+                                                @method('patch')
+                                                <div class="form-group">
+                                                    <label>Nama Lengkap</label>
+                                                    @if (Session::get('is_maahsiswa') == "1")
+                                                        <input class="form-control form-control-lg" value="{{$pengguna->nama_mhs}}" disabled type="text">
+                                                    @else
+                                                        <input class="form-control form-control-lg" name="nama" value="{{$pengguna->participantRef->nama_participant}}" type="text">
+                                                    @endif
+                                                    
                                                 </div>
-                                                <div class="custom-control custom-radio mb-5">
-                                                    <input type="radio" id="customRadio5" disabled name="customRadio" class="custom-control-input">
-                                                    <label class="custom-control-label weight-400" for="customRadio5">Perempuan</label>
+                                                {{-- <div class="form-group">
+                                                    <label>Jurusan</label>
+                                                    <input class="form-control form-control-lg" value="Teknik Informatika" disabled type="text">
+                                                </div> --}}
+                                                <div class="form-group">
+                                                    <label>Email</label>
+                                                    <input class="form-control form-control-lg" name="email" value="{{$pengguna->email}}"  type="email">
                                                 </div>
+                                                {{-- <div class="form-group">
+                                                    <label>Tanggal Lahir</label>
+                                                    <input class="form-control form-control-lg date-picker" name="tgl_lahir" type="text">
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Nomor Telepon</label>
-                                                <input class="form-control form-control-lg" type="text">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Alamat</label>
-                                                <textarea class="form-control"></textarea>
-                                            </div>
-                                            <div class="form-group mb-0">
-                                                <input type="submit" class="btn btn-primary" value="Simpan">
-                                            </div>
+                                                <div class="form-group">
+                                                    <label>Gender</label>
+                                                    <div class="d-flex">
+                                                    <div class="custom-control custom-radio mb-5 mr-20">
+                                                        <input type="radio" id="customRadio4"  name="gender" class="custom-control-input">
+                                                        <label class="custom-control-label weight-400" for="customRadio4">Laki-laki</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio mb-5">
+                                                        <input type="radio" id="customRadio5"  name="gender" class="custom-control-input">
+                                                        <label class="custom-control-label weight-400" for="customRadio5">Perempuan</label>
+                                                    </div>
+                                                    </div>
+                                                </div> --}}
+                                                <div class="form-group">
+                                                    <label>Nomor Telepon</label>
+                                                    <input class="form-control form-control-lg" name="phone" value="{{$pengguna->phone}}" type="text">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Alamat</label>
+                                                    <textarea name="alamat" class="form-control">
+                                                        {{$pengguna->alamat}}
+                                                    </textarea>
+                                                </div>
+                                                <div class="form-group mb-0">
+                                                    <input type="submit" class="btn btn-primary" value="Simpan">
+                                                </div>
+                                            </form>
                                         </li>
                                         <li class="weight-500 col-md-6">
                                             <h4 class="text-blue h5 mb-20">Edit Link Sosial Media</h4>
-                                            <div class="form-group">
-                                                <label>Facebook URL:</label>
-                                                <input class="form-control form-control-lg" type="text" placeholder="Paste your link here">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Twitter URL:</label>
-                                                <input class="form-control form-control-lg" type="text" placeholder="Paste your link here">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Linkedin URL:</label>
-                                                <input class="form-control form-control-lg" type="text" placeholder="Paste your link here">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Instagram URL:</label>
-                                                <input class="form-control form-control-lg" type="text" placeholder="Paste your link here">
-                                            </div>
-                                            <div class="form-group mb-0">
-                                                <input type="submit" class="btn btn-primary" value="Save">
-                                            </div>
+                                            <form action="{{route('peserta.account.save.socialmedia')}}" method="post">
+                                                @csrf
+                                                @method('patch')
+                                                <div class="form-group">
+                                                    <label>Facebook URL:</label>
+                                                    <input class="form-control form-control-lg" value="{{$pengguna->facebook_url}}" name="facebook" type="text" placeholder="Paste your link here">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Twitter URL:</label>
+                                                    <input class="form-control form-control-lg" value="{{$pengguna->twitter_url}}" name="twitter" type="text" placeholder="Paste your link here">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Linkedin URL:</label>
+                                                    <input class="form-control form-control-lg" value="{{$pengguna->linkedin_url}}" name="linkedin" type="text" placeholder="Paste your link here">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Instagram URL:</label>
+                                                    <input class="form-control form-control-lg" value="{{$pengguna->insta_url}}" name="instagram" type="text" placeholder="Paste your link here">
+                                                </div>
+                                                <div class="form-group mb-0">
+                                                    <input type="submit" class="btn btn-primary" value="Save">
+                                                </div>
+                                            </form>
                                         </li>
                                     </ul>
-                                </form>
                             </div>
                         </div>
+
+                        <form action="{{route('peserta.account.save.photo')}}" id="form-upload-photo" enctype="multipart/form-data" method="post">
+                            @csrf
+                            @method('patch')
+                            <input type="file" class="d-none" onchange="displayPhoto()" id="photo-inp" name="photo" >
+                            <input type="hidden" name="oldPhoto" value="{{$pengguna->photo}}">
+                        </form>
                         <!-- Setting Tab End -->
                     </div>
                 </div>
@@ -297,34 +331,40 @@
 <script src="{{url('assets/deskapp/vendors/scripts/layout-settings.js')}}"></script>
 <script src="{{url('assets/deskapp/src/plugins/cropperjs/dist/cropper.js')}}"></script>
 <script>
+    const uploadPhoto = () => {
+        event.preventDefault();
+        $('#photo-inp').trigger('click');
+        return false;
+    } 
+    const displayPhoto = () => {
+        var oFReader = new FileReader();
+        oFReader.readAsDataURL(document.getElementById("photo-inp").files[0]);
+        oFReader.onload = (oFREvent) =>  {
+            document.getElementById("profil-image").src = oFREvent.target.result;
+        };
 
-    window.addEventListener('DOMContentLoaded', function () {
-        var image = document.getElementById('image');
-        var cropBoxData;
-        var canvasData;
-        var cropper;
+        $('.hapus-avatar').removeClass('d-none'); 
+        $('.upload-avatar').removeClass('d-none'); 
+    };
 
-        $('#modal').on('shown.bs.modal', function () {
-            cropper = new Cropper(image, {
-                autoCropArea: 0.5,
-                dragMode: 'move',
-                aspectRatio: 3 / 3,
-                restore: false,
-                guides: false,
-                center: false,
-                highlight: false,
-                cropBoxMovable: false,
-                cropBoxResizable: false,
-                toggleDragModeOnDblclick: false,
-                ready: function () {
-                    cropper.setCropBoxData(cropBoxData).setCanvasData(canvasData);
-                }
-            });
-        }).on('hidden.bs.modal', function () {
-            cropBoxData = cropper.getCropBoxData();
-            canvasData = cropper.getCanvasData();
-            cropper.destroy();
-        });
-    });
+    const hapusPhoto = () => {
+        let value = $('#profil-image').data('filename');
+        let is_photo = $('#profil-image').data('photo');
+        let url = "/assets/img/"+value;
+        if(is_photo == 1){
+            url = "/assets/img/photo-pengguna/"+value;
+        }
+
+        $("#profil-image").attr("src", url);
+        $('#photo-inp').val('');
+        $('.hapus-avatar').addClass('d-none'); 
+        $('.upload-avatar').addClass('d-none'); 
+    }
+
+    // submit form photo
+    const savePhoto = () => {
+        event.preventDefault();
+        $("#form-upload-photo").submit();
+    }
 </script>
 @endpush

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\landing;
 use App\EventInternal;
 use App\Http\Controllers\Controller;
 use App\KategoriEvent;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\invitationTeamMail;
 use App\Ormawa;
 use App\EventInternalDetail;
 use App\EventInternalRegistration;
@@ -12,8 +14,11 @@ use App\FileEventInternalDetail;
 use App\Pengguna;
 use App\Pengumuman;
 use App\Timeline;
+use App\TimEvent;
+use App\TimEventDetail;
 use GuzzleHttp\Client;
 use App\TipePeserta;
+use App\TmpTimEventDetail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 
@@ -34,7 +39,7 @@ class eventController extends Controller
         $removeSlug = str_ireplace(array('-'), ' ', $slug);
 
         $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
-
+        $check_regis = null;
         if ($event) {
             // Check apakah user yg login sudah mendaftar event
             if (Session::get('id_pengguna') != null) {
@@ -123,7 +128,11 @@ class eventController extends Controller
 
     public function registrationTeam($slug)
     {
-        $penggunas = Pengguna::where('is_mahasiswa', 1)->orWhere('is_participant', 1)->get();
+        // remove slug string "-"
+        $removeSlug = str_ireplace(array('-'), ' ', $slug);
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+
+        $penggunas = Pengguna::with('participantRef')->where('is_mahasiswa', 1)->orWhere('is_participant', 1)->get();
         foreach ($penggunas as $item) {
             $item->nama_mhs = null;
             if ($item->nim) {
@@ -161,6 +170,85 @@ class eventController extends Controller
             }
         }
 
-        return view('landing.event.registrationTeam', compact('slug', 'penggunas', 'user_logged'));
+        return view('landing.event.registrationTeam', compact('slug', 'penggunas', 'user_logged', 'event'));
     }
+
+    public function saveRegistrationTeam(Request $request, $slug)
+    {
+        // remove slug string "-"
+        $removeSlug = str_ireplace(array('-'), ' ', $slug);
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+
+        $tim = new TimEvent();
+        $tim->save();
+
+        if ($tim) {
+
+            // registrasi event
+            $is_win = array('is_win' => '0', 'position' => null);
+            $eir = new EventInternalRegistration();
+            $eir->event_internal_id = $event->id_event_internal;
+            $eir->tim_event_id = $tim->id_tim_event;
+            $eir->is_win = json_encode($is_win);
+            $eir->save();
+
+            // Ketua
+            $pengguna = Pengguna::find($request->ketua);
+            $ted = new TimEventDetail();
+            $ted->tim_event_id = $tim->id_tim_event;
+            if ($pengguna->is_mahasiswa) {
+                $ted->nim = $pengguna->nim;
+            } else {
+                $ted->participant_id = $pengguna->participant_id;
+            }
+            $ted->role = "ketua";
+            $ted->save();
+
+            // Anggota
+            foreach ($request->anggota as $key => $item) {
+                $pengguna = Pengguna::find($item);
+
+                // send email
+                try {
+                    if ($pengguna->is_mahasiswa) {
+                        $client = new Client();
+                        $url = env("SOURCE_API") . "mahasiswa/detail/" . $pengguna->nim;
+                        $rMhs = $client->request('GET', $url, [
+                            'verify'  => false,
+                        ]);
+                        $mhs = json_decode($rMhs->getBody());
+                        Mail::to($pengguna->email)->send(new invitationTeamMail($mhs->nama, $removeSlug));
+                    } else {
+                        $nama = $pengguna->participantRef->nama_participant;
+                        Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $removeSlug));
+                    }
+                } catch (\Throwable $err) {
+                }
+
+                // insert to temporary team detail
+                $ted = new TmpTimEventDetail();
+                $ted->tim_event_id = $tim->id_tim_event;
+                if ($pengguna->is_mahasiswa) {
+                    $ted->nim = $pengguna->nim;
+                } else {
+                    $ted->participant_id = $pengguna->participant_id;
+                }
+                $ted->role = "anggota_" . ($key + 1);
+                $ted->save();
+            }
+
+            return "berhasil";
+        }
+    }
+
+    // public function sendMail()
+    // {
+    //     $nama = "Wildan Fuady";
+    //     $email = "nadiwacik1@gmail.com";
+    //     $kirim = Mail::to($email)->send(new invitationTeamMail($nama));
+
+    //     // if ($kirim) {
+    //     //     echo "Email telah dikirim";
+    //     // }
+    // }
 }

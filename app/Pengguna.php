@@ -23,4 +23,14 @@ class Pengguna extends Model
     {
         return $this->hasOne(Wadir3::class, 'id_wadir3', 'wadir3_id');
     }
+
+    public function timMhsRef()
+    {
+        return $this->hasOne(TimEventDetail::class, 'nim', 'nim');
+    }
+
+    public function timParticipantRef()
+    {
+        return $this->hasOne(TimEventDetail::class, 'participant_id', 'participant_id');
+    }
 }

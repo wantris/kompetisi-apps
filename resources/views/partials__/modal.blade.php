@@ -46,6 +46,11 @@
                 <div class="form-group mt-4 text-left">
                   <input type="submit" class="btn-login-mhs btn-round mt-3" value="Login">
                 </div>
+                <div class="form-group">
+                  <div class="font-weight-medium">
+                      Belum punya akun? Ayo <a href="{{route('peserta.register')}}" class="text-underline" style="color:#010B1D"><strong>Daftar</strong></a>
+                  </div>
+              </div>
               </div>
             </div>
           </form>

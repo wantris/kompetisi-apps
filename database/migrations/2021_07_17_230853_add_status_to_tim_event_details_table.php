@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTimEventsTable extends Migration
+class AddStatusToTimEventDetailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class CreateTimEventsTable extends Migration
      */
     public function up()
     {
-        Schema::create('tim_events', function (Blueprint $table) {
-            $table->id('id_tim_event');
-            $table->char('nidn', 50)->nullable();
-            $table->timestamps();
+        Schema::table('tim_event_details', function (Blueprint $table) {
+            $table->id('id_tim_event_detail')->first();
+            $table->char('status', 50)->after('role')->nullable();
         });
     }
 
@@ -27,6 +26,8 @@ class CreateTimEventsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tim_events');
+        Schema::table('tim_event_details', function (Blueprint $table) {
+            //
+        });
     }
 }

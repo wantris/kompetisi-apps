@@ -422,17 +422,59 @@
                                     @php
                                         $slug = \Str::slug($event->nama_event);
                                     @endphp
-                                    <div class="col-lg-4 col-md-12 col-12 d-none d-md-none d-lg-block text-center" style="margin-top: 40px">
-                                        <a href="{{route('event.registration.get', $slug)}}" class="detail-komp__footer-btn">
-                                            Daftar
-                                        </a>
-                                    </div>
-                                    <div class="col-lg-4 col-md-12 col-12 d-lg-none d-xl-none d-md-block text-center" style="margin-top: 20px">
-                                        <a href="{{route('event.registration.get', $slug)}}" style="display:inline-block;
-                                        width: 100%;" class="detail-komp__footer-btn">
-                                            Daftar
-                                        </a>
-                                    </div>
+                                    
+                                    @if ($event->tipe_peserta_id == "2" && Session::get('is_mahasiswa') == "1")
+                                        <div class="col-lg-4 col-md-12 col-12 d-none d-md-none d-lg-block text-center" style="margin-top: 40px">
+                                            <a href="{{route('event.registration.get', $slug)}}" class="detail-komp__footer-btn">
+                                                Daftar
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-4 col-md-12 col-12 d-lg-none d-xl-none d-md-block text-center" style="margin-top: 20px">
+                                            <a href="{{route('event.registration.get', $slug)}}" style="display:inline-block;
+                                            width: 100%;" class="detail-komp__footer-btn">
+                                                Daftar
+                                            </a>
+                                        </div>
+                                    @elseif($event->tipe_peserta_id == "3" && Session::get('is_mahasiswa') == "0")
+                                        <div class="col-lg-4 col-md-12 col-12 d-none d-md-none d-lg-block text-center" style="margin-top: 40px">
+                                            <a href="{{route('event.registration.get', $slug)}}" class="detail-komp__footer-btn">
+                                                Daftar
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-4 col-md-12 col-12 d-lg-none d-xl-none d-md-block text-center" style="margin-top: 20px">
+                                            <a href="{{route('event.registration.get', $slug)}}" style="display:inline-block;
+                                            width: 100%;" class="detail-komp__footer-btn">
+                                                Daftar
+                                            </a>
+                                        </div>
+                                    @elseif($event->tipe_peserta_id == "1" && Session::get('is_mahasiswa') == "0" || $event->tipe_peserta_id == "1" && Session::get('is_mahasiswa') == "1")
+                                        <div class="col-lg-4 col-md-12 col-12 d-none d-md-none d-lg-block text-center" style="margin-top: 40px">
+                                            <a href="{{route('event.registration.get', $slug)}}" class="detail-komp__footer-btn">
+                                                Daftar
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-4 col-md-12 col-12 d-lg-none d-xl-none d-md-block text-center" style="margin-top: 20px">
+                                            <a href="{{route('event.registration.get', $slug)}}" style="display:inline-block;
+                                            width: 100%;" class="detail-komp__footer-btn">
+                                                Daftar
+                                            </a>
+                                        </div>
+                                    @else
+                                        @php
+                                            $roleMessage = "Maaf event hanya untuk ".$event->tipePesertaRef->nama_tipe;
+                                        @endphp
+                                        <div class="col-lg-4 col-md-12 col-12 d-none d-md-none d-lg-block text-center" style="margin-top: 40px">
+                                            <a href="#" onclick="failureAlert('{{$roleMessage}}')" class="detail-komp__footer-btn">
+                                                Daftar
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-4 col-md-12 col-12 d-lg-none d-xl-none d-md-block text-center" style="margin-top: 20px">
+                                            <a href="#" onclick="failureAlert('{{$roleMessage}}')" style="display:inline-block;
+                                            width: 100%;" class="detail-komp__footer-btn">
+                                                Daftar
+                                            </a>
+                                        </div>
+                                    @endif
                                 @endif
                                
                             {{-- Jika belum login --}}
