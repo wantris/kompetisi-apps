@@ -103,6 +103,7 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
         Route::get('/', 'TeamController@index')->name('peserta.team.index');
         Route::get('/detail/{id}', 'TeamController@detail')->name('peserta.team.detail');
         Route::get('/users/search/{id}', 'TeamController@searchPengguna')->name('peserta.team.detail.search');
+        Route::post('/users/invite/{id}', 'TeamController@invitePengguna')->name('peserta.team.detail.invite');
     });
 });
 

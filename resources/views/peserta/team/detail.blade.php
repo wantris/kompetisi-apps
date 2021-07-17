@@ -117,21 +117,12 @@
                                 <p class="h4 text-secondary">Manajemen Tim :</p>
                             </div>
                             <div class="col-lg-6 col-12 text-right">
-                                <a href="#" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2" style="border:none;padding:5px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                                <a href="#" onclick="showModalInvite({{$tim->id_tim_event}})" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2" style="border:none;padding:5px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
                                     Undang Anggota</a>
                             </div>
                         </div>
                         <div class="card-box mb-5">
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group">
-                                            <select name="pengguna" style="width: 100%" id="invite-inp">
-                                                <option selected>Cari berdasarkan nama atau username</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
                                 <table class="stripe table nowrap" id="tim-undangan-table">
                                     <thead>
                                         <th>Nama</th>
@@ -188,11 +179,58 @@
         </div>
     </div>
 
+    @php
+        if ($tim->eventInternalRegisRef) {
+            $type = "internal";
+            $id_event = $tim->eventInternalRegisRef->event_internal_id;
+        }else{
+            $type = "eksternal";
+            $id_event = $tim->eventEksternalRegisRef->event_eksternal_id;
+        }
+    @endphp
+
+    {{-- Modal Invite --}}
+    <div style="border: none !important" class="modal fade" id="modal-invite"  role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-orange" id="myLargeModalLabel"><i class="icon-copy dw dw-user-11 mr-2"></i>Undang Anggota</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <form action="" id="form-invite" enctype="multipart/form-data" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <select name="id_pengguna" style="width: 100%" id="invite-inp">
+                                <option selected>Cari berdasarkan nama atau username</option>
+                            </select>
+                            <input type="hidden" name="type" id="type-inp">
+                            <input type="hidden" name="id_event" id="id-event-inp">
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Pilih anggota" class="dcd-btn dcd-btn-sm dcd-btn-primary d-print-inline-block mr-2" style="width:100%;border:none;padding:10px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('script')
     <script>
-
+        const showModalInvite = (id_tim_event) => {
+            event.preventDefault();
+            let type = "{{$type}}";
+            let id_event = "{{$id_event}}";
+            let url = '/peserta/team/users/invite/'+id_tim_event;
+          
+            $('#modal-invite').modal('show');
+            $('#type-inp').val(type);
+            $('#id-event-inp').val(id_event);
+            $('#form-invite').attr('action', url);
+        }
         const renderInviteSelect = () => {
             let id = "{{$id}}";
             $.ajax({
@@ -203,12 +241,12 @@
                     $.each(values, function (i, item) {
                         if(item.nim){
                             $('#invite-inp').append($('<option>', { 
-                                value: item.nim,
+                                value: item.id_pengguna,
                                 text : item.nama_mhs + " ("+item.username+")"
                             }));
                         }else{
                             $('#invite-inp').append($('<option>', { 
-                                value: item.participant_id,
+                                value: item.id_pengguna,
                                 text : item.participant_ref.nama_participant + " ("+item.username+")"
                             }));
                         }

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\peserta;
 
+use App\EventInternal;
 use App\EventInternalRegistration;
 use App\Http\Controllers\Controller;
 use App\Pengguna;
 use App\TimEvent;
 use App\TimEventDetail;
+use App\EventEksternal;
+use Illuminate\Support\Facades\Mail;
 use App\TmpTimEventDetail;
+use App\Mail\invitationTeamMail;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
@@ -86,6 +90,8 @@ class TeamController extends Controller
                 }
             }
 
+
+
             return view('peserta.team.detail', compact(
                 'id',
                 'navTitle',
@@ -135,5 +141,53 @@ class TeamController extends Controller
         }
 
         return response()->json($invites);
+    }
+
+    public function invitePengguna(Request $request, $id_tim)
+    {
+        $pengguna = Pengguna::with('participantRef')->find($request->id_pengguna);
+        $nama_mhs = null;
+
+
+        if ($request->type == "internal") {
+            $event = EventInternal::find($request->id_event);
+        } else {
+            $event = EventEksternal::find($request->id_event);
+        }
+
+        // insert to temporary team detail
+        $ted = new TimEventDetail();
+        $ted->tim_event_id = $id_tim;
+        if ($pengguna->is_mahasiswa) {
+            $nama_mhs = $this->searchMahasiswa($pengguna->nim);
+            dd($nama_mhs);
+            $ted->nim = $pengguna->nim;
+            Mail::to($pengguna->email)->send(new invitationTeamMail($nama_mhs, $event->nama_event));
+        } else {
+            $ted->participant_id = $pengguna->participant_id;
+            $nama = $pengguna->participantRef->nama_participant;
+            Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $event->nama_event));
+        }
+        $ted->role = "anggota";
+        $ted->status = "Pending";
+        $ted->save();
+
+        if ($ted) {
+            return redirect()->back()->with('success', 'Berhasil mengundang');
+        }
+    }
+
+    public function searchMahasiswa($nim)
+    {
+        try {
+            $client = new Client();
+            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
+            $rMhs = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $mhs = json_decode($rMhs->getBody());
+            return $mhs->nama;
+        } catch (\Throwable $err) {
+        }
     }
 }

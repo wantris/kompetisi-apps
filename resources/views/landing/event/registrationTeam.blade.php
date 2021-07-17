@@ -101,12 +101,12 @@
             $.each(values, function (i, item) {
                 if(item.nim){
                     $('#select_anggota_'+id).append($('<option>', { 
-                        value: item.nim,
+                        value: item.id_pengguna,
                         text : item.nama_mhs + " ("+item.username+")"
                     }));
                 }else{
                     $('#select_anggota_'+id).append($('<option>', { 
-                        value: item.participant_id,
+                        value: item.id_pengguna,
                         text : item.participant_ref.nama_participant + " ("+item.username+")"
                     }));
                 }
