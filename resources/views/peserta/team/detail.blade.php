@@ -30,7 +30,7 @@
 
 @section('content')
 
-    <div class="container-fluid">
+    <div class="container-fluid" style="margin-bottom: 50px !important">
         <div class="row">
             <div class="col-12 mb-2">
                 <ul class="nav nav-tabs customtab" role="tablist">
@@ -51,7 +51,7 @@
         <div class="row mt-5">
             <div class="col-12">
                 <div class="tab-content">
-                    <div class="tab-pane fade show active" id="keanggotaan" role="tabpanel">
+                    <div class="tab-pane fade show active"  id="keanggotaan" role="tabpanel">
                         <div class="contact-directory-list">
                             <ul class="row">
                                 @foreach ($tim->timDetailRef as $detail)
@@ -163,7 +163,10 @@
                                                 </td>
                                                 <td> {{$invite->status}} invite</td>
                                                 <td>
-                                                    <a href="#" class="text-secondary"><i class="icon-copy dw dw-trash1"></i></a>
+                                                    @php
+                                                        $json = json_encode($invite);
+                                                    @endphp
+                                                    <a href="#" onclick="deleteInvite({{$json}})" class="text-secondary"><i class="icon-copy dw dw-trash1"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -173,6 +176,29 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="pembimbing" role="tabpanel">
+                        <div class="row mb-2">
+                            <div class="col-lg-6 col-12">
+                                <p class="h4 text-secondary">Daftar Pembimbing:</p>
+                            </div>
+                        </div>
+                        <div class="card-box mb-5">
+                            <div class="card-body">
+                                <table class="stripe table nowrap" id="pembimbing-table">
+                                    <thead>
+                                        <th>Nama Dosen</th>
+                                        <th>Jurusan</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td >
+                                                {{$tim->nama_dosen}}
+                                            </td>
+                                            <td> Teknik informatika</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -220,6 +246,12 @@
 
 @push('script')
     <script>
+         $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
         const showModalInvite = (id_tim_event) => {
             event.preventDefault();
             let type = "{{$type}}";
@@ -231,6 +263,7 @@
             $('#id-event-inp').val(id_event);
             $('#form-invite').attr('action', url);
         }
+
         const renderInviteSelect = () => {
             let id = "{{$id}}";
             $.ajax({
@@ -266,10 +299,63 @@
                 "bLengthChange": false,
                 "fnDrawCallback": function ( oSettings ) {
                     $(oSettings.nTHead).hide();
+                },
+                "language": {
+                    "emptyTable": "Tidak ada anggota"
+                }
+            });
+
+            $('#pembimbing-table').DataTable({
+                "bLengthChange": false,
+                "language": {
+                    "emptyTable": "Belum ada pembimbing"
                 }
             });
         } );
 
-        
+        const deleteInvite = (values) => {
+            event.preventDefault();
+            let id_tim = values.tim_event_id;
+            let id_detail = values.id_tim_event_detail;
+            let status = values.status;
+            let url = "/peserta/team/users/invite/denied/"+id_tim;
+            let message = null;
+            
+            if(status == "Pending"){
+                message = "membatalkan undangan";
+            }else{
+                message = "menghapus anggota";
+            }
+
+            Notiflix.Confirm.Show( 
+                'Tim',
+                'Anda yakin ingin '+message+ ' ?',
+                'Yes',
+                'No',
+            function(){ 
+                $.ajax(
+                    {
+                        url: url,
+                        type: 'delete', 
+                        dataType: "JSON",
+                        data: {
+                            "id_detail": id_detail
+                        },
+                        success: function (response){
+                            console.log(response.status); 
+                            if(response.status == 1){
+                                Notiflix.Notify.Success("Berhasil "+message);
+                                location.reload();
+                            }
+                        },
+                        error: function(xhr) {
+                            console.log(xhr);
+                            Notiflix.Notify.Failure('Ooopss');
+                        }
+                });
+            }, function(){
+                    // No button callback alert('If you say so...'); 
+            } ); 
+        }
     </script>
 @endpush

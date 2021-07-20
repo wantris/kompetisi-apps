@@ -9,7 +9,10 @@
     <div class="row">
         <div class="col-12 col-md-6 offset-md-3 white-bg pad-4">
             <div class="card shadow">
-                <form action="{{route('event.registration.team.save', $slug)}}" method="post">
+                @php
+                    $event_json = json_encode($event);
+                @endphp
+                <form action="{{route('event.registration.team.save', $slug)}}" id="regis-form" data-event="{{$event_json}}" method="post">
                     @csrf
                     <div class="card-body" id="">
                         <div class="row">
@@ -20,10 +23,7 @@
                         <div class="row mt-3">
                             <div class="col-12">
                                 <h1 class="registration-komp-title float-left">Pendaftaran Tim</h1>
-                                @php
-                                    $pengguna_json = json_encode($penggunas);
-                                @endphp
-                                <a href="#" id="add-button" onclick="addAnggota({{$pengguna_json}})" class="btn-add-person float-right"><i class="fas fa-plus"></i></a>
+                                <a href="#" id="add-button" onclick="addAnggota({{$event_json}})" class="btn-add-person float-right"><i class="fas fa-plus"></i></a>
                             </div>
                             <div class="col-12">
                                 <hr>
@@ -44,15 +44,8 @@
                             <div class="col-12">
                                 <label for="" class="registration-komp-label">Anggota 1</label>
                                 <div class="form-group">
-                                    <select name="anggota[]" class="select-single" style="width: 100%">
+                                    <select name="anggota[]" class="select-single" id="select_anggota_1" style="width: 100%">
                                         <option selected>Pilih Anggota</option>
-                                        @foreach ($penggunas as $pengguna)
-                                            @if ($pengguna->nim)
-                                                <option value="{{$pengguna->id_pengguna}}">{{$pengguna->nama_mhs}} ({{$pengguna->username}})</option>
-                                            @else
-                                                <option value="{{$pengguna->id_pengguna}}">{{$pengguna->participantRef->nama_participant}} ({{$pengguna->username}})</option>
-                                            @endif
-                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -80,6 +73,35 @@
     <script>
         let id = 1;
 
+
+
+        const renderInviteSelect = (id, id_event) => {
+            $.ajax({
+                url: "/event/users/search/"+id_event,
+                type:"GET",
+                dataType: "json",
+                success: function(values){
+                    console.log(values);
+                    $.each(values, function (i, item) {
+                        if(item.is_mahasiswa){
+                            $('#select_anggota_'+id).append($('<option>', { 
+                                value: item.id_pengguna,
+                                text : item.nama_mhs + " ("+item.username+")"
+                            }));
+                        }else if(item.is_participant){
+                            $('#select_anggota_'+id).append($('<option>', { 
+                                value: item.id_pengguna,
+                                text : item.participant_ref.nama_participant + " ("+item.username+")"
+                            }));
+                        }
+                    });
+                },
+                error:function(err){
+                    console.log(err);
+                },
+            });
+        }
+
         // add row func
         const addAnggota = (values) => {
             event.preventDefault();
@@ -98,28 +120,22 @@
 
             $('#add-anggota').append(html);
 
-            $.each(values, function (i, item) {
-                if(item.nim){
-                    $('#select_anggota_'+id).append($('<option>', { 
-                        value: item.id_pengguna,
-                        text : item.nama_mhs + " ("+item.username+")"
-                    }));
-                }else{
-                    $('#select_anggota_'+id).append($('<option>', { 
-                        value: item.id_pengguna,
-                        text : item.participant_ref.nama_participant + " ("+item.username+")"
-                    }));
-                }
-            });
+            renderInviteSelect(id, values.id_event_internal);
             
             $('.select-single').each(function () {
                 $('.select-single').select2();
             });
         };
 
+        $( document ).ready(function() {
+            let values = $('#regis-form').data('event');
+            renderInviteSelect(1, values.id_event_internal);
+        });
+
          // remove row
          $(document).on('click', '#remove-button', function () {
             event.preventDefault();
+            
             $(this).closest('#inputFormRow').remove();
         });
     </script>

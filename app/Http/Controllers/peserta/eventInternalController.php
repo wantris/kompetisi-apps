@@ -11,6 +11,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Pengguna;
 use App\Pengumuman;
+use App\TimEvent;
 use App\Timeline;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
@@ -24,27 +25,70 @@ class eventInternalController extends Controller
         $kategoris = KategoriEvent::all();
         $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Daftar Event Internal';
 
+
         if (Session::get('id_pengguna') != null) {
             $pengguna = Pengguna::find(Session::get('id_pengguna'));
-            if ($pengguna->is_mahasiswa) {
-                $active_regis = EventInternalRegistration::with('eventInternalRef')->where('nim', $pengguna->nim)->whereHas('eventInternalRef', function ($query) {
-                    $query->where('status', 1);
-                })->get();
-                $inactive_regis = EventInternalRegistration::with('eventInternalRef')->where('nim', $pengguna->nim)->whereHas('eventInternalRef', function ($query) {
-                    $query->where('status', 0);
-                })->get();
+            $active_regis = collect();
+            $inactive_regis = collect();
 
-                return view('peserta.eventinternal.index', compact('navTitle', 'active_regis', 'inactive_regis', 'ormawas', 'kategoris'));
-            } else {
-                $active_regis = EventInternalRegistration::with('eventInternalRef')->where('participant_id', $pengguna->participant_id)->whereHas('eventInternalRef', function ($query) {
-                    $query->where('status', 1);
-                })->get();
-                $inactive_regis = EventInternalRegistration::with('eventInternalRef')->where('participant_id', $pengguna->participant_id)->whereHas('eventInternalRef', function ($query) {
-                    $query->where('status', 0);
-                })->get();
+            $tims = TimEvent::with('timDetailRef')->whereHas('timDetailRef', function ($query) use ($pengguna) {
+                if ($pengguna->is_mahasiswa) {
+                    $query->where('nim', $pengguna->nim);
+                } else {
+                    $query->where('participant_id', $pengguna->participant_id);
+                }
+                $query->where('status', 'Done');
+            })->get();
 
-                return view('peserta.eventinternal.index', compact('navTitle', 'active_regis', 'inactive_regis', 'ormawas', 'kategoris'));
+            if ($tims->count() > 0) {
+                foreach ($tims as $tim) {
+                    $active_regis_tim = EventInternalRegistration::with('eventInternalRef')->where('tim_event_id', $tim->id_tim_event)->whereHas('eventInternalRef', function ($query) {
+                        $query->where('status', 1);
+                    })->first();
+
+                    $inactive_regis_tim = EventInternalRegistration::with('eventInternalRef')->where('tim_event_id', $tim->id_tim_event)->whereHas('eventInternalRef', function ($query) {
+                        $query->where('status', 0);
+                    })->first();
+
+                    if ($active_regis_tim) {
+                        $active_regis->push($active_regis_tim);
+                    }
+
+                    if ($inactive_regis_tim) {
+                        $inactive_regis->push($inactive_regis_tim);
+                    }
+                }
             }
+
+            $active_regis_individu = EventInternalRegistration::with('eventInternalRef')->where(function ($query) use ($pengguna) {
+                if ($pengguna->is_mahasiswa) {
+                    $query->where('nim', $pengguna->nim);
+                } elseif ($pengguna->is_participant) {
+                    $query->where('participant_id', $pengguna->participant_id);
+                }
+            })->whereHas('eventInternalRef', function ($query) {
+                $query->where('status', 1);
+            })->get();
+
+            if ($active_regis_individu->count() > 0) {
+                $active_regis->push($active_regis_individu);
+            }
+
+            $inactive_regis_individu = EventInternalRegistration::with('eventInternalRef')->where(function ($query) use ($pengguna) {
+                if ($pengguna->is_mahasiswa) {
+                    $query->where('nim', $pengguna->nim);
+                } elseif ($pengguna->is_participant) {
+                    $query->where('participant_id', $pengguna->participant_id);
+                }
+            })->whereHas('eventInternalRef', function ($query) {
+                $query->where('status', 0);
+            })->get();
+
+            if ($inactive_regis_individu->count() > 0) {
+                $inactive_regis->push($inactive_regis_individu);
+            }
+
+            return view('peserta.eventinternal.index', compact('navTitle', 'active_regis', 'inactive_regis', 'ormawas', 'kategoris'));
         }
     }
 
@@ -104,24 +148,37 @@ class eventInternalController extends Controller
 
         if ($event) {
             $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>' . $removeSlug;
-            $registrations = EventInternalRegistration::where('event_internal_id', $event->id_event_internal)->get();
+            $registrations = EventInternalRegistration::with('timRef', 'participantRef')->where('event_internal_id', $event->id_event_internal)->get();
 
-            foreach ($registrations as $item) {
-                $item->nama_mhs = null;
-                if ($item->nim) {
-                    try {
-                        $client = new Client();
-                        $url = env("SOURCE_API") . "mahasiswa/detail/" . $item->nim;
-                        $rMhs = $client->request('GET', $url, [
-                            'verify'  => false,
-                        ]);
-                        $mhs = json_decode($rMhs->getBody());
 
-                        $item->nama_mhs = $mhs->nama;
-                    } catch (\Throwable $err) {
+            if ($event->role != "Team") {
+                foreach ($registrations as $item) {
+                    $item->nama_mhs = null;
+                    if ($item->nim) {
+                        try {
+                            $mhs = $this->getMahasiswaByNim($item->nim);
+                            $item->nama_mhs = $mhs->nama;
+                        } catch (\Throwable $err) {
+                        }
+                    }
+                }
+            } else {
+                foreach ($registrations as $item) {
+                    foreach ($item->timRef->timDetailRef as $detail) {
+                        if ($detail->role == "ketua") {
+                            $detail->nama_mhs = null;
+                            if ($detail->nim) {
+                                try {
+                                    $mhs = $this->getMahasiswaByNim($detail->nim);
+                                    $detail->nama_mhs = $mhs->nama;
+                                } catch (\Throwable $err) {
+                                }
+                            }
+                        }
                     }
                 }
             }
+
             return view('peserta.eventinternal.detail', compact('slug', 'navTitle', 'registrations', 'event'));
         }
 
@@ -181,5 +238,17 @@ class eventInternalController extends Controller
 
             return view('peserta.eventinternal.timeline', compact('navTitle', 'tls', 'slug'));
         }
+    }
+
+    public function getMahasiswaByNim($nim)
+    {
+        $client = new Client();
+        $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
+        $rMhs = $client->request('GET', $url, [
+            'verify'  => false,
+        ]);
+        $mhs = json_decode($rMhs->getBody());
+
+        return $mhs;
     }
 }

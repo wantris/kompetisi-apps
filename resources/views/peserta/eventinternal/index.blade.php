@@ -33,8 +33,6 @@
                         <a class="nav-link pb-2" data-toggle="tab" href="#contact2" role="tab" aria-selected="false">Event Lalu</a>
                     </li>
                 </ul>
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="home2" role="tabpanel">
                         <div class="pd-20">
                             <div class="row mt-3">
                                 <div class="col-lg-3 col-md-6 col-12">
@@ -55,25 +53,27 @@
                                 </div>
                             </div>
                             <div class="row mt-5" id="container-event-active">
-                                @foreach ($active_regis as $active)
-                                    <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
-                                        <div class="card card-box" style="outline: none !important; border:none !important">
-                                            <div class='star-div'><i class="icon-copy fa fa-star text-orange fa-lg float-right mr-2 mt-2" aria-hidden="true"></i></div>
-                                            <img class="card-img-top" src="{{url('assets/img/kompetisi-thumb/'.$active->eventInternalRef->poster_image)}}" alt="Card image cap">
-                                            <div class="card-body">
-                                                @php
-                                                    $deskripsi = Illuminate\Support\Str::limit($active->eventInternalRef->deskripsi, 100, $end='.......');
-                                                    $slug = \Str::slug($active->eventInternalRef->nama_event);
-                                                @endphp
-                                                <h5 class="card-title weight-500"><a href="{{route('peserta.eventinternal.detail', $slug)}}">{{$active->eventInternalRef->nama_event}}</a></h5>
-                                                <div class="text-secondary">
-                                                    {!!$deskripsi!!}
+                                @if ($active_regis->count() > 0)
+                                    @foreach ($active_regis as $active)
+                                        <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
+                                            <div class="card card-box" style="outline: none !important; border:none !important">
+                                                <div class='star-div'><i class="icon-copy fa fa-star text-orange fa-lg float-right mr-2 mt-2" aria-hidden="true"></i></div>
+                                                <img class="card-img-top" src="{{url('assets/img/kompetisi-thumb/'.$active->eventInternalRef->poster_image)}}" alt="Card image cap">
+                                                <div class="card-body">
+                                                    @php
+                                                        $deskripsi = Illuminate\Support\Str::limit($active->eventInternalRef->deskripsi, 100, $end='.......');
+                                                        $slug = \Str::slug($active->eventInternalRef->nama_event);
+                                                    @endphp
+                                                    <h5 class="card-title weight-500"><a href="{{route('peserta.eventinternal.detail', $slug)}}">{{$active->eventInternalRef->nama_event}}</a></h5>
+                                                    <div class="text-secondary">
+                                                        {!!$deskripsi!!}
+                                                    </div>
+                                                    <p class="card-text"><small class="text-muted"  style="color: #ed8512 !important"><i class="icon-copy dw dw-checked text-orange mr-1" aria-hidden="true"></i> Terdaftar {{$active->created_at->diffForHumans()}}</small></p>
                                                 </div>
-                                                <p class="card-text"><small class="text-muted"  style="color: #ed8512 !important"><i class="icon-copy dw dw-checked text-orange mr-1" aria-hidden="true"></i> Terdaftar {{$active->created_at->diffForHumans()}}</small></p>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -155,24 +155,26 @@
                                 </div>
                             </div>
                             <div class="row mt-5">
-                                @foreach ($inactive_regis as $inactive)
-                                    <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
-                                        <div class="card card-box" style="position: relative">
-                                            <div class='star-div'><i class="icon-copy dw dw-checked text-orange dw-lg font-weight-bold float-right mr-2 mt-2" aria-hidden="true"></i></div>
-                                            <img class="card-img-top" src="{{url('assets/img/banner-komp/'.$inactive->eventInternalRef->banner_image)}}" alt="Card image cap">
-                                            <div class="card-body">
-                                                @php
-                                                    $desc_inactive = Illuminate\Support\Str::limit($inactive->eventInternalRef->deskripsi, 100, $end='.......');
-                                                @endphp
-                                                <h5 class="card-title weight-500">{{$inactive->eventInternalRef->nama_event}}</h5>
-                                                <div class="text-secondary">
-                                                    {!!$desc_inactive!!}
+                                @if ($inactive_regis->count() > 0)
+                                    @foreach ($inactive_regis as $inactive)
+                                        <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
+                                            <div class="card card-box" style="position: relative">
+                                                <div class='star-div'><i class="icon-copy dw dw-checked text-orange dw-lg font-weight-bold float-right mr-2 mt-2" aria-hidden="true"></i></div>
+                                                <img class="card-img-top" src="{{url('assets/img/banner-komp/'.$inactive->eventInternalRef->banner_image)}}" alt="Card image cap">
+                                                <div class="card-body">
+                                                    @php
+                                                        $desc_inactive = Illuminate\Support\Str::limit($inactive->eventInternalRef->deskripsi, 100, $end='.......');
+                                                    @endphp
+                                                    <h5 class="card-title weight-500">{{$inactive->eventInternalRef->nama_event}}</h5>
+                                                    <div class="text-secondary">
+                                                        {!!$desc_inactive!!}
+                                                    </div>
+                                                    <p class="card-text"><small class="text-muted"  style="color: #ed8512 !important"><i class="icon-copy dw dw-checked text-orange mr-1" aria-hidden="true"></i> Terdaftar {{$inactive->created_at->diffForHumans()}}</small></p>
                                                 </div>
-                                                <p class="card-text"><small class="text-muted"  style="color: #ed8512 !important"><i class="icon-copy dw dw-checked text-orange mr-1" aria-hidden="true"></i> Terdaftar {{$inactive->created_at->diffForHumans()}}</small></p>
                                             </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                @endif
                             </div>
                          </div>
                     </div>

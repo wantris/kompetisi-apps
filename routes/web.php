@@ -19,6 +19,10 @@ Route::get('/', 'landing\homeController@index')->name('project.index');
 
 Route::get('/ormawa/detail/{name}', 'Landing\ormawaController@index')->name('ormawa.detail.index');
 
+// Login khusus terima undangan
+Route::get('/login', 'landing\homeController@login')->name('project.login.index');
+Route::post('/login', 'landing\homeController@postLogin')->name('project.login.post');
+
 // event
 Route::group(['prefix' => 'event', 'namespace' => 'landing'], function () {
     Route::get('/', 'eventController@index')->name('event.index');
@@ -26,8 +30,10 @@ Route::group(['prefix' => 'event', 'namespace' => 'landing'], function () {
     Route::get('/timeline/{slug}', 'eventController@timeline')->name('event.timeline');
     Route::get('/registration/{slug}', 'eventController@registration')->name('event.registration.get');
     Route::get('/registration/team/{slug}', 'eventController@registrationTeam')->name('event.registration.team');
+    Route::get('/users/search/{id}', 'eventController@searchPengguna')->name('event.users.search');
     Route::post('/registration/team/save/{slug}', 'eventController@saveRegistrationTeam')->name('event.registration.team.save');
     Route::get('/registration/team/invite/sendmail', 'eventController@sendMail')->name('event.registration.team.sendmail');
+    Route::get('/invitation/team/{id_detail}', 'eventController@lookInvitation')->name('event.invitation.look');
 });
 
 // Blog
@@ -91,6 +97,22 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
         });
     });
 
+    Route::group(['prefix' => 'eventeksternal'], function () {
+        Route::get('/', 'eventEksternalController@index')->name('peserta.eventeksternal.index');
+
+        // Route::post('/filter/active', 'eventEksternalController@filterEventAktif')->name('peserta.eventeksternal.filterkategori.aktif');
+
+        // Route::group(['prefix' => 'detail'], function () {
+        //     Route::get('/{slug}', 'eventEksternalController@detail')->name('peserta.eventeksternal.detail');
+        //     Route::get('/submission/{slug}/all', 'eventEksternalController@submission')->name('peserta.event.submission');
+        //     Route::get('/submission/{slug}/info', 'eventEksternalController@info')->name('peserta.event.submission.info');
+
+        //     Route::get('/notification/{slug}', 'eventEksternalController@notification')->name('peserta.eventeksternal.notification');
+        //     Route::get('/notification/detail/{slug}', 'eventEksternalController@detailNotification')->name('peserta.eventeksternal.notification.detail');
+        //     Route::get('/timeline/{slug}', 'eventEksternalController@timeline')->name('peserta.eventeksternal.timeline');
+        // });
+    });
+
     Route::group(['prefix' => 'account'], function () {
         Route::get('/', 'AccountController@index')->name('peserta.account.index');
         Route::patch('/save', 'AccountController@postAccount')->name('peserta.account.save');
@@ -104,6 +126,8 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
         Route::get('/detail/{id}', 'TeamController@detail')->name('peserta.team.detail');
         Route::get('/users/search/{id}', 'TeamController@searchPengguna')->name('peserta.team.detail.search');
         Route::post('/users/invite/{id}', 'TeamController@invitePengguna')->name('peserta.team.detail.invite');
+        Route::patch('/users/invite/accept/{id}', 'TeamController@acceptInvitation')->name('peserta.team.detail.invite.accept');
+        Route::delete('/users/invite/denied/{id}', 'TeamController@deniedInvitation')->name('peserta.team.detail.invite.denied');
     });
 });
 

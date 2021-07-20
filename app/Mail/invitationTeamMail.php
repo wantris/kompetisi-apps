@@ -16,10 +16,11 @@ class invitationTeamMail extends Mailable
      *
      * @return void
      */
-    public function __construct($nama, $event_name)
+    public function __construct($nama, $event_name, $id_detail)
     {
         $this->nama = $nama;
         $this->event_name = $event_name;
+        $this->id_detail = $id_detail;
     }
 
     /**
@@ -34,7 +35,8 @@ class invitationTeamMail extends Mailable
             ->with(
                 [
                     'nama' => $this->nama,
-                    'nama_event' => $this->event_name
+                    'nama_event' => $this->event_name,
+                    'id_detail' => $this->id_detail
                 ]
             );
     }

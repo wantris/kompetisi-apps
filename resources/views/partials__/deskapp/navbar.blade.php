@@ -95,12 +95,21 @@
                 <a class="dropdown-toggle" style="margin-top: 13px" href="#" role="button" data-toggle="dropdown">
                     <span class="user-name"><i class="icon-copy dw dw-user" style="font-size: 21px"></i></span>
                 </a>
-                <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                    <a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i>Profil</a>
-                    <a class="dropdown-item" href="{{route('ormawa.settings.changepassword')}}"><i
-                            class="dw dw-settings2"></i>Ganti Password</a>
-                    <a class="dropdown-item" href="{{route('ormawa.logout')}}"><i class="dw dw-logout"></i> Log Out</a>
-                </div>
+                @if (Session::get('id_pengguna'))
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                        <a class="dropdown-item" href="{{route('peserta.account.index')}}"><i class="dw dw-user1"></i>Profil</a>
+                        <a class="dropdown-item" href="{{route('ormawa.settings.changepassword')}}"><i
+                                class="dw dw-settings2"></i>Ganti Password</a>
+                        <a class="dropdown-item" href="{{route('peserta.logout')}}"><i class="dw dw-logout"></i> Log Out</a>
+                    </div>
+                @else
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                        <a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i>Profil</a>
+                        <a class="dropdown-item" href="{{route('ormawa.settings.changepassword')}}"><i
+                                class="dw dw-settings2"></i>Ganti Password</a>
+                        <a class="dropdown-item" href="{{route('ormawa.logout')}}"><i class="dw dw-logout"></i> Log Out</a>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

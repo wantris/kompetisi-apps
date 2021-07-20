@@ -42,27 +42,56 @@
                         </div>
                         <div class="tab-pane fade" id="contact5" role="tabpanel">
                             <div class="mt-4">
-                                <table class="data-table table stripe hover nowrap" style="width: 100%">
-                                    <thead>
-                                        <tr>
-                                            <th class="table-plus datatable-nosort">Nama</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($registrations as $item)
+                                @if ($event->role == "Individu")
+                                    <table class="data-table table stripe hover nowrap" style="width: 100%">
+                                        <thead>
                                             <tr>
-                                                @if ($item->nim)
-                                                    <td class="table-plus">{{$item->nama_mhs}}</td>
-                                                    <td>Mahasiswa Polindra</td>
-                                                @else
-                                                    <td class="table-plus">{{$item->participantRef->nama_participant}}</td>
-                                                    <td>Partisipan Eksternal</td>
-                                                @endif
+                                                <th class="table-plus datatable-nosort">Nama</th>
+                                                <th>Status</th>
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($registrations as $item)
+                                                <tr>
+                                                    @if ($item->nim)
+                                                        <td class="table-plus">{{$item->nama_mhs}}</td>
+                                                        <td>Mahasiswa Polindra</td>
+                                                    @else
+                                                        <td class="table-plus">{{$item->participantRef->nama_participant}}</td>
+                                                        <td>Partisipan Eksternal</td>
+                                                    @endif
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @else
+                                    <table class="data-table table stripe hover nowrap" style="width: 100%">
+                                        <thead>
+                                            <tr>
+                                                <th class="table-plus datatable-nosort">ID Tim</th>
+                                                <th>Ketua Tim</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($registrations as $item)
+                                                <tr>
+                                                    <td>{{$item->tim_event_id}}</td>
+                                                    <td>
+                                                        @foreach ($item->timRef->timDetailRef as $detail)
+                                                            @if ($detail->role == "ketua")
+                                                                @if ($detail->nim)
+                                                                    {{$detail->nama_mhs}}
+                                                                @else
+                                                                    {{$detail->participantRef->nama_participant}}
+                                                                @endif
+                                                            @endif
+                                                        @endforeach
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @endif
                             </div>
                         </div>
                     </div>

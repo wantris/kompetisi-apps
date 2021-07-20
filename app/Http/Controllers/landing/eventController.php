@@ -41,17 +41,36 @@ class eventController extends Controller
         $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
         $check_regis = null;
         if ($event) {
+            $id_eventinternal = $event->id_event_internal;
+
             // Check apakah user yg login sudah mendaftar event
             if (Session::get('id_pengguna') != null) {
                 $pengguna = Pengguna::find(Session::get('id_pengguna'));
-                if ($pengguna->is_mahasiswa) {
-                    $check_regis = EventInternalRegistration::where('nim', $pengguna->nim)->first();
-                } else {
-                    $check_regis = EventInternalRegistration::where('participant_id', $pengguna->participant_id)->first();
-                }
-            }
 
-            $id_eventinternal = $event->id_event_internal;
+                if ($event->role == "Individu") {
+                    if ($pengguna->is_mahasiswa) {
+                        $check_regis = EventInternalRegistration::where('nim', $pengguna->nim)
+                            ->where('event_internal_id', $event->id_event_internal)->first();
+                    } else {
+                        $check_regis = EventInternalRegistration::where('participant_id', $pengguna->participant_id)
+                            ->where('event_internal_id', $event->id_event_internal)->first();
+                    }
+                }
+
+                if ($event->role == "Team") {
+                    $check_regis = TimEvent::whereHas('eventInternalRegisRef', function ($query) use ($id_eventinternal) {
+                        $query->where('event_internal_id', $id_eventinternal);
+                    })->whereHas('timDetailRef', function ($query) use ($pengguna) {
+                        if ($pengguna->is_mahasiswa) {
+                            $query->where('nim', $pengguna->nim);
+                        } else {
+                            $query->where('participant_id', $pengguna->participant_id);
+                        }
+                    })->first();
+                }
+
+                // dd($check_regis);
+            }
 
             // Mengambil dokumen pendaftaran
             $feis = FileEventInternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventinternal) {
@@ -137,12 +156,7 @@ class eventController extends Controller
             $item->nama_mhs = null;
             if ($item->nim) {
                 try {
-                    $client = new Client();
-                    $url = env("SOURCE_API") . "mahasiswa/detail/" . $item->nim;
-                    $rMhs = $client->request('GET', $url, [
-                        'verify'  => false,
-                    ]);
-                    $mhs = json_decode($rMhs->getBody());
+                    $mhs = $this->getMahasiswaByNim($item->nim);
 
                     $item->nama_mhs = $mhs->nama;
                 } catch (\Throwable $err) {
@@ -158,12 +172,7 @@ class eventController extends Controller
 
         if ($user_logged->nim) {
             try {
-                $client = new Client();
-                $url = env("SOURCE_API") . "mahasiswa/detail/" . $user_logged->nim;
-                $rMhs = $client->request('GET', $url, [
-                    'verify'  => false,
-                ]);
-                $mhs = json_decode($rMhs->getBody());
+                $mhs = $this->getMahasiswaByNim($user_logged->nim);
 
                 $user_logged->nama_mhs = $mhs->nama;
             } catch (\Throwable $err) {
@@ -186,6 +195,7 @@ class eventController extends Controller
 
             // registrasi event
             $is_win = array('is_win' => '0', 'position' => null);
+
             $eir = new EventInternalRegistration();
             $eir->event_internal_id = $event->id_event_internal;
             $eir->tim_event_id = $tim->id_tim_event;
@@ -202,53 +212,99 @@ class eventController extends Controller
                 $ted->participant_id = $pengguna->participant_id;
             }
             $ted->role = "ketua";
+            $ted->status = "Done";
             $ted->save();
 
             // Anggota
             foreach ($request->anggota as $key => $item) {
-                $pengguna = Pengguna::find($item);
+                $anggota = Pengguna::find($item);
+
+                // insert to temporary team detail
+                $ted = new TimEventDetail();
+                $ted->tim_event_id = $tim->id_tim_event;
+                if ($anggota->is_mahasiswa) {
+                    $ted->nim = $anggota->nim;
+                } else {
+                    $ted->participant_id = $anggota->participant_id;
+                }
+                $ted->role = "anggota";
+                $ted->status = "Pending";
+                $ted->save();
 
                 // send email
                 try {
                     if ($pengguna->is_mahasiswa) {
-                        $client = new Client();
-                        $url = env("SOURCE_API") . "mahasiswa/detail/" . $pengguna->nim;
-                        $rMhs = $client->request('GET', $url, [
-                            'verify'  => false,
-                        ]);
-                        $mhs = json_decode($rMhs->getBody());
-                        Mail::to($pengguna->email)->send(new invitationTeamMail($mhs->nama, $removeSlug));
+                        $nama = $this->getMahasiswaByNim($pengguna->nim)->nama;
                     } else {
                         $nama = $pengguna->participantRef->nama_participant;
-                        Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $removeSlug));
                     }
+                    Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $removeSlug, $ted->id_tim_event_detail));
                 } catch (\Throwable $err) {
                 }
-
-                // insert to temporary team detail
-                $ted = new TmpTimEventDetail();
-                $ted->tim_event_id = $tim->id_tim_event;
-                if ($pengguna->is_mahasiswa) {
-                    $ted->nim = $pengguna->nim;
-                } else {
-                    $ted->participant_id = $pengguna->participant_id;
-                }
-                $ted->role = "anggota_" . ($key + 1);
-                $ted->save();
             }
 
-            return "berhasil";
+            return redirect()->route('peserta.team.index')->with('success', 'Pendaftaran event berhasil');
         }
     }
 
-    // public function sendMail()
-    // {
-    //     $nama = "Wildan Fuady";
-    //     $email = "nadiwacik1@gmail.com";
-    //     $kirim = Mail::to($email)->send(new invitationTeamMail($nama));
+    // look invitation from someone
+    public function lookInvitation($id_detail)
+    {
+        if (!Session::get('id_pengguna')) {
+            return view('landing.login', compact('id_detail'));
+        }
 
-    //     // if ($kirim) {
-    //     //     echo "Email telah dikirim";
-    //     // }
-    // }
+        $to_invite = TimEventDetail::find($id_detail);
+        if ($to_invite) {
+            $from_invite = TimEventDetail::with('participantRef', 'penggunaMhsRef', 'penggunaParticipantRef')->where('tim_event_id', $to_invite->tim_event_id)->where('role', 'ketua')->first();
+            if ($from_invite->penggunaMhsRef) {
+                $from_invite->penggunaMhsRef->nama_mhs = $from_invite->penggunaMhsRef->nim;
+                try {
+                    $mhs = $this->getMahasiswaByNim($from_invite->penggunaMhsRef->nim);
+                    $from_invite->penggunaMhsRef->nama_mhs = $mhs->nama;
+                } catch (\Throwable $err) {
+                }
+            }
+        }
+
+        return view('landing.event.invitation_team', compact('id_detail', 'to_invite', 'from_invite'));
+    }
+
+
+    public function searchPengguna($id)
+    {
+        // Cari pengguna yang tidak ada dalam tim detail dan yang tidak terdaftar pada tim $id
+        $invites = Pengguna::with('participantRef')->where('id_pengguna', '!=', Session::get('id_pengguna'))
+            ->where(function ($query) {
+                $query->where('is_mahasiswa', 1);
+                $query->orWhere('is_participant', 1);
+            })->get();
+
+        // get name mahasiswa from api
+        foreach ($invites as $item2) {
+            $item2->nama_mhs = null;
+            if ($item2->nim) {
+                try {
+                    // Get nama mahasiswa
+                    $item2->nama_mhs = $this->getMahasiswaByNim($item2->nim)->nama;
+                } catch (\Throwable $err) {
+                }
+            }
+        }
+
+        return response()->json($invites);
+    }
+
+
+    public function getMahasiswaByNim($nim)
+    {
+        $client = new Client();
+        $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
+        $rMhs = $client->request('GET', $url, [
+            'verify'  => false,
+        ]);
+        $mhs = json_decode($rMhs->getBody());
+
+        return $mhs;
+    }
 }

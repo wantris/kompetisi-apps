@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class TimEventDetail extends Model
 {
+    protected $primaryKey = "id_tim_event_detail";
+
+    public function timEventRef()
+    {
+        return $this->belongsTo(TimEvent::class, 'tim_event_id', 'id_tim_event');
+    }
+
     public function participantRef()
     {
         return $this->belongsTo(Participant::class, 'participant_id', 'id_participant');

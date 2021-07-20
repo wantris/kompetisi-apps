@@ -230,7 +230,7 @@
                                                 @method('patch')
                                                 <div class="form-group">
                                                     <label>Nama Lengkap</label>
-                                                    @if (Session::get('is_maahsiswa') == "1")
+                                                    @if (Session::get('is_mahasiswa') == "1")
                                                         <input class="form-control form-control-lg" value="{{$pengguna->nama_mhs}}" disabled type="text">
                                                     @else
                                                         <input class="form-control form-control-lg" name="nama" value="{{$pengguna->participantRef->nama_participant}}" type="text">
@@ -325,11 +325,7 @@
 @endsection
 
 @push('script')
-<script src="{{url('assets/deskapp/vendors/scripts/core.js')}}"></script>
-<script src="{{url('assets/deskapp/vendors/scripts/script.min.js')}}"></script>
-<script src="{{url('assets/deskapp/vendors/scripts/process.js')}}"></script>
-<script src="{{url('assets/deskapp/vendors/scripts/layout-settings.js')}}"></script>
-<script src="{{url('assets/deskapp/src/plugins/cropperjs/dist/cropper.js')}}"></script>
+
 <script>
     const uploadPhoto = () => {
         event.preventDefault();

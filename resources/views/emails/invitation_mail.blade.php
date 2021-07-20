@@ -39,11 +39,12 @@ font-size: 16px !important;
 font-weight: 700;
 line-height: 24px;
 text-align: center;
+text-decoration: none !important;
 text-transform: unset !important;
 transition: all 0.15s ease-in-out;
-background-color: #010b1d;
-border-color: #010b1d;
-color: #fff;
+background-color: #1261e9;
+border-color: #1261e9;
+color: #fff !important;
 }
 a[x-apple-data-detectors] {
 color: inherit !important;
@@ -104,7 +105,7 @@ padding:null!important;
 <td class="wrapper-cell" style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;border-radius:3px;overflow:hidden;padding:18px 25px;border:1px solid #ededed" bgcolor="#fff" align="left">
 <table class="content" style="width:100%;border-collapse:separate;border-spacing:0" cellspacing="0" cellpadding="0" border="0">
 <tr>
-<td class="text-content" style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;color:#333;font-size:15px;font-weight:400;line-height:1.4;padding:15px 5px" align="center"><p> Kamu telah diundang oleh <a target="_blank" rel="noopener noreferrer" class="highlight" href="https://gitlab.com/adesherina/proyek-bkk" style="color:#3777b0;text-decoration:none;font-weight:500">{{ $nama }}</a> untuk mengikuti kompetisi <a target="_blank" rel="noopener noreferrer" class="highlight" href="https://gitlab.com/adesherina/proyek-bkk" style="color:#3777b0;text-decoration:none;font-weight:500">{{$nama_event}}</a></p><p> Apabila kamu tertarik, klik dibawah ini </p><p><a class="join-btn" href="">Terima</a></p><p> Jika kamu tidak tertarik, kamu bisa <a href="https://gitlab.com/adesherina/proyek-bkk?leave=1" target="_blank" rel="noopener noreferrer" style="color:#3777b0;text-decoration:none">menolaknya</a>. </p></td>
+<td class="text-content" style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;color:#333;font-size:15px;font-weight:400;line-height:1.4;padding:15px 5px" align="center"><p> Kamu telah diundang oleh <a target="_blank" rel="noopener noreferrer" class="highlight" href="https://gitlab.com/adesherina/proyek-bkk" style="color:#3777b0;text-decoration:none;font-weight:500">{{ $nama }}</a> untuk mengikuti kompetisi <a target="_blank" rel="noopener noreferrer" class="highlight" href="https://gitlab.com/adesherina/proyek-bkk" style="color:#3777b0;text-decoration:none;font-weight:500">{{$nama_event}}</a></p><p> Apabila kamu tertarik, klik dibawah ini </p><p><a class="join-btn" href="{{route('event.invitation.look', $id_detail)}}">Lihat</a></p><p> Jika kamu tidak tertarik, kamu bisa <a href="https://gitlab.com/adesherina/proyek-bkk?leave=1" target="_blank" rel="noopener noreferrer" style="color:#3777b0;text-decoration:none">menolaknya</a>. </p></td>
 </tr>
 </table></td>
 </tr>

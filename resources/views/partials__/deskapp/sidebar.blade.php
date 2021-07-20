@@ -14,7 +14,7 @@
         <div class="sidebar-menu">
             <ul id="accordion-menu">
                 <li>
-                    <a href="javascript:;" class="dropdown-toggle no-arrow">
+                    <a href="{{route('peserta.index')}}" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-house-1"></span><span class="mtext">Home</span>
                     </a>
                 </li>
@@ -24,17 +24,12 @@
                     </a>
                     <ul class="submenu">
                         <li><a href="{{route('peserta.eventinternal.index')}}">Event Internal</a></li>
-                        <li><a href="{{route('ormawa.eventeksternal.index')}}">Event Eksternal</a></li>
+                        <li><a href="{{route('peserta.eventeksternal.index')}}">Event Eksternal</a></li>
                     </ul>
                 </li>
                 <li>
                     <a href="{{route('peserta.team.index')}}" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-group"></span><span class="mtext">Tim Saya</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{route('peserta.account.index')}}" class="dropdown-toggle no-arrow">
-                        <span class="micon dw dw-settings2"></span><span class="mtext">Profil Saya</span>
                     </a>
                 </li>
             </ul>

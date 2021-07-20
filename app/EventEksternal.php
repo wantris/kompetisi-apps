@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class EventEksternal extends Model
 {
@@ -11,6 +12,11 @@ class EventEksternal extends Model
     protected $casts = [
         'created_at' => 'date:Y-m-d',
     ];
+
+    public function getDeskripsiExcerptAttribute()
+    {
+        return Str::words($this->deskripsi, '15');
+    }
 
     public function cakupanOrmawaRef()
     {
