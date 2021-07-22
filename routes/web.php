@@ -88,6 +88,7 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
 
         Route::group(['prefix' => 'detail'], function () {
             Route::get('/{slug}', 'eventInternalController@detail')->name('peserta.eventinternal.detail');
+
             Route::get('/submission/{slug}/all', 'eventInternalController@submission')->name('peserta.event.submission');
             Route::get('/submission/{slug}/info', 'eventInternalController@info')->name('peserta.event.submission.info');
 
@@ -102,15 +103,16 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
 
         // Route::post('/filter/active', 'eventEksternalController@filterEventAktif')->name('peserta.eventeksternal.filterkategori.aktif');
 
-        // Route::group(['prefix' => 'detail'], function () {
-        //     Route::get('/{slug}', 'eventEksternalController@detail')->name('peserta.eventeksternal.detail');
-        //     Route::get('/submission/{slug}/all', 'eventEksternalController@submission')->name('peserta.event.submission');
-        //     Route::get('/submission/{slug}/info', 'eventEksternalController@info')->name('peserta.event.submission.info');
+        Route::group(['prefix' => 'detail'], function () {
+            Route::get('/{slug}', 'eventEksternalController@detail')->name('peserta.eventeksternal.detail');
+            Route::post('/register/{slug}', 'eventEksternalController@register')->name('peserta.eventeksternal.register');
+            Route::get('/submission/{slug}/all', 'eventEksternalController@submission')->name('peserta.event.submission');
+            Route::get('/submission/{slug}/info', 'eventEksternalController@info')->name('peserta.event.submission.info');
 
-        //     Route::get('/notification/{slug}', 'eventEksternalController@notification')->name('peserta.eventeksternal.notification');
-        //     Route::get('/notification/detail/{slug}', 'eventEksternalController@detailNotification')->name('peserta.eventeksternal.notification.detail');
-        //     Route::get('/timeline/{slug}', 'eventEksternalController@timeline')->name('peserta.eventeksternal.timeline');
-        // });
+            Route::get('/notification/{slug}', 'eventEksternalController@notification')->name('peserta.eventeksternal.notification');
+            Route::get('/notification/detail/{slug}', 'eventEksternalController@detailNotification')->name('peserta.eventeksternal.notification.detail');
+            Route::get('/timeline/{slug}', 'eventEksternalController@timeline')->name('peserta.eventeksternal.timeline');
+        });
     });
 
     Route::group(['prefix' => 'account'], function () {

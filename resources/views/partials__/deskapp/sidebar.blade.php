@@ -1,4 +1,4 @@
-@if (Session::get('id_pengguna') != null && Request()->route()->getPrefix() != "peserta/eventinternal/detail")
+@if (Session::get('id_pengguna') != null && Request()->route()->getPrefix() != "peserta/eventinternal/detail" && Request()->route()->getPrefix() != "peserta/eventeksternal/detail")
 
 <div class="left-side-bar">
     <div class="brand-logo">
@@ -78,6 +78,50 @@
     </div>
 </div>
 <div class="mobile-menu-overlay"></div>
+
+@elseif(Request()->route()->getPrefix() == "peserta/eventeksternal/detail")
+
+<div class="left-side-bar">
+    <div class="brand-logo">
+        <a href="index.html" class="text-center">
+            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="dark-logo">
+            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="light-logo">
+        </a>
+        <div class="close-sidebar" data-toggle="left-sidebar-close">
+            <i class="ion-close-round"></i>
+        </div>
+    </div>
+    <div class="menu-block customscroll">
+        <div class="sidebar-menu">
+            <ul id="accordion-menu">
+                <li>
+                    <a href="{{route('peserta.eventeksternal.index')}}" class="dropdown-toggle no-arrow">
+                        <span class="micon dw dw-house-1"></span><span class="mtext">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{route('peserta.event.submission','Design-Competition')}}"
+                        class="dropdown-toggle no-arrow">
+                        <span class="micon dw dw-startup"></span><span class="mtext">Submission</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{route('peserta.eventeksternal.notification', $slug)}}"
+                        class="dropdown-toggle no-arrow">
+                        <span class="micon dw dw-speaker-1"></span><span class="mtext">Pengumuman</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{route('peserta.eventeksternal.timeline',$slug)}}" class="dropdown-toggle no-arrow">
+                        <span class="micon dw dw-calendar-7"></span><span class="mtext">Timeline</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="mobile-menu-overlay"></div>
+
 
 {{-- Ormawa sidebar --}}
 @elseif(Session::get('is_ormawa') == 1)

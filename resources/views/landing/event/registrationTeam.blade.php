@@ -111,7 +111,7 @@
                         <div class="col-12">
                             <label for="" class="registration-komp-label">Anggota ${id}</label>
                             <a href="#" id="remove-button" class="btn-add-person float-right" style="padding: 4px 4px; background-color:red !important; border-color:red"><i class="fas fa-trash"></i></a>
-                            <select name="anggota_${id}" id="select_anggota_${id}" name="anggota[]" class="select-single" style="width: 100%">
+                            <select id="select_anggota_${id}" name="anggota[]" class="select-single" style="width: 100%">
                                 <option selected>Pilih Anggota</option>
                    
                             </select>
