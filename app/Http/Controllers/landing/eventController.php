@@ -125,6 +125,7 @@ class eventController extends Controller
                     break;
 
                 default:
+                    $is_win = array('is_win' => '0', 'position' => null);
                     $regis = new EventInternalRegistration();
                     $regis->event_internal_id = $event->id_event_internal;
                     if (Session::get('is_mahasiswa') == "1") {
@@ -134,10 +135,11 @@ class eventController extends Controller
                         $regis->nim = null;
                         $regis->participant_id = $penggunaRef;
                     }
-                    $regis->is_win = "{}";
+                    $regis->is_win = json_encode($is_win);
+                    $regis->status = 0;
                     $regis->save();
 
-                    return redirect()->route('peserta.eventeventinternal.index');
+                    return redirect()->route('peserta.eventinternal.index');
                     break;
             }
         } else {
@@ -189,6 +191,7 @@ class eventController extends Controller
         $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
 
         $tim = new TimEvent();
+        $tim->status = 0;
         $tim->save();
 
         if ($tim) {
@@ -200,6 +203,7 @@ class eventController extends Controller
             $eir->event_internal_id = $event->id_event_internal;
             $eir->tim_event_id = $tim->id_tim_event;
             $eir->is_win = json_encode($is_win);
+            $eir->status = 0;
             $eir->save();
 
             // Ketua

@@ -24,7 +24,9 @@
                     </a>
                     <ul class="submenu">
                         <li><a href="{{route('peserta.eventinternal.index')}}">Event Internal</a></li>
-                        <li><a href="{{route('peserta.eventeksternal.index')}}">Event Eksternal</a></li>
+                        @if (Session::get('is_mahasiswa') == 1)
+                            <li><a href="{{route('peserta.eventeksternal.index')}}">Event Eksternal</a></li>
+                        @endif
                     </ul>
                 </li>
                 <li>
@@ -153,6 +155,15 @@
                         <li><a href="{{route('ormawa.eventeksternal.index')}}">Event Eksternal</a></li>
                     </ul>
                 </li>
+                <li class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle">
+                        <span class="micon dw dw-notebook"></span><span class="mtext"> Pendaftaran </span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="{{route('ormawa.eventinternal.index')}}">Event Internal</a></li>
+                        <li><a href="{{route('ormawa.eventeksternal.index')}}">Event Eksternal</a></li>
+                    </ul>
+                </li>
                 @if (Session::get('is_dosen') == "0")
                 <li>
                     <a href="{{route('ormawa.timeline.index')}}" class="dropdown-toggle no-arrow">
@@ -165,6 +176,7 @@
                     </a>
                 </li>
                 @endif
+                
                 <li>
                     <a href="{{route('peserta.team.index')}}" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-group"></span><span class="mtext">Tim</span>

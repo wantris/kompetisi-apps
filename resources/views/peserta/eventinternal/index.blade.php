@@ -20,11 +20,10 @@
 
 <div class="row mt-2">
     <div class="col-lg-12 col-md-12 col-sm-12">
-        <div class="">
             <div class="tab">
                 <ul class="nav nav-tabs customtab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active  pb-2" data-toggle="tab" href="#home2" role="tab" aria-selected="true">Event Aktif</a>
+                        <a class="nav-link active  pb-2" data-toggle="tab" href="#event-aktif-tab" role="tab" aria-selected="true">Event Aktif</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link pb-2" data-toggle="tab" href="#profile2" role="tab" aria-selected="false">Event Favorit</a>
@@ -33,6 +32,8 @@
                         <a class="nav-link pb-2" data-toggle="tab" href="#contact2" role="tab" aria-selected="false">Event Lalu</a>
                     </li>
                 </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade active show" id="event-aktif-tab" role="tabpanel">
                         <div class="pd-20">
                             <div class="row mt-3">
                                 <div class="col-lg-3 col-md-6 col-12">
@@ -56,22 +57,45 @@
                                 @if ($active_regis->count() > 0)
                                     @foreach ($active_regis as $active)
                                         <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
-                                            <div class="card card-box" style="outline: none !important; border:none !important">
-                                                <div class='star-div'><i class="icon-copy fa fa-star text-orange fa-lg float-right mr-2 mt-2" aria-hidden="true"></i></div>
-                                                <img class="card-img-top" src="{{url('assets/img/kompetisi-thumb/'.$active->eventInternalRef->poster_image)}}" alt="Card image cap">
-                                                <div class="card-body">
+                                        <div class="komp-card2 mx-auto">
+                                            <div class="komp-thumbnail" data-background="{{asset('assets/img/kompetisi-thumb/'.$active->eventInternalRef->poster_image)}}">
+                                            </div>
+                                            <div class="komp-banner">
+                                                <div class="komp-banner__date text-left pl-2 pt-1" >  
                                                     @php
-                                                        $deskripsi = Illuminate\Support\Str::limit($active->eventInternalRef->deskripsi, 100, $end='.......');
-                                                        $slug = \Str::slug($active->eventInternalRef->nama_event);
+                                                        $tgl_buka = Carbon\Carbon::parse($active->eventInternalRef->tgl_buka)->toDatetime()->format('M, d Y');
                                                     @endphp
-                                                    <h5 class="card-title weight-500"><a href="{{route('peserta.eventinternal.detail', $slug)}}">{{$active->eventInternalRef->nama_event}}</a></h5>
-                                                    <div class="text-secondary">
-                                                        {!!$deskripsi!!}
-                                                    </div>
-                                                    <p class="card-text"><small class="text-muted"  style="color: #ed8512 !important"><i class="icon-copy dw dw-checked text-orange mr-1" aria-hidden="true"></i> Terdaftar {{$active->created_at->diffForHumans()}}</small></p>
+                                                    {{$tgl_buka}}
+                                                </div>
+                                                <div class="komp-banner__date text-right pr-2 pt-1" data-toggle="tooltip" data-placement="top" title="{{$active->eventInternalRef->ormawaRef->nama_ormawa}}">
+                                                    @php
+                                                        $count = str_word_count($active->eventInternalRef->ormawaRef->nama_ormawa);
+                                                        $nama_ormawa = $active->eventInternalRef->ormawaRef->nama_ormawa;
+                                                        if($count > 3){
+                                                            $nama_ormawa = $active->eventInternalRef->ormawaRef->nama_akronim;
+                                                        }
+                                                    @endphp
+                                                    {{$nama_ormawa}}
                                                 </div>
                                             </div>
+                                            <div class="komp-title pl-3">
+                                                @php
+                                                    $slug = \Str::slug($active->eventInternalRef->nama_event);
+                                                @endphp
+                                                <a href="{{route('peserta.eventinternal.detail', $slug)}}"><h1 class="mt-3">
+                                                    {{$active->eventInternalRef->nama_event}} 
+                                                </h1></a>
+                                            </div>
+                                            <div class="komp-description pl-3 pr-3 mt-2">
+                                                {!!$active->eventInternalRef->deskripsi_excerpt!!}
+                                            </div>
+                                            <div class="komp-created pl-3 pr-3 mt-3">
+                                                <p class="text-secondary d-inline">
+                                                    Terdaftar {{$active->created_at->isoFormat('MMM, d Y')}}
+                                                </p>
+                                            </div>
                                         </div>
+                                    </div>
                                     @endforeach
                                 @endif
                             </div>
@@ -176,7 +200,7 @@
                                     @endforeach
                                 @endif
                             </div>
-                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -188,6 +212,10 @@
 
 @push('script')
     <script>
+         $("[data-background]").each(function () {
+            $(this).css("background-image", "url(" + $(this).attr("data-background") + ")")
+        });
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

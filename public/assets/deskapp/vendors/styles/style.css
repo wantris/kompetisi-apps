@@ -42,15 +42,237 @@ body {
     background: #fff !important;
 }
 
+.komp-card2 {
+    width: 100%;
+    max-width: 345px;
+    height: 420px;
+
+    background: #ffffff;
+    box-shadow: 0 6px 20px rgb(17 26 104 / 15%);
+    border-radius: 30px;
+}
+
+.komp-thumbnail {
+    width: 100%;
+    max-width: 345px;
+    height: 244px;
+
+    border-radius: 30px 30px 0px 0px;
+    background-size: cover;
+    overflow: hidden;
+    position: relative;
+}
+
+.komp-banner {
+    width: 100%;
+    max-width: 345px;
+    height: 24px;
+
+    background: #007aff;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.komp-banner__date {
+    max-height: 24px;
+    font-family: Nunito Sans;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    max-height: 24px;
+
+    color: #ffffff;
+}
+
+.komp-title h1 {
+    font-family: "Nunito Sans";
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+
+    /* identical to box height */
+
+    color: #3a4166;
+}
+
+.komp-description p {
+    font-family: "Nunito Sans";
+    font-style: normal;
+    font-size: 13px;
+    line-height: 18px;
+
+    color: rgba(0, 0, 0, 0.63);
+}
+
+.komp-created i {
+    font-size: 11px;
+
+    color: rgba(0, 0, 0, 0.63);
+}
+
+.komp-created p {
+    font-family: "Nunito Sans";
+    font-style: normal;
+    font-size: 11px;
+
+    color: rgba(0, 0, 0, 0.63);
+}
+
+.like-btn {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    right: 40px;
+    background-color: #126afe;
+    color: #fff;
+    border-radius: 50px;
+    font-size: 20px;
+    text-align: center;
+    text-decoration: none;
+    box-shadow: 2px 2px 3px #999;
+}
+
+.like-btn:hover {
+    color: #fff;
+}
+
+.my-like-btn {
+    margin-top: 22px;
+}
+
+.banner-event {
+    /* Background image is centered vertically and horizontally at all times */
+    background-position: center center;
+
+    /* Background image doesn’t tile */
+    background-repeat: no-repeat;
+
+    /* This is what makes the background image rescale based
+        on the container’s size */
+    background-size: cover;
+
+    width: 100%;
+    height: 300px;
+}
+
+.user-profile-picture {
+    height: 200px;
+    width: 200px;
+    background: #fff;
+}
+.minus-top {
+    position: absolute;
+    top: -40px;
+}
+.wrapper-kelas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.shadow {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+.rounded {
+    border-radius: 0.25rem !important;
+}
+.event-description-detail p {
+    font-size: 14px;
+}
+
+@media (max-width: 991.98px) {
+    .wrapper-kelas-sm {
+        height: 180px !important;
+        width: 180px !important;
+        margin: 0 auto 30px auto;
+    }
+    .wrapper-kelas-sm.minus-top {
+        position: unset;
+        margin: -80px auto 0 auto;
+    }
+}
+
+@media (min-width: 991.98px) {
+    .event-description-detail {
+        padding-left: 80px;
+    }
+}
+
+.separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.separator::before,
+.separator::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #f5a461;
+}
+
+.separator:not(:empty)::before {
+    margin-right: 0.25em;
+}
+
+.separator:not(:empty)::after {
+    margin-left: 0.25em;
+}
+
+div.scrollmenu {
+    border-radius: 10px;
+    background-color: #0079ff;
+    overflow: auto;
+    white-space: nowrap;
+}
+
+div.scrollmenu a {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 25px;
+    background-color: #0079ff;
+    text-decoration: none;
+}
+
+div.scrollmenu a:hover {
+    background-color: #f5a461;
+}
+
+div.scrollmenu::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+div.scrollmenu {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
 .bg-primary {
     background-color: #126afe !important;
 }
 
-.alert-success {
+.alert-primary {
     font-size: 14px !important;
     color: #126afe;
     background-color: #f1f6ff !important;
     border-color: #126afe !important;
+}
+
+.alert-danger {
+    font-size: 14px !important;
+    color: #ee1e4b;
+    background-color: #fff1f4 !important;
+    border-color: #ee1e4b !important;
+}
+
+.alert-success {
+    font-size: 14px !important;
+    color: #1cb858;
+    background-color: #e0f0e6 !important;
+    border-color: #1cb858 !important;
 }
 
 /* Custom */

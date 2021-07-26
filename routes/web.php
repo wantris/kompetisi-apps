@@ -88,6 +88,7 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
 
         Route::group(['prefix' => 'detail'], function () {
             Route::get('/{slug}', 'eventInternalController@detail')->name('peserta.eventinternal.detail');
+             Route::post('/uploadfile/{id_regis}', 'eventInternalController@uploadFile')->name('peserta.eventinternal.detail.upload');
 
             Route::get('/submission/{slug}/all', 'eventInternalController@submission')->name('peserta.event.submission');
             Route::get('/submission/{slug}/info', 'eventInternalController@info')->name('peserta.event.submission.info');
@@ -105,6 +106,7 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
 
         Route::group(['prefix' => 'detail'], function () {
             Route::get('/{slug}', 'eventEksternalController@detail')->name('peserta.eventeksternal.detail');
+            Route::post('/uploadfile/{id_regis}', 'eventEksternalController@uploadFile')->name('peserta.eventeksternal.detail.upload');
             Route::post('/register/{slug}', 'eventEksternalController@register')->name('peserta.eventeksternal.register');
             Route::get('/submission/{slug}/all', 'eventEksternalController@submission')->name('peserta.event.submission');
             Route::get('/submission/{slug}/info', 'eventEksternalController@info')->name('peserta.event.submission.info');
@@ -127,6 +129,7 @@ Route::group(['prefix' => 'peserta', 'namespace' => 'peserta'], function () {
         Route::get('/', 'TeamController@index')->name('peserta.team.index');
         Route::get('/detail/{id}', 'TeamController@detail')->name('peserta.team.detail');
         Route::get('/users/search/{id}', 'TeamController@searchPengguna')->name('peserta.team.detail.search');
+        Route::patch('/users/ajukanpembimbing/{id}', 'TeamController@ajukanPembimbing')->name('peserta.team.detail.ajukanpembimbing');
         Route::post('/users/invite/{id}', 'TeamController@invitePengguna')->name('peserta.team.detail.invite');
         Route::patch('/users/invite/accept/{id}', 'TeamController@acceptInvitation')->name('peserta.team.detail.invite.accept');
         Route::delete('/users/invite/denied/{id}', 'TeamController@deniedInvitation')->name('peserta.team.detail.invite.denied');
@@ -155,8 +158,8 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
         Route::delete('/delete/{id_eventinternal}', 'EventInternalController@delete')->name('ormawa.eventinternal.delete');
 
         // ADDITIONAL CRUD
-        Route::get('/pendaftar/{id_eventinternal}', 'EventInternalController@lihatPendaftar')->name('ormawa.eventinternal.pendaftar');
-        Route::get('detail/{event}/peserta', 'EventInternalController@listPeserta')->name('ormawa.eventinternal.peserta');
+        Route::get('/pendaftar/{id_eventinternal}', 'EventInternalController@lihatPendaftar')->name('ormawa.eventinternal.pendaftar');        
+        // Route::get('detail/{event}/peserta', 'EventInternalController@listPeserta')->name('ormawa.eventinternal.peserta');
         Route::get('/publik/{id_eventinternal}', 'EventInternalController@lihatPublik')->name('ormawa.eventinternal.publik');
         Route::patch('/status', 'EventInternalController@updateStatus')->name('ormawa.eventinternal.statusupdate');
 
@@ -167,6 +170,12 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
 
         // validate pembina
         Route::patch('/vallidasipembina', 'EventInternalController@updateValidasiPembina')->name('ormawa.eventinternal.validasi.pembina');
+
+        // Registrasi
+        Route::get('/pendaftar/downloadberkas/{id_regis}', 'EventInternalController@downloadBerkas')->name('ormawa.eventinternal.pendaftar.downloadberkas');
+        Route::get('/pendaftar/validasiregis/{id_regis}/{status}', 'EventInternalController@updateStatusRegis')->name('ormawa.eventinternal.pendaftar.updatestatus');
+        Route::get('/pendaftar/validasisemua/{id_event}', 'EventInternalController@validasiSemua')->name('ormawa.eventinternal.pendaftar.validasisemua');
+        Route::delete('/pendaftar/delete/{id_regis}', 'EventInternalController@deletePendaftar')->name('ormawa.eventinternal.pendaftar.hapus');
     });
 
     Route::group(['prefix' => 'eventeksternal', 'middleware' => 'ormawa'], function () {
@@ -192,6 +201,18 @@ Route::group(['prefix' => 'ormawa', 'namespace' => 'ormawa'], function () {
 
         // validate pembina
         Route::patch('/vallidasipembina', 'EventEksternalController@updateValidasiPembina')->name('ormawa.eventeksternal.validasi.pembina');
+
+        // Registrasi
+        Route::get('/pendaftar/downloadberkas/{id_regis}', 'EventEksternalController@downloadBerkas')->name('ormawa.eventeksternal.pendaftar.downloadberkas');
+        Route::get('/pendaftar/validasiregis/{id_regis}/{status}', 'EventEksternalController@updateStatusRegis')->name('ormawa.eventeksternal.pendaftar.updatestatus');
+        Route::get('/pendaftar/validasisemua/{id_event}', 'EventEksternalController@validasiSemua')->name('ormawa.eventeksternal.pendaftar.validasisemua');
+        Route::delete('/pendaftar/delete/{id_regis}', 'EventEksternalController@deletePendaftar')->name('ormawa.eventeksternal.pendaftar.hapus');
+    });
+
+    Route::group(['prefix' => 'team', 'middleware' => 'ormawa'], function () {
+        Route::get('/detail/{id_tim}', 'TeamController@detail')->name('ormawa.team.detail');
+         Route::patch('/ajukanpembimbing/{id_tim}', 'TeamController@ajukanPembimbing')->name('ormawa.team.detail.ajukanpembimbing');
+
     });
 
     Route::group(['prefix' => 'eventeksternal', 'middleware' => 'ormawa'], function () {

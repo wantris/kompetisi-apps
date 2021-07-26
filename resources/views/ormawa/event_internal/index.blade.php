@@ -139,6 +139,7 @@
                                                     </a>
                                                     @php
                                                     $eiaJson = json_encode($eia);
+                                                    $slug = \Str::slug($eia->nama_event);
                                                     @endphp
                                                     <div
                                                         class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
@@ -159,7 +160,7 @@
                                                             href="#"><i class="dw dw-delete-3"></i> Delete</a>
                                                         @endif
                                                         <a class="dropdown-item"
-                                                            href="{{route('ormawa.eventinternal.peserta', 'Seminar-Teknologi')}}"><i
+                                                            href="{{route('ormawa.eventinternal.pendaftar', $eia->id_event_internal)}}"><i
                                                                 class="icon-copy dw dw-user-11"></i>Pendaftar</a>
 
                                                         @if (Session::get('is_pembina') == "1")
@@ -267,6 +268,7 @@
                                                     </a>
                                                     @php
                                                     $eiJson = json_encode($ei);
+                                                    $slug = \Str::slug($ei->nama_event);
                                                     @endphp
                                                     <div
                                                         class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
@@ -287,7 +289,7 @@
                                                             href="#"><i class="dw dw-delete-3"></i> Delete</a>
                                                         @endif
                                                         <a class="dropdown-item"
-                                                            href="{{route('ormawa.eventinternal.peserta', 'Seminar-Teknologi')}}"><i
+                                                            href="{{route('ormawa.eventinternal.pendaftar',  $ei->id_event_internal)}}"><i
                                                                 class="icon-copy dw dw-user-11"></i>Pendaftar</a>
 
                                                         @if (Session::get('is_pembina') == "1")
@@ -395,6 +397,7 @@
                                                     </a>
                                                     @php
                                                     $eisJson = json_encode($eis);
+                                                    $slug = \Str::slug($eis->nama_event);
                                                     @endphp
                                                     <div
                                                         class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
@@ -412,10 +415,10 @@
                                                             href="#"><i class="dw dw-checked"></i>Ubah Status</a>
                                                         @endif
                                                         <a class="dropdown-item" onclick="deleteEvent({{$eisJson}})"
-                                                            href="#"><i class="dw dw-delete-3"></i> Delete</a>
+                                                            href="#"><i class="dw dw-delete-3"></i> Hapus</a>
                                                         @endif
                                                         <a class="dropdown-item"
-                                                            href="{{route('ormawa.eventinternal.peserta', 'Seminar-Teknologi')}}"><i
+                                                            href="{{route('ormawa.eventinternal.pendaftar', $eis->id_event_internal)}}"><i
                                                                 class="icon-copy dw dw-user-11"></i>Pendaftar</a>
 
                                                         @if (Session::get('is_pembina') == "1")

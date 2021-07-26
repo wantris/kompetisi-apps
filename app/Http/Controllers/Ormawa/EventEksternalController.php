@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Ormawa;
 
 use App\Http\Controllers\Controller;
-use App\{CakupanOrmawa, EventEksternal, Ormawa, KategoriEvent, TipePeserta, EventEksternalDetail, FileEventEksternalDetail};
+use App\{CakupanOrmawa, EventEksternal, Ormawa, KategoriEvent, TipePeserta, EventEksternalDetail, FileEventEksternalDetail, EventEksternalRegistration, FileEventEksternalRegistration};
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\EventEksternalStoreRequest;
@@ -354,4 +355,153 @@ class EventEksternalController extends Controller
         }
     }
     //  ============================ END ADDITIONAL CRUD ===============================
+
+     public function lihatPendaftar($id_eventeksternal)
+    {
+        $ee = EventEksternal::find($id_eventeksternal);
+        $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Pendaftar ' . $ee->nama_event;
+        $pendaftaran = $this->getPendaftarById($ee);
+        $feeds = $this->getAllFilePendaftaran($ee->id_event_eksternal);
+
+        return view('ormawa.event_eksternal.list_peserta', compact('navTitle', 'navTitle', 'pendaftaran','ee','feeds'));
+    }
+
+    public function getPendaftarById($event){
+        $registrations = EventEksternalRegistration::with('timRef','fileEeRegisRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
+        if ($event->role != "Team") {
+                foreach ($registrations as $item) {
+                    $item->nama_mhs = null;
+                    if ($item->nim) {
+                        try {
+                            $mhs = $this->getMahasiswaByNim($item->nim);
+                            $item->nama_mhs = $mhs->nama;
+                        } catch (\Throwable $err) {
+                        }
+                    }
+                }
+            } else {
+                foreach ($registrations as $item) {
+                    foreach ($item->timRef->timDetailRef as $detail) {
+                        if ($detail->role == "ketua") {
+                            $detail->nama_mhs = null;
+                            if ($detail->nim) {
+                                try {
+                                    $mhs = $this->getMahasiswaByNim($detail->nim);
+                                    $detail->nama_mhs = $mhs->nama;
+                                } catch (\Throwable $err) {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $registrations;
+    }
+
+    public function getAllFilePendaftaran($id_eventeksternal)
+    {
+        $feeds = FileEventeksternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventeksternal) {
+            $q->where('event_eksternal_id', '=', $id_eventeksternal);
+        })->where('tipe', 'pendaftaran')->get();
+
+        return $feeds;
+    }
+
+    public function downloadBerkas($id_regis)
+    {
+        $regis = EventeksternalRegistration::with('fileEeRegisRef')->find($id_regis);
+
+        if($regis->fileEeRegisRef->count() > 0){
+            $file = FileEventeksternalRegistration::where('event_eksternal_regis_id', $regis->id_event_eksternal_registration)->latest('created_at')->first();
+            $file = public_path(). "/assets/file/berkas_pendaftaran_eksternal/".$file->filename;
+
+            return response()->download($file);
+        }
+    }
+
+    public function updateStatusRegis($id_regis, $status){
+        $regis = EventeksternalRegistration::find($id_regis);
+        $regis->status = $status;
+        $regis->save();
+
+        return redirect()->back()->with('success','Update status registrasi berhasil');
+    }
+
+    public function validasiSemua($id_eventeksternal){
+        $regis = EventeksternalRegistration::where('event_eksternal_id', $id_eventeksternal)->get();
+        if($regis->count() > 0){
+            foreach($regis as $item){
+                $update = EventeksternalRegistration::where('id_event_eksternal_registration', $item->id_event_eksternal_registration)->update([
+                    'status' => 1
+                ]);
+            }
+        }
+
+        return response()->json([
+            "status" => 1,
+            "message" => "Pendaftaran berhasil divalidasi semua",
+        ]);
+    }
+
+    public function deletePendaftar($id_regis)
+    {
+        EventeksternalRegistration::destroy($id_regis);
+
+        return response()->json([
+            "status" => 1,
+            "message" =>"Pendaftaran berhasil dihapus",
+        ]);
+    }
+
+     public function getMahasiswaByNim($nim)
+    {
+        $msh = null;
+
+        try{
+            $client = new Client();
+            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
+            $rMhs = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $mhs = json_decode($rMhs->getBody());
+
+        }catch(\Throwable $err){
+
+        }
+
+        return $mhs;
+    }
+
+        public function getAllDosen(){
+        $dosens = null;
+
+        try{
+            $client = new Client();
+            $url = env("SOURCE_API") . "dosen/";
+            $rDosens = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $dosens = json_decode($rDosens->getBody());
+        }catch(\Throwable $err){
+
+        }
+
+        return $dosens;
+    }
+
+    public function getDosenSingle($nidn)
+    {
+        try {
+            $client = new Client();
+            $url = env("SOURCE_API") . "dosen/" . $nidn;
+            $rDosen = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $dosen = json_decode($rDosen->getBody());
+
+            return $dosen->nama_dosen;
+        } catch (\Throwable $err) {
+        }
+    }
 }

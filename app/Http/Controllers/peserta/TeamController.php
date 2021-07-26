@@ -76,6 +76,9 @@ class TeamController extends Controller
         $tim = TimEvent::find($id);
         if ($tim) {
 
+            // Get all dosen
+            $dosens = $this->getAllDosen();
+
             // Get nama dosen
             if ($tim->nidn) {
                 $tim->nama_dosen = $tim->nidn;
@@ -123,7 +126,8 @@ class TeamController extends Controller
                 'navTitle',
                 'tim',
                 'check',
-                'invitationals'
+                'invitationals',
+                'dosens'
             ));
         }
 
@@ -159,6 +163,20 @@ class TeamController extends Controller
             "status" => 1,
             "message" => "Berhasil menolak undangan",
         ]);
+    }
+
+    public function ajukanPembimbing(Request $request, $id_tim){
+        $nidn = $request->nidn;
+        
+        try{
+            $pengajuan = TimEvent::where('id_tim_event', $id_tim)->update([
+                'nidn' => $nidn
+            ]);
+
+            return redirect()->back()->with('success','Pengajuan Berhasil');
+        }catch(\Throwable $err){
+            dd($err);
+        } 
     }
 
 
@@ -240,6 +258,23 @@ class TeamController extends Controller
             return $mhs->nama;
         } catch (\Throwable $err) {
         }
+    }
+
+    public function getAllDosen(){
+        $dosens = null;
+
+        try{
+            $client = new Client();
+            $url = env("SOURCE_API") . "dosen/";
+            $rDosens = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $dosens = json_decode($rDosens->getBody());
+        }catch(\Throwable $err){
+
+        }
+
+        return $dosens;
     }
 
     public function getDosenSingle($nidn)

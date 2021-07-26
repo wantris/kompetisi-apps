@@ -4,107 +4,7 @@
 
 @push('css')
 <style>
-    .like-btn{
-        position:fixed;
-        width:60px;
-        height:60px;
-        bottom:40px;
-        right:40px;
-        background-color:#126afe;
-        color:#FFF;
-        border-radius:50px;
-        font-size: 20px;
-        text-align:center;
-        text-decoration: none;
-        box-shadow: 2px 2px 3px #999;
-    }
-
-    .like-btn:hover{
-        color: #fff;
-    }
-
-    .my-like-btn{
-        margin-top:22px;
-    }    
-
-    .banner-event{
-        /* Background image is centered vertically and horizontally at all times */
-        background-position: center center;
-
-        /* Background image doesn’t tile */
-        background-repeat: no-repeat;
-
-        /* This is what makes the background image rescale based
-        on the container’s size */
-        background-size: cover;
-
-        width: 100%;
-        height: 300px;
-    }
-
-    .user-profile-picture {
-    height: 200px;
-    width: 200px;
-    background: #fff;
-}
-.minus-top {
-    position: absolute;
-    top: -40px;
-}
-.wrapper-kelas {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-.shadow {
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-}
-.rounded {
-    border-radius: .25rem!important;
-}
-.event-description-detail p {
-    font-size: 14px;
-}
-@media (max-width: 991.98px){
-    .wrapper-kelas-sm {
-        height: 180px!important;
-        width: 180px!important;
-        margin: 0 auto 30px auto;
-    }
-    .wrapper-kelas-sm.minus-top {
-        position: unset;
-        margin: -80px auto 0 auto;
-    }
-}
-
-@media (min-width: 991.98px){
-    .event-description-detail{
-        padding-left: 80px;
-    }
-}
-
-.separator {
-  display: flex;
-  align-items: center;
-  text-align: center;
-}
-
-.separator::before,
-.separator::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid #f5a461;
-}
-
-.separator:not(:empty)::before {
-  margin-right: .25em;
-}
-
-.separator:not(:empty)::after {
-  margin-left: .25em;
-}
-
+  
 .select2-selection {
         -webkit-box-shadow: 0;
         box-shadow: 0;
@@ -126,35 +26,7 @@
         margin: 10px;
         }
 
-        div.scrollmenu {
-            border-radius: 10px;
-        background-color: #0079ff;
-        overflow: auto;
-        white-space: nowrap;
-        }
 
-        div.scrollmenu a {
-        display: inline-block;
-        color: white;
-        text-align: center;
-        padding: 14px 25px;
-        background-color: #0079ff;
-        text-decoration: none;
-        }
-
-        div.scrollmenu a:hover {
-        background-color: #f5a461;
-        }
-
-        div.scrollmenu::-webkit-scrollbar {
-    display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-div.scrollmenu {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
 </style>    
 @endpush
 
@@ -211,10 +83,13 @@ div.scrollmenu {
             <div class="col-lg-12 col-md-12 col-sm-12 col-12 mb-30 mt-5">
                 <div class="tab">
                     <div class="scrollmenu mb-4">
-                        <a class="nav-link" data-toggle="tab" href="#deskripsi" role="tab" aria-selected="true">Deksripsi</a>
+                        <a class="nav-link" data-toggle="tab" href="#deskripsi" role="tab" aria-selected="true">Deskripsi</a>
                         <a class="nav-link" data-toggle="tab" href="#dokumen" role="tab" aria-selected="false">Dokumen Event</a>
                         <a class="nav-link" data-toggle="tab" href="#pendaftar" role="tab" aria-selected="false">Pendaftar</a>
-                        <a class="nav-link" href="#about">Upload Berkas</a>
+                        @if ($check_regis && $feeds->count() > 0)
+                            <a class="nav-link" data-toggle="tab" href="#berkas-pendaftaran" role="tab" aria-selected="false">Upload Berkas</a>
+                        @endif
+                        
                     </div>
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="deskripsi" role="tabpanel">
@@ -239,37 +114,24 @@ div.scrollmenu {
                         </div>
                         <div class="tab-pane fade" id="dokumen" role="tabpanel">
                             <div class="pd-20">
-                                        <table class="table">
-                                            <thead>
-                                              <tr>
-                                                <th scope="col">Dokumen</th>
-                                                <th scope="col">Action</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($feeds as $file)
-                                                <tr>
-                                                    <td>{{$file->nama_file}}</td>
-                                                    <td>
-                                                        <a href="#" class="btn btn-primary" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff">Download</a>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                            </tbody>
-                                          </table>
-                               {{-- <div class="row mt-2">
-                                    <div class="col-lg-1">
-                                        <div class="rounded-circle shadow-sm text-center bg-primary text-white pt-1" style="width: 30px; height:30px;position: relative;"><i class="icon-copy dw dw-right-chevron text-center" style="font-size:14px"></i></div>
-                                    </div>
-                                    <div class="col-8">
-                                        <div class="py-1 px-2" style="width:100%; border-bottom:1px solid #126afe !important;">
-                                            asdad
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-1">
-                                        <a href="#" class="btn btn-outline-primary" style="font-size: 14px">Download</a>
-                                    </div>
-                               </div> --}}
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                        <th scope="col">Dokumen</th>
+                                        <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($feeds as $file)
+                                        <tr>
+                                            <td>{{$file->nama_file}}</td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff">Download</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <div class="tab-pane fade" id="pendaftar" role="tabpanel">
@@ -337,6 +199,56 @@ div.scrollmenu {
                                 @endif
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="berkas-pendaftaran" role="tabpanel">
+                            <div class="row mb-2">
+                                <div class="col-6">
+
+                                </div>
+                                <div class="col-6 text-right">
+                                    @if ($event->role == "Team")
+                                        @php
+                                            $jsonRegis = json_encode($check_regis->eventEksternalRegisRef);
+                                        @endphp
+                                    @else
+                                        @php
+                                            $jsonRegis = json_encode($check_regis);
+                                        @endphp
+                                    @endif
+                                    <button class="btn btn-primary shadow" onclick="addBerkas({{$jsonRegis}})" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;">Upload Berkas</button>
+                                </div>
+                            </div>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Nama Berkas</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if ($check_regis)
+                                        @if($event->role == "Team")
+                                            @foreach ($check_regis->eventEksternalRegisRef->fileEeRegisRef as $berkas)
+                                                <tr>
+                                                    <td>{{$berkas->filename}}</td>
+                                                    <td>
+                                                        <a href="#" class="btn btn-primary" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff">Download</a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            @foreach ($check_regis->fileEeRegisRef as $berkas)
+                                                <tr>
+                                                    <td>{{$berkas->filename}}</td>
+                                                    <td>
+                                                        <a href="#" class="btn btn-primary" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff">Download</a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -346,13 +258,38 @@ div.scrollmenu {
             <div class="row clearfix progress-box position-sticky">
                 <div class="col-lg-12 col-md-4">
                     <div class="col-12">
-                        <div class="alert alert-success">
+                        <div class="alert alert-primary">
                             @if ($check_regis)
                                 Anda sudah terdaftar pada event ini
                             @else
                                 Yuk daftar event {{$event->nama_event}}
                             @endif
                         </div>
+                    </div>
+                    <div class="col-12">
+                            @if ($check_regis)
+                                @if ($check_regis->eventEksternalRegisRef)
+                                    @if ($check_regis->eventEksternalRegisRef->status == "0")
+                                    <div class="alert alert-danger">
+                                        Pendaftaran belum tervalidasi
+                                    </div>
+                                    @else
+                                    <div class="alert alert-success">
+                                        Pendaftaran tervalidasi
+                                    </div>
+                                    @endif
+                                @else
+                                    @if ($check_regis->status == "0")
+                                    <div class="alert alert-danger">
+                                        Pendaftaran belum tervalidasi
+                                    </div>
+                                    @else
+                                    <div class="alert alert-success">
+                                        Pendaftaran tervalidasi
+                                    </div>
+                                    @endif
+                                @endif
+                            @endif
                     </div>
                     <div class="col-12">
                         @if (!$check_regis)
@@ -420,6 +357,30 @@ div.scrollmenu {
                         </div>
                         <div class="form-group">
                             <input type="submit" value="Pilih anggota" class="dcd-btn dcd-btn-sm dcd-btn-primary d-print-inline-block mr-2" style="width:100%;border:none;padding:10px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Berkas --}}
+    <div style="border: none !important" class="modal fade" id="modal-upload-berkas"  role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-orange" id="myLargeModalLabel"><i class="icon-copy dw dw-file mr-2"></i>Upload Berkas Pendaftaran</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <form action="" id="form-upload-berkas" enctype="multipart/form-data" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Berkas Pendaftaran</label>
+                            <input type="file" id="upload-berkas-inp" name="file" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Upload Berkas" class="dcd-btn dcd-btn-sm dcd-btn-primary d-print-inline-block mr-2" style="width:100%;border:none;padding:10px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
                         </div>
                     </div>
                 </form>
@@ -533,6 +494,13 @@ div.scrollmenu {
         }
     }
 
+    const addBerkas = (regis) => {
+        $('#modal-upload-berkas').modal('show');
+        let url = "/peserta/eventeksternal/detail/uploadfile/"+regis.id_event_eksternal_registration;
+
+        $('#form-upload-berkas').attr('action', url);
+    };
+
     $(document).ready( function () {
         $('#invite-inp').select2();
         $(".nav-link").click(function(){
@@ -546,26 +514,26 @@ div.scrollmenu {
     let scrollLeft;
 
     slider.addEventListener('mousedown', (e) => {
-    isDown = true;
-    slider.classList.add('active-scroll');
-    startX = e.pageX - slider.offsetLeft;
-    scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('mouseleave', () => {
-    isDown = false;
-    slider.classList.remove('active-scroll');
-    });
-    slider.addEventListener('mouseup', () => {
-    isDown = false;
-    slider.classList.remove('active-scroll');
-    });
-    slider.addEventListener('mousemove', (e) => {
-    if(!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - slider.offsetLeft;
-    const walk = (x - startX) * 3; //scroll-fast
-    slider.scrollLeft = scrollLeft - walk;
-    console.log(walk);
+        isDown = true;
+        slider.classList.add('active-scroll');
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+        });
+        slider.addEventListener('mouseleave', () => {
+        isDown = false;
+        slider.classList.remove('active-scroll');
+        });
+        slider.addEventListener('mouseup', () => {
+        isDown = false;
+        slider.classList.remove('active-scroll');
+        });
+        slider.addEventListener('mousemove', (e) => {
+        if(!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 3; //scroll-fast
+        slider.scrollLeft = scrollLeft - walk;
+        console.log(walk);
     });
 </script>
 @endpush

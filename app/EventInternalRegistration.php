@@ -23,4 +23,8 @@ class EventInternalRegistration extends Model
     public function timRef(){
         return $this->belongsTo(TimEvent::class, 'tim_event_id', 'id_tim_event');
     }
+
+    public function fileEiRegisRef(){
+        return $this->hasMany(FileEventInternalRegistration::class, 'event_internal_regis_id', 'id_event_internal_registration');
+    }
 }

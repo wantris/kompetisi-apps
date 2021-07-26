@@ -13,6 +13,8 @@ use App\Pengguna;
 use App\Pengumuman;
 use App\TimEvent;
 use App\Timeline;
+use App\FileEventInternalDetail;
+use App\FileEventInternalRegistration;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
 
@@ -71,7 +73,9 @@ class eventInternalController extends Controller
             })->get();
 
             if ($active_regis_individu->count() > 0) {
-                $active_regis->push($active_regis_individu);
+                foreach($active_regis_individu as $item){
+                    $active_regis->push($item);
+                }
             }
 
             $inactive_regis_individu = EventInternalRegistration::with('eventInternalRef')->where(function ($query) use ($pengguna) {
@@ -85,7 +89,9 @@ class eventInternalController extends Controller
             })->get();
 
             if ($inactive_regis_individu->count() > 0) {
-                $inactive_regis->push($inactive_regis_individu);
+                foreach($inactive_regis_individu as $item){
+                    $inactive_regis->push($item);
+                }
             }
 
             return view('peserta.eventinternal.index', compact('navTitle', 'active_regis', 'inactive_regis', 'ormawas', 'kategoris'));
@@ -144,13 +150,14 @@ class eventInternalController extends Controller
         // remove slug string "-"
         $removeSlug = str_ireplace(array('-'), ' ', $slug);
 
+        $pengguna = Pengguna::find(Session::get('id_pengguna'));
         $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
 
         if ($event) {
             $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>' . $removeSlug;
             $registrations = EventInternalRegistration::with('timRef', 'participantRef')->where('event_internal_id', $event->id_event_internal)->get();
-
-
+            $check_regis = $this->checkIsRegis($pengguna, $event->id_event_internal);
+            $feeds = $this->getAllFilePendaftaran($event->id_event_internal);
             if ($event->role != "Team") {
                 foreach ($registrations as $item) {
                     $item->nama_mhs = null;
@@ -179,7 +186,14 @@ class eventInternalController extends Controller
                 }
             }
 
-            return view('peserta.eventinternal.detail', compact('slug', 'navTitle', 'registrations', 'event'));
+            return view('peserta.eventinternal.detail', compact(
+                'slug', 
+                'navTitle', 
+                'registrations', 
+                'event',
+                'check_regis',
+                'feeds'
+            ));
         }
 
         return redirect()->back()->with('failed', 'Event tidak ada');
@@ -195,6 +209,22 @@ class eventInternalController extends Controller
     {
         $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Info Submission';
         return view('peserta.eventinternal.submission_info', compact('slug', 'navTitle'));
+    }
+
+      public function uploadFile(Request $req, $id_regis){
+        // dd($request->all());
+        if ($req->file('file')) {
+            $resorceFile = $req->file('file');
+            $nameFile   = "berkas_pendaftaran_" . rand(0000, 9999) . "." . $resorceFile->getClientOriginalExtension();
+            $resorceFile->move(\base_path() . "/public/assets/file/berkas_pendaftaran_internal/", $nameFile);
+        }
+
+        $file = new FileEventInternalRegistration();
+        $file->event_internal_regis_id = $id_regis;
+        $file->filename = $nameFile;
+        $file->save();
+
+        return redirect()->back()->with('success','Upload berkas berhasil');
     }
 
     public function notification($slug)
@@ -240,15 +270,59 @@ class eventInternalController extends Controller
         }
     }
 
+     public function checkIsRegis($pengguna, $id_eventinternal)
+    {
+        $event = EventInternal::find($id_eventinternal);
+        if ($event->role == "Team") {
+            $check_regis = TimEvent::whereHas('eventInternalRegisRef', function ($query) use ($id_eventinternal) {
+                $query->where('event_internal_id', $id_eventinternal);
+            })->whereHas('timDetailRef', function ($query) use ($pengguna) {
+                if ($pengguna->is_mahasiswa) {
+                    $query->where('nim', $pengguna->nim);
+                } else {
+                    $query->where('participant_id', $pengguna->participant_id);
+                }
+            })->first();
+        } else {
+            if ($pengguna->is_mahasiswa) {
+                $check_regis = EventInternalRegistration::where('nim', $pengguna->nim)
+                    ->where('event_internal_id', $id_eventinternal)->first();
+            } else {
+                $check_regis = EventInternalRegistration::where('participant_id', $pengguna->participant_id)
+                    ->where('event_internal_id', $id_eventinternal)->first();
+            }
+        }
+
+        return $check_regis;
+    }
+
+    public function getAllFilePendaftaran($id_eventinternal)
+    {
+        $feeds = FileEventInternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventinternal) {
+            $q->where('event_internal_id', '=', $id_eventinternal);
+        })->where('tipe', 'pendaftaran')->get();
+
+        return $feeds;
+    }
+
     public function getMahasiswaByNim($nim)
     {
-        $client = new Client();
-        $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-        $rMhs = $client->request('GET', $url, [
-            'verify'  => false,
-        ]);
-        $mhs = json_decode($rMhs->getBody());
+        $msh = null;
+
+        try{
+            $client = new Client();
+            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
+            $rMhs = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $mhs = json_decode($rMhs->getBody());
+
+        }catch(\Throwable $err){
+
+        }
 
         return $mhs;
     }
+
+
 }

@@ -10,6 +10,7 @@ use App\Pengguna;
 use App\EventEksternalRegistration;
 use App\EventEksternal;
 use App\FileEventEksternalDetail;
+use App\FileEventEksternalRegistration;
 use App\Timeline;
 use App\TimEvent;
 use App\Pengumuman;
@@ -61,12 +62,11 @@ class eventEksternalController extends Controller
                 $pengguna->nama_mhs = $mhs->nama;
             }
             $check_regis = $this->checkIsRegis($pengguna, $event->id_event_eksternal);
+           
             $registrations = $this->getAllRegisInByEvent($event);
 
             $feeds = $this->getAllDocPendaftaran($event->id_event_eksternal);
             $search = $this->searchPengguna($event->id_event_eksternal);
-
-
 
             return view('peserta.eventeksternal.detail', compact(
                 'navTitle',
@@ -97,12 +97,12 @@ class eventEksternalController extends Controller
             $penggunaRef = $pengguna->participant_id;
         }
 
-
         // registrasi event
         $is_win = array('is_win' => '0', 'position' => null);
 
         if ($event->role == "Team") {
             $tim = new TimEvent();
+            $tim->status = 0;
             $tim->save();
 
             if ($tim) {
@@ -111,8 +111,8 @@ class eventEksternalController extends Controller
                 $eir->event_eksternal_id = $event->id_event_eksternal;
                 $eir->tim_event_id = $tim->id_tim_event;
                 $eir->is_win = json_encode($is_win);
+                $eir->status = 0;
                 $eir->save();
-
 
                 $ted = new TimEventDetail();
                 $ted->tim_event_id = $tim->id_tim_event;
@@ -166,6 +166,22 @@ class eventEksternalController extends Controller
         }
     }
 
+    public function uploadFile(Request $req, $id_regis){
+        // dd($request->all());
+        if ($req->file('file')) {
+            $resorceFile = $req->file('file');
+            $nameFile   = "berkas_pendaftaran_" . rand(0000, 9999) . "." . $resorceFile->getClientOriginalExtension();
+            $resorceFile->move(\base_path() . "/public/assets/file/berkas_pendaftaran_eksternal/", $nameFile);
+        }
+
+        $file = new FileEventEksternalRegistration();
+        $file->event_eksternal_regis_id = $id_regis;
+        $file->filename = $nameFile;
+        $file->save();
+
+        return redirect()->back()->with('success','Upload berkas berhasil');
+    }
+
     public function timeline($slug)
     {
         // remove slug string "-"
@@ -174,7 +190,7 @@ class eventEksternalController extends Controller
         $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
 
         if ($event) {
-            $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Timeline ' . $removeSlug;
+            $navTitle = '<span claorss="micon dw dw-up-chevron-1 mr-2"></span>Timeline ' . $removeSlug;
             $tls = Timeline::where('event_eksternal_id', $event->id_event_eksternal)->get();
 
             return view('peserta.eventeksternal.timeline', compact('navTitle', 'tls', 'slug'));
@@ -295,6 +311,7 @@ class eventEksternalController extends Controller
         return $inactive_regis;
     }
 
+    
     public function checkIsRegis($pengguna, $id_eventeksternal)
     {
         $event = EventEksternal::find($id_eventeksternal);
@@ -317,8 +334,6 @@ class eventEksternalController extends Controller
                     ->where('event_eksternal_id', $event->id_event_eksternal)->first();
             }
         }
-
-
 
         return $check_regis;
     }
@@ -378,7 +393,6 @@ class eventEksternalController extends Controller
         $invites = Pengguna::with('participantRef')->where('id_pengguna', '!=', Session::get('id_pengguna'))
             ->where(function ($query) {
                 $query->where('is_mahasiswa', 1);
-                $query->orWhere('is_participant', 1);
             })->get();
 
         // get name mahasiswa from api

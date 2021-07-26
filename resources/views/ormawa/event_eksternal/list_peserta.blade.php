@@ -9,7 +9,7 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-12 mb-30">
         <div class="pd-20 card">
             <div class="card-body">
-                 @if ($ei->role == "Individu")
+                 @if ($ee->role == "Individu")
                     <div class="table-responsive">
                         <table class="pendaftaran-table table stripe hover nowrap" style="width: 100%">
                             <thead>
@@ -22,20 +22,12 @@
                             </thead>
                             <tbody>
                                 @foreach ($pendaftaran as $regis)
-                                    <tr id="tr_{{$regis->id_event_internal_registration}}">
+                                    <tr id="tr_{{$regis->id_event_eksternal_registration}}">
                                         <td>
-                                            @if ($regis->nim)
-                                                {{$regis->nama_mhs}}
-                                            @else
-                                                {{$regis->participantRef->nama_participant}}
-                                            @endif
+                                            {{$regis->nama_mhs}}
                                         </td>
                                         <td>
-                                            @if ($regis->nim)
-                                                Mahasiswa Polindra
-                                            @else
-                                                Partisipan Eksternal
-                                            @endif
+                                            Mahasiswa Polindra
                                         </td>
                                         <td>
                                             @if ($regis->status == "0")
@@ -55,15 +47,18 @@
                                                             href="#"><i class="dw dw-eye"></i>Lihat Profil</a>
                                                     @if (Session::get('is_pembina') == "0")
                                                         @if ($regis->status == "0")
-                                                            <a class="dropdown-item" href="{{route('ormawa.eventinternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_internal_registration,'status'=>1])}}"><i class="icon-copy dw dw-checked"></i>Buat Tervalidasi</a>
+                                                            <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_eksternal_registration,'status'=>1])}}"><i class="icon-copy dw dw-checked"></i>Buat Tervalidasi</a>
                                                         @else
-                                                            <a class="dropdown-item" href="{{route('ormawa.eventinternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_internal_registration,'status'=>0])}}"><i class="icon-copy dw dw-ban"></i>Buat Belum Tervalidasi</a>
+                                                            <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_eksternal_registration,'status'=>0])}}"><i class="icon-copy dw dw-ban"></i>Buat Belum Tervalidasi</a>
                                                         @endif
-                                                            <a class="dropdown-item" href="#" onclick="deletePendaftar({{$regis->id_event_internal_registration}})"><i class="dw dw-delete-3"></i> Hapus</a>
+                                                            <a class="dropdown-item" href="#" onclick="deletePendaftar({{$regis->id_event_eksternal_registration}})"><i class="dw dw-delete-3"></i> Hapus</a>
                                                     @endif
-                                                    @if ($regis->fileEiRegisRef->count() > 0 && $feeds->count() > 0)
-                                                        <a class="dropdown-item" href="{{route('ormawa.eventinternal.pendaftar.downloadberkas', $regis->id_event_internal_registration)}}"><i class="icon-copy dw dw-inbox"></i>Download Berkas</a>
+                                                    @if ($regis->count() > 0)
+                                                        @if ($regis->fileEeRegisRef->count() > 0 && $feeds->count() > 0)
+                                                            <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.downloadberkas', $regis->id_event_eksternal_registration)}}"><i class="icon-copy dw dw-inbox"></i>Download Berkas</a>
+                                                        @endif
                                                     @endif
+                                                    
                                                 </div>
                                             </div>
                                         </td>
@@ -85,16 +80,12 @@
                             </thead>
                             <tbody>
                                 @foreach ($pendaftaran as $regis)
-                                    <tr id="tr_{{$regis->id_event_internal_registration}}">
+                                    <tr id="tr_{{$regis->id_event_eksternal_registration}}">
                                         <td>{{$regis->tim_event_id}}</td>
                                         <td>
                                             @foreach ($regis->timRef->timDetailRef as $detail)
                                                 @if ($detail->role == "ketua")
-                                                    @if ($detail->nim)
-                                                        {{$detail->nama_mhs}}
-                                                    @else
-                                                        {{$detail->participantRef->nama_participant}}
-                                                    @endif
+                                                    {{$detail->nama_mhs}}
                                                 @endif
                                             @endforeach    
                                         </td>
@@ -115,15 +106,16 @@
                                                     @if (Session::get('is_pembina') == "0")
                                                         <a class="dropdown-item" href="{{route('ormawa.team.detail', $regis->tim_event_id)}}"><i class="dw dw-eye"></i>Lihat Tim</a>
                                                         @if ($regis->status == "0")
-                                                            <a class="dropdown-item" href="{{route('ormawa.eventinternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_internal_registration,'status'=>1])}}"><i class="icon-copy dw dw-checked"></i>Buat Tervalidasi</a>
+                                                            <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_eksternal_registration,'status'=>1])}}"><i class="icon-copy dw dw-checked"></i>Buat Tervalidasi</a>
                                                         @else
-                                                            <a class="dropdown-item" href="{{route('ormawa.eventinternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_internal_registration,'status'=>0])}}"><i class="icon-copy dw dw-ban"></i>Buat Belum Tervalidasi</a>
+                                                            <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_eksternal_registration,'status'=>0])}}"><i class="icon-copy dw dw-ban"></i>Buat Belum Tervalidasi</a>
                                                         @endif
-                                                            <a class="dropdown-item" href="#" onclick="deletePendaftar({{$regis->id_event_internal_registration}})"><i class="dw dw-delete-3"></i> Hapus</a>
+                                                            <a class="dropdown-item" href="#" onclick="deletePendaftar({{$regis->id_event_eksternal_registration}})"><i class="dw dw-delete-3"></i> Hapus</a>
                                                     @endif
-                                                    @if ($regis->fileEiRegisRef->count() > 0 && $feeds->count() > 0)
-                                                        <a class="dropdown-item" href="{{route('ormawa.eventinternal.pendaftar.downloadberkas', $regis->id_event_internal_registration)}}"><i class="icon-copy dw dw-inbox"></i>Download Berkas</a>
-                                                  
+                                                    @if ($regis->count() > 0)
+                                                        @if ($regis->fileEeRegisRef->count() > 0 && $feeds->count() > 0)
+                                                            <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.downloadberkas', $regis->id_event_eksternal_registration)}}"><i class="icon-copy dw dw-inbox"></i>Download Berkas</a>
+                                                        @endif
                                                     @endif
                                                 </div>
                                             </div>
@@ -142,7 +134,7 @@
 
 @push('script')
 <script>
-    let id_event = "{{$ei->id_event_internal}}";
+    let id_event = "{{$ee->id_event_eksternal}}";
     $(document).ready( function () {
         $('.pendaftaran-table').DataTable({
             dom: 'Bfrtip',
@@ -151,7 +143,7 @@
                 {
                     text: 'Validasi Semua',
                     action: function ( e, dt, node, config ) {
-                        let url = "/ormawa/eventinternal/pendaftar/validasisemua/"+id_event;
+                        let url = "/ormawa/eventeksternal/pendaftar/validasisemua/"+id_event;
                         console.log(url);
                          $.ajax(
                             {
@@ -177,7 +169,7 @@
     } );
 
       const deletePendaftar = (id_regis) => {
-        let url = "/ormawa/eventinternal/pendaftar/delete/"+id_regis;
+        let url = "/ormawa/eventeksternal/pendaftar/delete/"+id_regis;
         event.preventDefault();
         Notiflix.Confirm.Show( 
             'Pendaftaran',

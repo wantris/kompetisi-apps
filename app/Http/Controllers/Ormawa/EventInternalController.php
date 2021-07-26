@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Ormawa;
 
 use App\Http\Controllers\Controller;
-use App\{EventInternal, EventInternalDetail, EventInternalRegistration, FileEventInternalDetail, Ormawa, KategoriEvent, TipePeserta};
+use App\{EventInternal, EventInternalDetail, EventInternalRegistration, FileEventInternalDetail, FileEventInternalRegistration, Ormawa, KategoriEvent, TipePeserta, TimEvent};
 use App\Http\Requests\EventInternalStoreRequest;
 use App\Http\Requests\EventInternalUpdateRequest;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use GuzzleHttp\Client;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -211,9 +213,10 @@ class EventInternalController extends Controller
     {
         $ei = EventInternal::find($id_eventinternal);
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Pendaftar ' . $ei->nama_event;
-        $eir = EventInternalRegistration::where('event_internal_id', $id_eventinternal)->get();
+        $pendaftaran = $this->getPendaftarById($ei);
+        $feeds = $this->getAllFilePendaftaran($ei->id_event_internal);
 
-        return view('ormawa.event_internal.list_peserta', compact('navTitle', 'navTitle', 'eir'));
+        return view('ormawa.event_internal.list_peserta', compact('navTitle', 'navTitle', 'pendaftaran','ei','feeds'));
     }
 
     public function listPeserta($slug)
@@ -343,6 +346,146 @@ class EventInternalController extends Controller
         } catch (\Throwable $err) {
             dd($err);
             return redirect()->back()->with('failed', 'Update validasi gagal');
+        }
+    }
+
+    // ======= Pendaftaran =====
+        public function getPendaftarById($event){
+        $registrations = EventInternalRegistration::with('timRef', 'participantRef')->where('event_internal_id', $event->id_event_internal)->get();
+        if ($event->role != "Team") {
+                foreach ($registrations as $item) {
+                    $item->nama_mhs = null;
+                    if ($item->nim) {
+                        try {
+                            $mhs = $this->getMahasiswaByNim($item->nim);
+                            $item->nama_mhs = $mhs->nama;
+                        } catch (\Throwable $err) {
+                        }
+                    }
+                }
+            } else {
+                foreach ($registrations as $item) {
+                    foreach ($item->timRef->timDetailRef as $detail) {
+                        if ($detail->role == "ketua") {
+                            $detail->nama_mhs = null;
+                            if ($detail->nim) {
+                                try {
+                                    $mhs = $this->getMahasiswaByNim($detail->nim);
+                                    $detail->nama_mhs = $mhs->nama;
+                                } catch (\Throwable $err) {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $registrations;
+    }
+
+    public function getAllFilePendaftaran($id_eventinternal)
+    {
+        $feeds = FileEventInternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventinternal) {
+            $q->where('event_internal_id', '=', $id_eventinternal);
+        })->where('tipe', 'pendaftaran')->get();
+
+        return $feeds;
+    }
+    
+    public function downloadBerkas($id_regis)
+    {
+        $regis = EventInternalRegistration::find($id_regis);
+
+        if($regis->fileEiRegisRef->count() > 0){
+            $file = FileEventInternalRegistration::where('event_internal_regis_id', $regis->id_event_internal_registration)->latest('created_at')->first();
+            $file = public_path(). "/assets/file/berkas_pendaftaran_internal/".$file->filename;
+
+            return response()->download($file);
+        }
+    }
+
+    public function updateStatusRegis($id_regis, $status){
+        $regis = EventInternalRegistration::find($id_regis);
+        $regis->status = $status;
+        $regis->save();
+
+        return redirect()->back()->with('success','Update status registrasi berhasil');
+    }
+
+    public function validasiSemua($id_eventinternal){
+        $regis = EventInternalRegistration::where('event_internal_id', $id_eventinternal)->get();
+        if($regis->count() > 0){
+            foreach($regis as $item){
+                $update = EventInternalRegistration::where('id_event_internal_registration', $item->id_event_internal_registration)->update([
+                    'status' => 1
+                ]);
+            }
+        }
+
+        return response()->json([
+            "status" => 1,
+            "message" => "Pendaftaran berhasil divalidasi semua",
+        ]);
+    }
+
+    public function deletePendaftar($id_regis)
+    {
+        EventInternalRegistration::destroy($id_regis);
+
+        return response()->json([
+            "status" => 1,
+            "message" =>"Pendaftaran berhasil dihapus",
+        ]);
+    }
+
+    public function getMahasiswaByNim($nim)
+    {
+        $msh = null;
+
+        try{
+            $client = new Client();
+            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
+            $rMhs = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $mhs = json_decode($rMhs->getBody());
+
+        }catch(\Throwable $err){
+
+        }
+
+        return $mhs;
+    }
+
+        public function getAllDosen(){
+        $dosens = null;
+
+        try{
+            $client = new Client();
+            $url = env("SOURCE_API") . "dosen/";
+            $rDosens = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $dosens = json_decode($rDosens->getBody());
+        }catch(\Throwable $err){
+
+        }
+
+        return $dosens;
+    }
+
+    public function getDosenSingle($nidn)
+    {
+        try {
+            $client = new Client();
+            $url = env("SOURCE_API") . "dosen/" . $nidn;
+            $rDosen = $client->request('GET', $url, [
+                'verify'  => false,
+            ]);
+            $dosen = json_decode($rDosen->getBody());
+
+            return $dosen->nama_dosen;
+        } catch (\Throwable $err) {
         }
     }
 }

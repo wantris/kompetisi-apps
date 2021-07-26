@@ -161,7 +161,7 @@
                                                             href="#"><i class="dw dw-delete-3"></i> Delete</a>
                                                         @endif
                                                         <a class="dropdown-item"
-                                                            href="{{route('ormawa.eventeksternal.peserta', 'Seminar-Teknologi')}}"><i
+                                                            href="{{route('ormawa.eventeksternal.pendaftar', $eea->id_event_eksternal)}}"><i
                                                                 class="icon-copy dw dw-user-11"></i>Pendaftar</a>
 
                                                         @if (Session::get('is_pembina') == "1")
@@ -286,7 +286,7 @@
                                                             href="#"><i class="dw dw-delete-3"></i> Delete</a>
                                                         @endif
                                                         <a class="dropdown-item"
-                                                            href="{{route('ormawa.eventeksternal.peserta', 'Seminar-Teknologi')}}"><i
+                                                            href="{{route('ormawa.eventeksternal.pendaftar', $ee->id_event_eksternal)}}"><i
                                                                 class="icon-copy dw dw-user-11"></i>Pendaftar</a>
 
                                                         @if (Session::get('is_pembina') == "1")
@@ -411,7 +411,7 @@
                                                             href="#"><i class="dw dw-delete-3"></i> Delete</a>
                                                         @endif
                                                         <a class="dropdown-item"
-                                                            href="{{route('ormawa.eventeksternal.peserta', 'Seminar-Teknologi')}}"><i
+                                                            href="{{route('ormawa.eventeksternal.pendaftar', $ees->id_event_eksternal)}}"><i
                                                                 class="icon-copy dw dw-user-11"></i>Pendaftar</a>
 
                                                         @if (Session::get('is_pembina') == "1")
@@ -486,7 +486,7 @@
                                                             href="#"><i class="dw dw-polaroids"></i>Detail</a>
                                                         @endif
                                                         <a class="dropdown-item"
-                                                            href="{{route('ormawa.eventeksternal.peserta', 'Seminar-Teknologi')}}"><i
+                                                            href="{{route('ormawa.eventeksternal.pendaftar', $eesc->id_event_eksternal)}}"><i
                                                                 class="icon-copy dw dw-user-11"></i>Pendaftar</a>
                                                         @if (Session::get('is_pembina') == "1")
                                                         <a class="dropdown-item"
