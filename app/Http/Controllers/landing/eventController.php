@@ -26,7 +26,7 @@ class eventController extends Controller
 {
     public function index()
     {
-        $events = EventInternal::where('status', '1')->paginate(1);
+        $events = EventInternal::where('status', '1')->paginate(10);
         $kategoris = KategoriEvent::all();
         $tipes = TipePeserta::all();
         $ormawas = Ormawa::all();
@@ -40,6 +40,7 @@ class eventController extends Controller
 
         $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
         $check_regis = null;
+
         if ($event) {
             $id_eventinternal = $event->id_event_internal;
 

@@ -14,6 +14,18 @@ class EventInternal extends Model
         'created_at' => 'date:Y-m-d',
     ];
 
+    protected $appends = ['poster_image_url', 'banner_image_url'];
+
+    public function getPosterImageUrlAttribute($value)
+    {
+        return request()->getSchemeAndHttpHost() . '/assets/img/kompetisi-thumb/' . $this->poster_image;
+    }
+
+    public function getBannerImageUrlAttribute($value)
+    {
+        return request()->getSchemeAndHttpHost() . '/assets/img/banner-komp/' . $this->banner_image;
+    }
+
     public function getDeskripsiExcerptAttribute()
     {
         return Str::words($this->deskripsi, '15');

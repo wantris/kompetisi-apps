@@ -364,7 +364,7 @@ $eiJson = json_encode($ei);
                                             <div class="row">
                                                 <div class="col-6">
                                                     <p class="h5 text-orange" id="title-pembina"><i
-                                                            class="icon-copy dw dw-file mr-2"></i>Berkas Kebtuhan
+                                                            class="icon-copy dw dw-file mr-2"></i>Berkas Kebutuhan
                                                         Pendaftaran
                                                     </p>
                                                 </div>

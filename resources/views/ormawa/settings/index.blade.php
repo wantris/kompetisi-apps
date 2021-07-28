@@ -144,12 +144,12 @@
                                 </p>
                             </div>
                             <div class="col-6 text-right">
-                                <div id="container-btn">
+                                {{-- <div id="container-btn">
                                     <a href="#" onclick="showForm()" id="tambah-btn"
                                         class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
                                         style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
                                         Tambah</a>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="col-12">
                                 <hr>
@@ -165,7 +165,6 @@
                                             <th>Nama Dosen</th>
                                             <th>Tahun Jabatan</th>
                                             <th>Status Keaktifan</th>
-                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -182,14 +181,6 @@
                                                 <a href="#" style="font-size: 11px;margin-bottom:10px"
                                                     class="btn btn-danger btn-sm">Tidak</a>
                                                 @endif
-                                            </td>
-                                            <td>
-                                                <a href="{{route('ormawa.settings.edit.pembina', $pembina->id_pembina)}}"
-                                                    class="btn btn-info btn-sm d-inline"><i
-                                                        class="icofont-ui-edit"></i></a>
-                                                <a href="#" onclick="deletePembina({{$pembina->id_pembina}})"
-                                                    class="btn btn-danger btn-sm d-inline"><i
-                                                        class="icofont-trash"></i></a>
                                             </td>
                                         </tr>
                                         @endforeach

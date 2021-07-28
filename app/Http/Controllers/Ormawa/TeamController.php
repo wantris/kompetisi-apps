@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 
 class TeamController extends Controller
 {
-     public function detail($id_tim){
+    public function detail($id_tim)
+    {
 
         $navTitle = '<span class="micon dw dw-user-11 mr-2"></span>Detail Team';
 
@@ -23,67 +24,67 @@ class TeamController extends Controller
             $tim->nama_dosen = $tim->nidn;
             $tim->nama_dosen =  $this->getDosenSingle($tim->nidn);
         }
-        
+
         // Get name of mahasiswa
         foreach ($tim->timDetailRef as $detail) {
             if ($detail->nim) {
                 $detail->nama_mhs = $detail->nim;
                 try {
-                    $detail->nama_mhs = $this->getMahasiswaByNim($detail->nim);
+                    $detail->nama_mhs = $this->getMahasiswaByNim($detail->nim)->nama;
                 } catch (\Throwable $err) {
                 }
             }
         }
 
-        return view('ormawa.tim.detail', compact('regis','tim','dosens','navTitle'));
+
+        return view('ormawa.tim.detail', compact('tim', 'dosens', 'navTitle'));
     }
 
-    public function ajukanPembimbing(Request $request, $id_tim){
+    public function ajukanPembimbing(Request $request, $id_tim)
+    {
         $nidn = $request->nidn;
-        
-        try{
+
+        try {
             $pengajuan = TimEvent::where('id_tim_event', $id_tim)->update([
                 'nidn' => $nidn
             ]);
 
-            return redirect()->back()->with('success','Pengajuan Berhasil');
-        }catch(\Throwable $err){
+            return redirect()->back()->with('success', 'Pengajuan Berhasil');
+        } catch (\Throwable $err) {
             dd($err);
-        } 
+        }
     }
 
-    
+
     public function getMahasiswaByNim($nim)
     {
         $msh = null;
 
-        try{
+        try {
             $client = new Client();
             $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
             $rMhs = $client->request('GET', $url, [
                 'verify'  => false,
             ]);
             $mhs = json_decode($rMhs->getBody());
-
-        }catch(\Throwable $err){
-
+        } catch (\Throwable $err) {
         }
 
         return $mhs;
     }
 
-    public function getAllDosen(){
+    public function getAllDosen()
+    {
         $dosens = null;
 
-        try{
+        try {
             $client = new Client();
             $url = env("SOURCE_API") . "dosen/";
             $rDosens = $client->request('GET', $url, [
                 'verify'  => false,
             ]);
             $dosens = json_decode($rDosens->getBody());
-        }catch(\Throwable $err){
-
+        } catch (\Throwable $err) {
         }
 
         return $dosens;

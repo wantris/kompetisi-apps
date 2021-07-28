@@ -12,9 +12,13 @@ class EventEksternalController extends Controller
 {
     public function index()
     {
-        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->get();
-        if ($event->count() > 0) {
-            return response()->json($event);
+        $events = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef', 'pengajuanRef')->get();
+        if ($events->count() > 0) {
+            return response()->json([
+                'status' => 200,
+                'message' => "Data event eksternal tersedia",
+                'data' => $events
+            ], 200);
         }
 
         return response()->json([
@@ -103,9 +107,13 @@ class EventEksternalController extends Controller
 
     public function detail($id_eventeksternal)
     {
-        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->find($id_eventeksternal);
+        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef', 'pengajuanRef')->find($id_eventeksternal);
         if ($event) {
-            return response()->json($event);
+            return response()->json([
+                'status' => 200,
+                'message' => "Data event eksternal tersedia",
+                'data' => $event
+            ], 200);
         }
 
         return response()->json([
@@ -190,18 +198,15 @@ class EventEksternalController extends Controller
     public function seePengajuan($id_eventeksternal)
     {
         try {
-            $pengajuan = EventEksternalDetail::with('eventEksternalRef', 'filePengajuan')->where('event_eksternal_id', $id_eventeksternal)->first();
+            $pengajuan = EventEksternalDetail::with('filePengajuan')->where('event_eksternal_id', $id_eventeksternal)->first();
             if ($pengajuan) {
 
-                $cakupan = CakupanOrmawa::find($pengajuan->eventEksternalRef->cakupan_ormawa_id);
-                $kategori = KategoriEvent::find($pengajuan->eventEksternalRef->kategori_id);
-                $tipe = TipePeserta::find($pengajuan->eventEksternalRef->tipe_peserta_id);
 
-                $pengajuan->eventEksternalRef->cakupan_ormawa_ref = $cakupan;
-                $pengajuan->eventEksternalRef->kategori_ref = $kategori;
-                $pengajuan->eventEksternalRef->tipe_ref = $tipe;
-
-                return response()->json($pengajuan, 200);
+                return response()->json([
+                    'status' => 200,
+                    'message' => "Data pengajuan event eksternal tersedia",
+                    'data' => $pengajuan
+                ], 200);
             }
 
             return response()->json([

@@ -16,6 +16,7 @@ use Throwable;
 
 class EventInternalController extends Controller
 {
+
     public function index()
     {
         $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->get();
@@ -32,11 +33,11 @@ class EventInternalController extends Controller
 
     public function detail($id_eventinternal)
     {
-        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->find($id_eventinternal);
+        $root_url = request()->getSchemeAndHttpHost();
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef', 'pengajuanRef', 'pengajuanRef.filePengajuan')->find($id_eventinternal);
         if ($event) {
             return response()->json($event);
         }
-
         return response()->json([
             "success" => false,
             "status" => 404,
@@ -208,14 +209,6 @@ class EventInternalController extends Controller
         try {
             $pengajuan = EventInternalDetail::with('eventInternalRef', 'filePengajuan')->where('event_internal_id', $id_eventinternal)->first();
             if ($pengajuan) {
-                $ormawa = Ormawa::find($pengajuan->eventInternalRef->ormawa_id);
-                $kategori = KategoriEvent::find($pengajuan->eventInternalRef->kategori_id);
-                $tipe = TipePeserta::find($pengajuan->eventInternalRef->tipe_peserta_id);
-
-                $pengajuan->ormawa_ref = $ormawa;
-                $pengajuan->eventInternalRef->kategori_ref = $kategori;
-                $pengajuan->eventInternalRef->tipe_ref = $tipe;
-
                 return response()->json($pengajuan, 200);
             }
 

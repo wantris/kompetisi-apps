@@ -23,7 +23,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/', 'Api\ormawaController@index')->name('ormawa.index');
         Route::get('/add', 'Api\ormawaController@add')->name('ormawa.add');
         Route::post('/add', 'ormawaController@save')->name('ormawa.save');
-        Route::get('/detail/{id_ormawa}', 'ormawaController@detail')->name('ormawa.detail');
+        Route::get('/detail/{id_ormawa}', 'Api\ormawaController@detail')->name('ormawa.detail');
         Route::get('/edit/{id_ormawa}', 'ormawaController@edit')->name('ormawa.edit');
         Route::post('/update/{id_ormawa}', 'Api\ormawaController@update')->name('ormawa.update');
         Route::delete('/delete/{id_ormawa}', 'ormawaController@edit')->name('ormawa.delete');

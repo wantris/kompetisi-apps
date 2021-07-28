@@ -20,6 +20,6 @@ class EventEksternalDetail extends Model
 
     public function filePengajuan()
     {
-        return $this->hasMany(FileEventEksternalDetail::class, 'id_event_eksternal_detail', 'event_eksternal_detail_id');
+        return $this->hasMany(FileEventEksternalDetail::class, 'event_eksternal_detail_id', 'id_event_eksternal_detail');
     }
 }

@@ -4,10 +4,6 @@
 
 @push('css')
 <style>
-    .nav-link:hover {
-        color: #f5a461 !important;
-    }
-
     .dataTables_paginate {
         margin-top: 20px !important;
     }

@@ -122,6 +122,8 @@ class settingsController extends Controller
 
     public function editPembina($id_pembina)
     {
+        $navTitle = '<i class="icon-copy dw dw-settings mr-2"></i>Update Pembina';
+
         $pb = Pembina::find($id_pembina);
         if ($pb) {
             try {
@@ -143,6 +145,7 @@ class settingsController extends Controller
 
                 return view('ormawa.settings.pembina_edit', compact('navTitle', 'pb', 'dosens', 'dosen'));
             } catch (\Throwable $err) {
+                dd($err);
                 return redirect()->route('ormawa.settings.index')->with('failed', 'Data tidak ada');
             }
         }

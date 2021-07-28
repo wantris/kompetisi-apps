@@ -9,12 +9,21 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-12 mb-30">
         <div class="pd-20 card">
             <div class="card-body">
+               <div class="mb-2 col-12 col-lg-3">
+                   <select id="status-select" class="form-control">
+                       <option value="" selected>Semua Status</option>
+                       <option value="Sudah">Tervalidasi</option>
+                       <option value="Tidak">Belum Tervalidasi</option>
+                   </select>
+               </div>
                  @if ($ee->role == "Individu")
                     <div class="table-responsive">
                         <table class="pendaftaran-table table stripe hover nowrap" style="width: 100%">
                             <thead>
                                 <tr>
                                     <th class="table-plus datatable-nosort">Nama</th>
+                                    <th>Email</th>
+                                    <th>Nomor Telepon</th>
                                     <th>Status Pendaftar</th>
                                     <th>Sudah Tervalidasi</th>
                                     <th>Action</th>
@@ -27,11 +36,17 @@
                                             {{$regis->nama_mhs}}
                                         </td>
                                         <td>
+                                            {{$regis->penggunaRef->email}}
+                                        </td>
+                                        <td>
+                                            {{$regis->penggunaRef->phone}}
+                                        </td>
+                                        <td>
                                             Mahasiswa Polindra
                                         </td>
                                         <td>
                                             @if ($regis->status == "0")
-                                                <a href="#" class="btn btn-warning" style="font-size: 12px">Belum</a> 
+                                                <a href="#" class="btn btn-warning" style="font-size: 12px">Tidak</a> 
                                             @else
                                                 <a href="#" class="btn btn-success" style="font-size: 12px">Sudah</a>
                                             @endif
@@ -74,7 +89,7 @@
                                 <tr>
                                     <th class="table-plus datatable-nosort">ID Tim</th>
                                     <th>Ketua Tim</th>
-                                     <th>Sudah Tervalidasi</th>
+                                    <th>Sudah Tervalidasi</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -135,11 +150,11 @@
 @push('script')
 <script>
     let id_event = "{{$ee->id_event_eksternal}}";
+    let status = "all";
     $(document).ready( function () {
-        $('.pendaftaran-table').DataTable({
+        var table = $('.pendaftaran-table').DataTable({
             dom: 'Bfrtip',
             buttons: [
-                'excel', 'pdf',
                 {
                     text: 'Validasi Semua',
                     action: function ( e, dt, node, config ) {
@@ -163,12 +178,37 @@
                                 }
                         });
                     }
+                },
+                {
+                    text: 'Export Excel',
+                    action: function ( e, dt, node, config ) {
+                        let url = "/ormawa/eventeksternal/pendaftar/export/"+id_event+"/"+status;
+                        window.location = url;
+                    }
                 }
-            ]
+            ],
+            
+        });
+        
+
+        $('#status-select').each(function(){
+            $(this).on('change', function(){
+                if($(this).val() == "Sudah"){
+                    status = 1;
+                }else if($(this).val() == "Tidak"){
+                    status = 0;
+                }else{
+                    status = "all";
+                }
+
+                table.column(2).search($(this).val()).draw(); 
+            });
         });
     } );
 
-      const deletePendaftar = (id_regis) => {
+   
+
+    const deletePendaftar = (id_regis) => {
         let url = "/ormawa/eventeksternal/pendaftar/delete/"+id_regis;
         event.preventDefault();
         Notiflix.Confirm.Show( 

@@ -42,6 +42,10 @@ body {
     background: #fff !important;
 }
 
+.nav-link:hover {
+    color: #f5a461 !important;
+}
+
 .komp-card2 {
     width: 100%;
     max-width: 345px;
@@ -237,7 +241,8 @@ div.scrollmenu a {
 }
 
 div.scrollmenu a:hover {
-    background-color: #f5a461;
+    background-color: #fb8c00;
+    color: #fff !important;
 }
 
 div.scrollmenu::-webkit-scrollbar {

@@ -9,6 +9,13 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-12 mb-30">
         <div class="pd-20 card">
             <div class="card-body">
+                <div class="mb-2 col-12 col-lg-3">
+                    <select id="status-select" class="form-control">
+                        <option value="" selected>Semua Status</option>
+                        <option value="Sudah">Tervalidasi</option>
+                        <option value="Tidak">Belum Tervalidasi</option>
+                    </select>
+                </div>
                  @if ($ei->role == "Individu")
                     <div class="table-responsive">
                         <table class="pendaftaran-table table stripe hover nowrap" style="width: 100%">
@@ -143,11 +150,12 @@
 @push('script')
 <script>
     let id_event = "{{$ei->id_event_internal}}";
+    let status = "all"
+    
     $(document).ready( function () {
-        $('.pendaftaran-table').DataTable({
+        var table = $('.pendaftaran-table').DataTable({
             dom: 'Bfrtip',
             buttons: [
-                'excel', 'pdf',
                 {
                     text: 'Validasi Semua',
                     action: function ( e, dt, node, config ) {
@@ -171,8 +179,29 @@
                                 }
                         });
                     }
+                },
+                {
+                    text: 'Export Excel',
+                    action: function ( e, dt, node, config ) {
+                        let url = "/ormawa/eventinternal/pendaftar/export/"+id_event+"/"+status;
+                        window.location = url;
+                    }
                 }
             ]
+        });
+
+        $('#status-select').each(function(){
+            $(this).on('change', function(){
+                if($(this).val() == "Sudah"){
+                    status = 1;
+                }else if($(this).val() == "Tidak"){
+                    status = 0;
+                }else{
+                    status = "all";
+                }
+
+                table.column(2).search($(this).val()).draw(); 
+            });
         });
     } );
 

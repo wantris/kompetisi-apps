@@ -34,6 +34,11 @@
                         <span class="micon dw dw-group"></span><span class="mtext">Tim Saya</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{route('peserta.regis.eventinternal.index')}}" class="dropdown-toggle no-arrow">
+                        <span class="micon dw dw-link"></span><span class="mtext">Riwayat Pendaftaran</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -160,8 +165,8 @@
                         <span class="micon dw dw-notebook"></span><span class="mtext"> Pendaftaran </span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="{{route('ormawa.eventinternal.index')}}">Event Internal</a></li>
-                        <li><a href="{{route('ormawa.eventeksternal.index')}}">Event Eksternal</a></li>
+                        <li><a href="{{route('ormawa.registration.eventinternal.index')}}">Event Internal</a></li>
+                        <li><a href="{{route('ormawa.registration.eventeksternal.index')}}">Event Eksternal</a></li>
                     </ul>
                 </li>
                 @if (Session::get('is_dosen') == "0")

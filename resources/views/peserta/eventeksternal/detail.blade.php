@@ -204,18 +204,20 @@
                                 <div class="col-6">
 
                                 </div>
-                                <div class="col-6 text-right">
-                                    @if ($event->role == "Team")
-                                        @php
-                                            $jsonRegis = json_encode($check_regis->eventEksternalRegisRef);
-                                        @endphp
-                                    @else
-                                        @php
-                                            $jsonRegis = json_encode($check_regis);
-                                        @endphp
-                                    @endif
-                                    <button class="btn btn-primary shadow" onclick="addBerkas({{$jsonRegis}})" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;">Upload Berkas</button>
-                                </div>
+                                @if ($check_regis)
+                                    <div class="col-6 text-right">
+                                        @if ($event->role == "Team")
+                                            @php
+                                                $jsonRegis = json_encode($check_regis->eventEksternalRegisRef);
+                                            @endphp
+                                        @else
+                                            @php
+                                                $jsonRegis = json_encode($check_regis);
+                                            @endphp
+                                        @endif
+                                        <button class="btn btn-primary shadow" onclick="addBerkas({{$jsonRegis}})" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;">Upload Berkas</button>
+                                    </div>
+                                @endif
                             </div>
                             <table class="table">
                                 <thead>

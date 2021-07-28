@@ -15,7 +15,33 @@ class OrmawaController extends Controller
     {
         $ormawas = Ormawa::all();
 
-        return response()->json($ormawas);
+        return response()->json([
+            'status' => 200,
+            'message' => "Data Ormawa tersedia",
+            'data' => $ormawas
+        ], 200);
+    }
+
+
+    public function detail($id_ormawa)
+    {
+        $ormawa = Ormawa::find($id_ormawa);
+
+        if ($ormawa) {
+            return response()->json(
+                [
+                    'status' => 200,
+                    'message' => "Data Ormawa tersedia",
+                    'data' => $ormawa
+                ],
+                200
+            );
+        }
+
+        return response()->json([
+            "success" => false,
+            "message" => "Data ormawa tidak ada",
+        ], 404);
     }
 
 

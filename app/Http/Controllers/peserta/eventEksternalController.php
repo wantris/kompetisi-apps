@@ -62,9 +62,7 @@ class eventEksternalController extends Controller
                 $pengguna->nama_mhs = $mhs->nama;
             }
             $check_regis = $this->checkIsRegis($pengguna, $event->id_event_eksternal);
-           
             $registrations = $this->getAllRegisInByEvent($event);
-
             $feeds = $this->getAllDocPendaftaran($event->id_event_eksternal);
             $search = $this->searchPengguna($event->id_event_eksternal);
 
@@ -166,7 +164,8 @@ class eventEksternalController extends Controller
         }
     }
 
-    public function uploadFile(Request $req, $id_regis){
+    public function uploadFile(Request $req, $id_regis)
+    {
         // dd($request->all());
         if ($req->file('file')) {
             $resorceFile = $req->file('file');
@@ -179,7 +178,7 @@ class eventEksternalController extends Controller
         $file->filename = $nameFile;
         $file->save();
 
-        return redirect()->back()->with('success','Upload berkas berhasil');
+        return redirect()->back()->with('success', 'Upload berkas berhasil');
     }
 
     public function timeline($slug)
@@ -311,7 +310,7 @@ class eventEksternalController extends Controller
         return $inactive_regis;
     }
 
-    
+
     public function checkIsRegis($pengguna, $id_eventeksternal)
     {
         $event = EventEksternal::find($id_eventeksternal);
@@ -321,16 +320,11 @@ class eventEksternalController extends Controller
             })->whereHas('timDetailRef', function ($query) use ($pengguna) {
                 if ($pengguna->is_mahasiswa) {
                     $query->where('nim', $pengguna->nim);
-                } else {
-                    $query->where('participant_id', $pengguna->participant_id);
                 }
             })->first();
         } else {
             if ($pengguna->is_mahasiswa) {
                 $check_regis = EventEksternalRegistration::where('nim', $pengguna->nim)
-                    ->where('event_eksternal_id', $event->id_event_eksternal)->first();
-            } else {
-                $check_regis = EventEksternalRegistration::where('participant_id', $pengguna->participant_id)
                     ->where('event_eksternal_id', $event->id_event_eksternal)->first();
             }
         }
@@ -340,7 +334,7 @@ class eventEksternalController extends Controller
 
     public function getAllRegisInByEvent($event)
     {
-        $registrations = EventEksternalRegistration::with('timRef', 'participantRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
+        $registrations = EventEksternalRegistration::with('timRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
 
         if ($registrations->count() > 0) {
             if ($event->role != "Team") {
