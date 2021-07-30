@@ -6,9 +6,17 @@ use App\Http\Controllers\Controller;
 use App\TimEvent;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use App\Http\Controllers\endpoint\ApiDosenController;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
 
 class TeamController extends Controller
 {
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
+    }
+
     public function detail($id_tim)
     {
 
@@ -17,7 +25,7 @@ class TeamController extends Controller
         $tim = TimEvent::find($id_tim);
 
         // Get all dosen
-        $dosens = $this->getAllDosen();
+        $dosens = $this->api_dosen->getAllDosen();
 
         // Get nama dosen
         if ($tim->nidn) {

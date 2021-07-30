@@ -9,29 +9,29 @@ use App\Pengguna;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
 
 class AccountController extends Controller
 {
+    protected $api_mahasiswa;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+    }
+
     public function index()
     {
         $navTitle = '<span class="micon dw dw-user-12 mr-2"></span> Pengaturan Profil';
         $pengguna = Pengguna::find(Session::get('id_pengguna'));
         if ($pengguna) {
+            $pengguna->mahasiswaRef = null;
             if ($pengguna->nim) {
                 // History event
                 $event_regis = EventInternalRegistration::with('eventInternalRef')->where('nim', $pengguna->nim)->get();
 
-                try {
-                    $client = new Client();
-                    $url = env("SOURCE_API") . "mahasiswa/detail/" . $pengguna->nim;
-                    $rMhs = $client->request('GET', $url, [
-                        'verify'  => false,
-                    ]);
-                    $mhs = json_decode($rMhs->getBody());
-
-                    $pengguna->nama_mhs = $mhs->nama;
-                } catch (\Throwable $err) {
-                }
+                $mhs = $this->api_mahasiswa->getMahasiswaByNim($pengguna->nim);
+                $pengguna->mahasiswaRef = $mhs;
             } else {
                 // History event
                 $event_regis = EventInternalRegistration::with('eventInternalRef')->where('participant_id', $pengguna->participant_id)->get();

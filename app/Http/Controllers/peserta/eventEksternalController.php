@@ -19,12 +19,26 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\invitationTeamMail;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
+use App\Http\Controllers\endpoint\ApiDosenController;
 
 class eventEksternalController extends Controller
 {
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $pengguna;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
+        $this->pengguna = Pengguna::find(Session::get('id_pengguna'));
+    }
+
     public function index()
     {
         $ormawas = Ormawa::all();
+
         $kategoris = KategoriEvent::all();
         $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Daftar Event Eksternal';
 
@@ -32,6 +46,7 @@ class eventEksternalController extends Controller
 
         // get Active event registration by session login
         $active_regis = $this->getEventActiveBySession();
+
 
         // get Inactive event registration by session login
         $inactive_regis = $this->getEventInactiveBySession();
@@ -55,16 +70,21 @@ class eventEksternalController extends Controller
 
         if ($event) {
             $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Event ' . $event->nama_event;
-            $pengguna = Pengguna::with('participantRef')->find(Session::get('id_pengguna'));
+            $pengguna = $this->pengguna;
+
+
             if ($pengguna->nim) {
-                $pengguna->nama_mhs = $pengguna->nim;
-                $mhs = $this->getMahasiswaByNim($pengguna->nim);
-                $pengguna->nama_mhs = $mhs->nama;
+                $pengguna->mahasiswaRef = null;
+                $mhs = $this->api_mahasiswa->getMahasiswaByNim($pengguna->nim);
+                $pengguna->mahasiswaRef = $mhs;
             }
-            $check_regis = $this->checkIsRegis($pengguna, $event->id_event_eksternal);
+
+            $check_regis = $this->checkIsRegis($pengguna, $event);
+
             $registrations = $this->getAllRegisInByEvent($event);
-            $feeds = $this->getAllDocPendaftaran($event->id_event_eksternal);
+            $feeds = $this->getAllDocPendaftaran($event);
             $search = $this->searchPengguna($event->id_event_eksternal);
+
 
             return view('peserta.eventeksternal.detail', compact(
                 'navTitle',
@@ -87,13 +107,7 @@ class eventEksternalController extends Controller
         $removeSlug = str_ireplace(array('-'), ' ', $slug);
         $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
 
-        $pengguna = Pengguna::find(Session::get('id_pengguna'));
-
-        if ($pengguna->is_mahasiswa) {
-            $penggunaRef = $pengguna->nim;
-        } else {
-            $penggunaRef = $pengguna->participant_id;
-        }
+        $pengguna = $this->pengguna;
 
         // registrasi event
         $is_win = array('is_win' => '0', 'position' => null);
@@ -114,11 +128,7 @@ class eventEksternalController extends Controller
 
                 $ted = new TimEventDetail();
                 $ted->tim_event_id = $tim->id_tim_event;
-                if ($pengguna->is_mahasiswa) {
-                    $ted->nim = $pengguna->nim;
-                } else {
-                    $ted->participant_id = $pengguna->participant_id;
-                }
+                $ted->nim = $pengguna->nim;
                 $ted->role = "ketua";
                 $ted->status = "Done";
                 $ted->save();
@@ -130,22 +140,20 @@ class eventEksternalController extends Controller
                     // insert to temporary team detail
                     $ted = new TimEventDetail();
                     $ted->tim_event_id = $tim->id_tim_event;
-                    if ($anggota->is_mahasiswa) {
-                        $ted->nim = $anggota->nim;
-                    } else {
-                        $ted->participant_id = $anggota->participant_id;
-                    }
+                    $ted->nim = $anggota->nim;
                     $ted->role = "anggota";
                     $ted->status = "Pending";
                     $ted->save();
 
                     // send email
                     try {
-                        if ($pengguna->is_mahasiswa) {
-                            $nama = $this->getMahasiswaByNim($pengguna->nim)->nama;
+                        $mhs = $this->api_mahasiswa->getMahasiswaByNim($pengguna->nim)->mahasiswa_nama;
+                        if ($mhs) {
+                            $nama = $mhs->mahasiswa_nama;
                         } else {
-                            $nama = $pengguna->participantRef->nama_participant;
+                            $nama = $pengguna->nim;
                         }
+
                         Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $removeSlug, $ted->id_tim_event_detail));
                     } catch (\Throwable $err) {
                     }
@@ -154,9 +162,10 @@ class eventEksternalController extends Controller
                 return redirect()->route('peserta.team.index')->with('success', 'Pendaftaran event berhasil');
             }
         } else {
+
             $regis = new EventEksternalRegistration();
             $regis->event_eksternal_id = $event->id_event_eksternal;
-            $regis->nim = $penggunaRef;
+            $regis->nim = $pengguna->nim;
             $regis->is_win = json_encode($is_win);
             $regis->save();
 
@@ -220,7 +229,7 @@ class eventEksternalController extends Controller
         $active_regis = collect();
 
         if (Session::get('id_pengguna') != null) {
-            $pengguna = Pengguna::find(Session::get('id_pengguna'));
+            $pengguna = $this->pengguna;
 
             $tims = TimEvent::with('timDetailRef')->whereHas('timDetailRef', function ($query) use ($pengguna) {
                 if ($pengguna->is_mahasiswa) {
@@ -268,7 +277,7 @@ class eventEksternalController extends Controller
         $inactive_regis = collect();
 
         if (Session::get('id_pengguna') != null) {
-            $pengguna = Pengguna::find(Session::get('id_pengguna'));
+            $pengguna = $this->pengguna;
 
             $tims = TimEvent::with('timDetailRef')->whereHas('timDetailRef', function ($query) use ($pengguna) {
                 if ($pengguna->is_mahasiswa) {
@@ -311,22 +320,19 @@ class eventEksternalController extends Controller
     }
 
 
-    public function checkIsRegis($pengguna, $id_eventeksternal)
+    public function checkIsRegis($pengguna, $event)
     {
-        $event = EventEksternal::find($id_eventeksternal);
+        $id_eventeksternal = $event->id_event_eksternal;
+
         if ($event->role == "Team") {
             $check_regis = TimEvent::whereHas('eventEksternalRegisRef', function ($query) use ($id_eventeksternal) {
                 $query->where('event_eksternal_id', $id_eventeksternal);
             })->whereHas('timDetailRef', function ($query) use ($pengguna) {
-                if ($pengguna->is_mahasiswa) {
-                    $query->where('nim', $pengguna->nim);
-                }
+                $query->where('nim', $pengguna->nim);
             })->first();
         } else {
-            if ($pengguna->is_mahasiswa) {
-                $check_regis = EventEksternalRegistration::where('nim', $pengguna->nim)
-                    ->where('event_eksternal_id', $event->id_event_eksternal)->first();
-            }
+            $check_regis = EventEksternalRegistration::where('nim', $pengguna->nim)
+                ->where('event_eksternal_id', $id_eventeksternal)->first();
         }
 
         return $check_regis;
@@ -339,28 +345,20 @@ class eventEksternalController extends Controller
         if ($registrations->count() > 0) {
             if ($event->role != "Team") {
                 foreach ($registrations as $item) {
-                    $item->nama_mhs = null;
-                    if ($item->nim) {
-                        $item->nama_mhs = $item->nim;
-                        try {
-                            $mhs = $this->getMahasiswaByNim($item->nim);
-                            $item->nama_mhs = $mhs->nama;
-                        } catch (\Throwable $err) {
-                        }
+                    $item->nama_mhs = $item->nim;
+                    $mhs = $this->api_mahasiswa->getMahasiswaByNim($item->nim);
+                    if ($mhs) {
+                        $item->nama_mhs = $mhs->mahasiswa_nama;
                     }
                 }
             } else {
                 foreach ($registrations as $item) {
                     foreach ($item->timRef->timDetailRef as $detail) {
                         if ($detail->role == "ketua") {
-                            $detail->nama_mhs = null;
-                            if ($detail->nim) {
-                                $detail->nama_mhs = $detail->nim;
-                                try {
-                                    $mhs = $this->getMahasiswaByNim($detail->nim);
-                                    $detail->nama_mhs = $mhs->nama;
-                                } catch (\Throwable $err) {
-                                }
+                            $detail->nama_mhs = $detail->nim;
+                            $mhs = $this->api_mahasiswa->getMahasiswaByNim($detail->nim);
+                            if ($mhs) {
+                                $detail->nama_mhs = $mhs->mahasiswa_nama;
                             }
                         }
                     }
@@ -371,8 +369,10 @@ class eventEksternalController extends Controller
         return $registrations;
     }
 
-    public function getAllDocPendaftaran($id_eventeksternal)
+    public function getAllDocPendaftaran($event)
     {
+        $id_eventeksternal = $event->id_event_eksternal;
+
         $feeds = FileEventEksternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventeksternal) {
             $q->where('event_eksternal_id', '=', $id_eventeksternal);
         })->where('tipe', 'pendaftaran')->get();
@@ -384,18 +384,18 @@ class eventEksternalController extends Controller
     public function searchPengguna($id)
     {
         // Cari pengguna yang tidak ada dalam tim detail dan yang tidak terdaftar pada tim $id
-        $invites = Pengguna::with('participantRef')->where('id_pengguna', '!=', Session::get('id_pengguna'))
+        $invites = Pengguna::where('id_pengguna', '!=', Session::get('id_pengguna'))
             ->where(function ($query) {
                 $query->where('is_mahasiswa', 1);
             })->get();
 
         // get name mahasiswa from api
         foreach ($invites as $item2) {
-            $item2->nama_mhs = null;
+            $item2->mahasiswaRef = null;
             if ($item2->nim) {
                 try {
                     // Get nama mahasiswa
-                    $item2->nama_mhs = $this->getMahasiswaByNim($item2->nim)->nama;
+                    $item2->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($item2->nim);
                 } catch (\Throwable $err) {
                 }
             }

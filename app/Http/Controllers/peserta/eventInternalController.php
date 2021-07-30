@@ -15,11 +15,27 @@ use App\TimEvent;
 use App\Timeline;
 use App\FileEventInternalDetail;
 use App\FileEventInternalRegistration;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
+use App\Http\Controllers\endpoint\ApiDosenController;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
 
 class eventInternalController extends Controller
 {
+
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $pengguna;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->api_mahasiswa = new ApiMahasiswaController;
+            $this->api_dosen = new ApiDosenController;
+            $this->pengguna = Pengguna::find(Session::get('id_pengguna'));
+            return $next($request);
+        });
+    }
 
     public function index()
     {
@@ -29,7 +45,8 @@ class eventInternalController extends Controller
 
 
         if (Session::get('id_pengguna') != null) {
-            $pengguna = Pengguna::find(Session::get('id_pengguna'));
+
+            $pengguna = $this->pengguna;
             $active_regis = collect();
             $inactive_regis = collect();
 
@@ -73,7 +90,7 @@ class eventInternalController extends Controller
             })->get();
 
             if ($active_regis_individu->count() > 0) {
-                foreach($active_regis_individu as $item){
+                foreach ($active_regis_individu as $item) {
                     $active_regis->push($item);
                 }
             }
@@ -89,7 +106,7 @@ class eventInternalController extends Controller
             })->get();
 
             if ($inactive_regis_individu->count() > 0) {
-                foreach($inactive_regis_individu as $item){
+                foreach ($inactive_regis_individu as $item) {
                     $inactive_regis->push($item);
                 }
             }
@@ -104,7 +121,9 @@ class eventInternalController extends Controller
         $id_ormawa = $request->id_ormawa;
 
         if (Session::get('id_pengguna') != null) {
-            $pengguna = Pengguna::find(Session::get('id_pengguna'));
+
+            $pengguna = $this->pengguna;
+
             if ($pengguna->is_mahasiswa) {
                 $active_regis = EventInternalRegistration::with('eventInternalRef')->where('nim', $pengguna->nim)->whereHas('eventInternalRef', function ($query) use ($id_kategori, $id_ormawa) {
                     $query->where('status', 1);
@@ -147,24 +166,26 @@ class eventInternalController extends Controller
 
     public function detail($slug)
     {
-        // remove slug string "-"
+
         $removeSlug = str_ireplace(array('-'), ' ', $slug);
 
-        $pengguna = Pengguna::find(Session::get('id_pengguna'));
+        $pengguna = $this->pengguna;
+
         $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
 
         if ($event) {
             $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>' . $removeSlug;
             $registrations = EventInternalRegistration::with('timRef', 'participantRef')->where('event_internal_id', $event->id_event_internal)->get();
-            $check_regis = $this->checkIsRegis($pengguna, $event->id_event_internal);
+            $check_regis = $this->checkIsRegis($pengguna, $event);
             $feeds = $this->getAllFilePendaftaran($event->id_event_internal);
+
             if ($event->role != "Team") {
                 foreach ($registrations as $item) {
-                    $item->nama_mhs = null;
+                    $item->mahasiswaRef = null;
                     if ($item->nim) {
                         try {
-                            $mhs = $this->getMahasiswaByNim($item->nim);
-                            $item->nama_mhs = $mhs->nama;
+                            $mhs = $this->api_mahasiswa->getMahasiswaByNim($item->nim);
+                            $item->mahasiswaRef = $mhs;
                         } catch (\Throwable $err) {
                         }
                     }
@@ -173,11 +194,11 @@ class eventInternalController extends Controller
                 foreach ($registrations as $item) {
                     foreach ($item->timRef->timDetailRef as $detail) {
                         if ($detail->role == "ketua") {
-                            $detail->nama_mhs = null;
+                            $detail->mahasiswaRef = null;
                             if ($detail->nim) {
                                 try {
-                                    $mhs = $this->getMahasiswaByNim($detail->nim);
-                                    $detail->nama_mhs = $mhs->nama;
+                                    $mhs = $this->api_mahasiswa->getMahasiswaByNim($detail->nim);;
+                                    $detail->mahasiswaRef = $mhs;
                                 } catch (\Throwable $err) {
                                 }
                             }
@@ -187,12 +208,13 @@ class eventInternalController extends Controller
             }
 
             return view('peserta.eventinternal.detail', compact(
-                'slug', 
-                'navTitle', 
-                'registrations', 
+                'slug',
+                'navTitle',
+                'registrations',
                 'event',
                 'check_regis',
-                'feeds'
+                'feeds',
+                'pengguna'
             ));
         }
 
@@ -211,7 +233,8 @@ class eventInternalController extends Controller
         return view('peserta.eventinternal.submission_info', compact('slug', 'navTitle'));
     }
 
-      public function uploadFile(Request $req, $id_regis){
+    public function uploadFile(Request $req, $id_regis)
+    {
         // dd($request->all());
         if ($req->file('file')) {
             $resorceFile = $req->file('file');
@@ -224,7 +247,7 @@ class eventInternalController extends Controller
         $file->filename = $nameFile;
         $file->save();
 
-        return redirect()->back()->with('success','Upload berkas berhasil');
+        return redirect()->back()->with('success', 'Upload berkas berhasil');
     }
 
     public function notification($slug)
@@ -270,9 +293,10 @@ class eventInternalController extends Controller
         }
     }
 
-     public function checkIsRegis($pengguna, $id_eventinternal)
+    public function checkIsRegis($pengguna, $event)
     {
-        $event = EventInternal::find($id_eventinternal);
+        $id_eventinternal = $event->id_event_internal;
+
         if ($event->role == "Team") {
             $check_regis = TimEvent::whereHas('eventInternalRegisRef', function ($query) use ($id_eventinternal) {
                 $query->where('event_internal_id', $id_eventinternal);
@@ -309,20 +333,16 @@ class eventInternalController extends Controller
     {
         $msh = null;
 
-        try{
+        try {
             $client = new Client();
             $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
             $rMhs = $client->request('GET', $url, [
                 'verify'  => false,
             ]);
             $mhs = json_decode($rMhs->getBody());
-
-        }catch(\Throwable $err){
-
+        } catch (\Throwable $err) {
         }
 
         return $mhs;
     }
-
-
 }

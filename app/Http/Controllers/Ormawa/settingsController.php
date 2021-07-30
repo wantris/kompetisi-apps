@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Ormawa;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\endpoint\ApiDosenController;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Requests\PembinaStoreRequest;
 use Illuminate\Support\Facades\Session;
 use App\Ormawa;
@@ -12,30 +14,34 @@ use Illuminate\Http\Request;
 
 class settingsController extends Controller
 {
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $ormawa;
+    protected $dosens;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
+        $this->ormawa =  Ormawa::find(Session::get('id_ormawa'));
+        $this->dosens = $this->api_dosen->getAllDosen();
+    }
+
     public function index()
     {
         try {
-            $ormawa = Ormawa::find(Session::get('id_ormawa'));
+            $ormawa = $this->ormawa;
+
             $pembinas = Pembina::where('ormawa_id', Session::get('id_ormawa'))->get();
-            $client = new Client();
-            $url = env("SOURCE_API") . "dosen/";
-            $rDosens = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $dosens = json_decode($rDosens->getBody());
+
+            $dosens = $this->dosens;
 
             if ($pembinas->count() > 0) {
                 foreach ($pembinas as $pembina) {
-                    // call API
-                    $client = new Client();
-                    $url = env("SOURCE_API") . "dosen/" . $pembina->nidn;
-                    $response = $client->request('GET', $url, [
-                        'verify'  => false,
-                    ]);
-                    $dosen = json_decode($response->getBody());
-
+                    $pembina->dosenRef = null;
+                    $dosen = $this->api_dosen->getDosenOnlySomeField($pembina->nidn);
                     if ($dosen) {
-                        $pembina->nama_dosen = $dosen->nama_dosen;
+                        $pembina->dosenRef = $dosen;
                     }
                 }
             }

@@ -417,7 +417,7 @@
         $('#form-invite').attr('action', url);
 
         if(pengguna.is_mahasiswa){
-            $('#nama-ketua-text').val(pengguna.nama_mhs);
+            $('#nama-ketua-text').val(pengguna.mahasiswaRef.mahasiswa_nama);
         }else{
             $('#nama-ketua-text').val(pengguna.participant_ref.nama_participant);
         }
@@ -427,7 +427,7 @@
             if(item.is_mahasiswa){
                 $('#invite-inp').append($('<option>', { 
                     value: item.id_pengguna,
-                    text : item.nama_mhs + " ("+item.username+")"
+                    text : item.mahasiswaRef.mahasiswa_nama + " ("+item.username+")"
                 }));
             }else if(item.is_participant){
                 $('#invite-inp').append($('<option>', { 

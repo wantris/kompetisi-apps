@@ -18,12 +18,30 @@ use App\TimEvent;
 use App\TimEventDetail;
 use GuzzleHttp\Client;
 use App\TipePeserta;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
+use App\Http\Controllers\endpoint\ApiDosenController;
 use App\TmpTimEventDetail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class eventController extends Controller
 {
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $pengguna;
+
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->api_mahasiswa = new ApiMahasiswaController;
+            $this->api_dosen = new ApiDosenController;
+            $this->pengguna = Pengguna::find(Session::get('id_pengguna'));
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $events = EventInternal::where('status', '1')->paginate(10);
@@ -46,7 +64,7 @@ class eventController extends Controller
 
             // Check apakah user yg login sudah mendaftar event
             if (Session::get('id_pengguna') != null) {
-                $pengguna = Pengguna::find(Session::get('id_pengguna'));
+                $pengguna = $this->pengguna;
 
                 if ($event->role == "Individu") {
                     if ($pengguna->is_mahasiswa) {
@@ -69,8 +87,6 @@ class eventController extends Controller
                         }
                     })->first();
                 }
-
-                // dd($check_regis);
             }
 
             // Mengambil dokumen pendaftaran
@@ -110,7 +126,7 @@ class eventController extends Controller
         $removeSlug = str_ireplace(array('-'), ' ', $slug);
 
         if (Session::get('id_pengguna') != null) {
-            $pengguna = Pengguna::find(Session::get('id_pengguna'));
+            $pengguna = $this->pengguna;
             if ($pengguna->is_mahasiswa) {
                 $penggunaRef = $pengguna->nim;
             } else {
@@ -151,23 +167,12 @@ class eventController extends Controller
     public function registrationTeam($slug)
     {
         // remove slug string "-"
+
+
         $removeSlug = str_ireplace(array('-'), ' ', $slug);
         $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
 
-        $penggunas = Pengguna::with('participantRef')->where('is_mahasiswa', 1)->orWhere('is_participant', 1)->get();
-        foreach ($penggunas as $item) {
-            $item->nama_mhs = null;
-            if ($item->nim) {
-                try {
-                    $mhs = $this->getMahasiswaByNim($item->nim);
-
-                    $item->nama_mhs = $mhs->nama;
-                } catch (\Throwable $err) {
-                }
-            }
-        }
-
-        $user_logged = Pengguna::find(Session::get('id_pengguna'));
+        $user_logged = $this->pengguna;
 
         if (!$user_logged) {
             return redirect()->route('project.index')->with('failed', 'Anda harus login');
@@ -175,14 +180,14 @@ class eventController extends Controller
 
         if ($user_logged->nim) {
             try {
-                $mhs = $this->getMahasiswaByNim($user_logged->nim);
-
-                $user_logged->nama_mhs = $mhs->nama;
+                $user_logged->mahasiswaRef = null;
+                $mhs = $this->api_mahasiswa->getMahasiswaByNim($user_logged->nim);
+                // dd($user_logged->nim);
+                $user_logged->mahasiswaRef = $mhs;
             } catch (\Throwable $err) {
             }
         }
-
-        return view('landing.event.registrationTeam', compact('slug', 'penggunas', 'user_logged', 'event'));
+        return view('landing.event.registrationTeam', compact('slug', 'user_logged', 'event'));
     }
 
     public function saveRegistrationTeam(Request $request, $slug)
@@ -239,7 +244,7 @@ class eventController extends Controller
                 // send email
                 try {
                     if ($pengguna->is_mahasiswa) {
-                        $nama = $this->getMahasiswaByNim($pengguna->nim)->nama;
+                        $nama = $this->api_mahasiswa->getMahasiswaByNim($pengguna->nim)->mahasiswa_nama;
                     } else {
                         $nama = $pengguna->participantRef->nama_participant;
                     }
@@ -265,8 +270,8 @@ class eventController extends Controller
             if ($from_invite->penggunaMhsRef) {
                 $from_invite->penggunaMhsRef->nama_mhs = $from_invite->penggunaMhsRef->nim;
                 try {
-                    $mhs = $this->getMahasiswaByNim($from_invite->penggunaMhsRef->nim);
-                    $from_invite->penggunaMhsRef->nama_mhs = $mhs->nama;
+                    $mhs =  $this->api_mahasiswa->getMahasiswaByNim($from_invite->penggunaMhsRef->nim);
+                    $from_invite->penggunaMhsRef->nama_mhs = $mhs->mahasiswa_nama;
                 } catch (\Throwable $err) {
                 }
             }
@@ -278,38 +283,38 @@ class eventController extends Controller
 
     public function searchPengguna($id)
     {
-        // Cari pengguna yang tidak ada dalam tim detail dan yang tidak terdaftar pada tim $id
-        $invites = Pengguna::with('participantRef')->where('id_pengguna', '!=', Session::get('id_pengguna'))
-            ->where(function ($query) {
-                $query->where('is_mahasiswa', 1);
-                $query->orWhere('is_participant', 1);
-            })->get();
+        $year = Carbon::now()->year;
+        $cut_year = substr($year, -2);
+        (string)$minus_year = (int)$cut_year - 3;
 
-        // get name mahasiswa from api
-        foreach ($invites as $item2) {
-            $item2->nama_mhs = null;
-            if ($item2->nim) {
+        $api_mahasiswa = $this->api_mahasiswa;
+        $mahasiswas = collect();
+
+        $mahasiswa_api = Cache::remember('all_mahasiswa', 120, function () use ($api_mahasiswa) {
+            return $api_mahasiswa->getAllMahasiswa();
+        });
+
+        foreach ($mahasiswa_api as $api) {
+            $mahasiswas->push($api);
+        }
+
+        // Cari pengguna yang tidak ada dalam tim detail dan yang tidak terdaftar pada tim $id
+        $penggunas = Pengguna::with('participantRef')->where('id_pengguna', '!=', Session::get('id_pengguna'))
+            ->where(function ($query) use ($minus_year, $cut_year) {
+                $query->where('is_mahasiswa', 1);
+                $query->whereBetween('nim', [$minus_year . '%', $cut_year . '%']);
+            })->orWhere('is_participant', 1)->get();
+
+        $penggunas->each(function ($item, $key) use ($mahasiswas) {
+            if ($item->nim) {
                 try {
-                    // Get nama mahasiswa
-                    $item2->nama_mhs = $this->getMahasiswaByNim($item2->nim)->nama;
+                    $mhs =  $mahasiswas->where('mahasiswa_nim', $item->nim)->first();
+                    $item->mahasiswaRef = $mhs;
                 } catch (\Throwable $err) {
                 }
             }
-        }
+        });
 
-        return response()->json($invites);
-    }
-
-
-    public function getMahasiswaByNim($nim)
-    {
-        $client = new Client();
-        $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-        $rMhs = $client->request('GET', $url, [
-            'verify'  => false,
-        ]);
-        $mhs = json_decode($rMhs->getBody());
-
-        return $mhs;
+        return response()->json($penggunas);
     }
 }

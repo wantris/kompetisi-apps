@@ -114,7 +114,7 @@
                                                         </div>
                                                         <div class="d-flex flex-column flex-auto">
                                                             @if ($invite->invited_by->nim)
-                                                                <a href="#" class="text-orange"><strong>{{$invite->invited_by->nama_mhs}}</strong></a>
+                                                                <a href="#" class="text-orange"><strong>{{$invite->invited_by->mahasiswaRef->mahasiswa_nama}}</strong></a>
                                                                 <small class="text-secondary">{{$invite->invited_by->role}}</small>
                                                             @else
                                                                 <a href="#" class="text-orange"><strong>{{$invite->invited_by->participantRef->nama_participant}}</strong></a>

@@ -163,6 +163,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Nama Dosen</th>
+                                            <th>Jurusan</th>
                                             <th>Tahun Jabatan</th>
                                             <th>Status Keaktifan</th>
                                         </tr>
@@ -171,7 +172,18 @@
                                         @foreach ($pembinas as $pembina)
                                         <tr id="tr_{{$pembina->id_pembina}}">
                                             <td>{{$loop->iteration}}</td>
-                                            <td>{{$pembina->nama_dosen}}</td>
+                                            <td>
+                                                @if ($pembina->dosenRef)
+                                                    {{$pembina->dosenRef->dosen_lengkap_nama}}
+                                                @else
+                                                    {{$pembina->nidn}}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($pembina->dosenRef)
+                                                    {{$pembina->dosenRef->program_studi_nama}}
+                                                @endif
+                                            </td>
                                             <td>{{$pembina->tahun_jabatan}}</td>
                                             <td>
                                                 @if ($pembina->status == 1)
@@ -197,7 +209,9 @@
                                         <select class="js-example-basic-single" style="width: 100%" name="nama_dosen">
                                             <option selected>Pilih Dosen</option>
                                             @foreach ($dosens as $dosen)
-                                            <option value="{{$dosen->nidn}}">{{$dosen->nama_dosen}}</option>
+                                                <option value="{{$dosen->dosen_nidn}}">
+                                                    {{$dosen->dosen_gelar_depan . " " . $dosen->dosen_nama . " " . $dosen->dosen_gelar_belakang}}
+                                                </option>
                                             @endforeach
                                         </select>
                                         @if ($errors->has('nama_dosen'))

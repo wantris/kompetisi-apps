@@ -33,7 +33,7 @@
                             <div class="col-12">
                                 <label for="" class="registration-komp-label">Ketua Tim</label>
                                 @if ($user_logged->nim)
-                                    <input type="text" disabled value="{{$user_logged->nama_mhs}}" class="form-control">
+                                    <input type="text" disabled value="{{$user_logged->mahasiswaRef->mahasiswa_nama}}" class="form-control">
                                 @else
                                     <input type="text" disabled value="{{$user_logged->participantRef->nama_participant}}" class="form-control">
                                 @endif
@@ -86,7 +86,7 @@
                         if(item.is_mahasiswa){
                             $('#select_anggota_'+id).append($('<option>', { 
                                 value: item.id_pengguna,
-                                text : item.nama_mhs + " ("+item.username+")"
+                                text : item.mahasiswaRef.mahasiswa_nama + " ("+item.username+")"
                             }));
                         }else if(item.is_participant){
                             $('#select_anggota_'+id).append($('<option>', { 

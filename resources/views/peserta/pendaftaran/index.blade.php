@@ -45,7 +45,7 @@
                                                     <td></td>
                                                     <td>
                                                         @if ($regis->nim)
-                                                            {{$regis->mahasiswaRef->nama}}
+                                                            {{$regis->mahasiswaRef->mahasiswa_nama}}
                                                         @else
                                                             {{$regis->participantRef->nama_participant}}
                                                         @endif
@@ -89,7 +89,7 @@
                                                         @foreach ($regis->timRef->timDetailRef as $detail)
                                                             @if ($detail->role == "ketua")
                                                                 @if ($detail->nim)
-                                                                    {{$detail->mahasiswaRef->nama}}
+                                                                    {{$detail->mahasiswaRef->mahasiswa_nama}}
                                                                 @else
                                                                     {{$detail->participantRef->nama_participant}}
                                                                 @endif
@@ -126,7 +126,7 @@
                                                                 $slug = \Str::slug($regis->eventInternalRef->nama_event);
                                                             @endphp
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                                                <a class="dropdown-item" href="{{route('ormawa.team.detail', $regis->tim_event_id)}}"><i class="dw dw-eye"></i>Lihat Tim</a>
+                                                                <a class="dropdown-item" href="{{route('peserta.team.detail', $regis->tim_event_id)}}"><i class="dw dw-eye"></i>Lihat Tim</a>
                                                                 <a class="dropdown-item" href="{{route('peserta.eventinternal.detail', $slug)}}"><i class="dw dw-rocket"></i>Lihat Event</a>
                                                             </div>
                                                         </div>
@@ -162,7 +162,7 @@
                                                     <td>{{$eksternal->id_event_eksternal_registration}}</td>
                                                     <td></td>
                                                     <td>
-                                                        {{$eksternal->mahasiswaRef->nama}}
+                                                        {{$eksternal->mahasiswaRef->mahasiswa_nama}}
                                                     </td>
                                                     <td>{{$eksternal->eventeksternalRef->nama_event}}</td>
                                                     <td>
@@ -198,7 +198,7 @@
                                                     <td>
                                                         @foreach ($eksternal->timRef->timDetailRef as $detail)
                                                             @if ($detail->role == "ketua")
-                                                                    {{$detail->mahasiswaRef->nama}}
+                                                                    {{$detail->mahasiswaRef->mahasiswa_nama}}
                                                             @endif
                                                         @endforeach    
                                                     </td>
@@ -228,7 +228,7 @@
                                                                 $slug = \Str::slug($eksternal->eventEksternalRef->nama_event);
                                                             @endphp
                                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                                                <a class="dropdown-item" href="{{route('ormawa.team.detail', $eksternal->tim_event_id)}}"><i class="dw dw-eye"></i>Lihat Tim</a>
+                                                                <a class="dropdown-item" href="{{route('peserta.team.detail', $eksternal->tim_event_id)}}"><i class="dw dw-eye"></i>Lihat Tim</a>
                                                                 <a class="dropdown-item" href="{{route('peserta.eventeksternal.detail', $slug)}}"><i class="dw dw-rocket"></i>Lihat Event</a>
                                                             </div>
                                                         </div>

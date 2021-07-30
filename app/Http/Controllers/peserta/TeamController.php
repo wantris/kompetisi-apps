@@ -12,18 +12,32 @@ use App\EventEksternal;
 use Illuminate\Support\Facades\Mail;
 use App\TmpTimEventDetail;
 use App\Mail\invitationTeamMail;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
+use App\Http\Controllers\endpoint\ApiDosenController;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class TeamController extends Controller
 {
     protected $id_tim;
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $pengguna;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
+        $this->pengguna = Pengguna::find(Session::get('id_pengguna'));
+    }
 
     public function index()
     {
         $navTitle = '<span class="micon dw dw-user-11 mr-2"></span>Team';
-        $pengguna = Pengguna::find(Session::get('id_pengguna'));
+
+        $pengguna = $this->pengguna;
 
         // Tim yg status nya Done bukan pending
         $tims = TimEvent::with('timDetailRef')->whereHas('timDetailRef', function ($query) use ($pengguna) {
@@ -53,10 +67,10 @@ class TeamController extends Controller
                     $search = null;
                     $search = TimEventDetail::with('penggunaMhsRef', 'penggunaParticipantRef')->where('tim_event_id', $item->tim_event_id)->where('role', 'ketua')->first();
                     if ($search) {
-                        $search->nama_mhs = null;
+                        $search->mahasiswaRef = null;
                         if ($search->nim) {
                             try {
-                                $search->nama_mhs = $this->getMahasiswaByNim($search->nim);
+                                $search->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($search->nim);
                             } catch (\Throwable $err) {
                             }
                         }
@@ -66,23 +80,24 @@ class TeamController extends Controller
             }
         }
 
-        // dd($tim_pendings);
         return view('peserta.team.index', compact('navTitle', 'tims', 'tim_pendings', 'pengguna'));
     }
 
     public function detail($id)
     {
         $navTitle = '<span class="micon dw dw-user-11 mr-2"></span>Detail Team';
-        $tim = TimEvent::find($id);
+        $tim = TimEvent::with('timDetailRef')->find($id);
+        $pengguna = $this->pengguna;
+
         if ($tim) {
 
             // Get all dosen
-            $dosens = $this->getAllDosen();
+            $dosens = $this->api_dosen->getAllDosen();
 
             // Get nama dosen
             if ($tim->nidn) {
-                $tim->nama_dosen = $tim->nidn;
-                $tim->nama_dosen =  $this->getDosenSingle($tim->nidn);
+                $tim->dosenRef = $tim->nidn;
+                $tim->dosenRef =  $this->api_dosen->getDosenSingle($tim->nidn);
             }
 
             // Check if session login has role ketua
@@ -98,9 +113,9 @@ class TeamController extends Controller
             // Get name of mahasiswa
             foreach ($tim->timDetailRef as $detail) {
                 if ($detail->nim) {
-                    $detail->nama_mhs = $detail->nim;
+                    $detail->mahasiswaRef = $detail->nim;
                     try {
-                        $detail->nama_mhs = $this->getMahasiswaByNim($detail->nim);
+                        $detail->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($detail->nim);
                     } catch (\Throwable $err) {
                     }
                 }
@@ -112,9 +127,9 @@ class TeamController extends Controller
             if ($invitationals->count() > 0) {
                 foreach ($invitationals as $tim_detail) {
                     if ($tim_detail->nim) {
-                        $tim_detail->nama_mhs = $tim_detail->nim;
+                        $tim_detail->mahasiswaRef = $tim_detail->nim;
                         try {
-                            $tim_detail->nama_mhs = $this->getMahasiswaByNim($tim_detail->nim);
+                            $tim_detail->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($tim_detail->nim);
                         } catch (\Throwable $err) {
                         }
                     }
@@ -127,7 +142,8 @@ class TeamController extends Controller
                 'tim',
                 'check',
                 'invitationals',
-                'dosens'
+                'dosens',
+                'pengguna'
             ));
         }
 
@@ -165,33 +181,36 @@ class TeamController extends Controller
         ]);
     }
 
-    public function ajukanPembimbing(Request $request, $id_tim){
+    public function ajukanPembimbing(Request $request, $id_tim)
+    {
         $nidn = $request->nidn;
-        
-        try{
+
+        try {
             $pengajuan = TimEvent::where('id_tim_event', $id_tim)->update([
                 'nidn' => $nidn
             ]);
 
-            return redirect()->back()->with('success','Pengajuan Berhasil');
-        }catch(\Throwable $err){
+            return redirect()->back()->with('success', 'Pengajuan Berhasil');
+        } catch (\Throwable $err) {
             dd($err);
-        } 
+        }
     }
-
 
     public function searchPengguna($id)
     {
         // Cari pengguna yang tidak ada dalam tim detail dan yang tidak terdaftar pada tim $id
-        $coba = Pengguna::with('participantRef')->doesntHave('timParticipantRef', 'or', function ($query) use ($id) {
-            $query->where('tim_event_id', $id);
-        })->whereDoesntHave('timMhsRef', function ($query) use ($id) {
-            $query->where('tim_event_id', $id);
-        })->get();
+        $penggunas = Cache::remember('invite_internal', 120, function () use ($id) {
+            return Pengguna::with('participantRef')->doesntHave('timParticipantRef', 'or', function ($query) use ($id) {
+                $query->where('tim_event_id', $id);
+            })->whereDoesntHave('timMhsRef', function ($query) use ($id) {
+                $query->where('tim_event_id', $id);
+            })->get();
+        });
+
 
         // Filter hanya untuk maahasiswa dan participant
         $invites = collect();
-        foreach ($coba as $item) {
+        foreach ($penggunas as $item) {
             if ($item->is_mahasiswa == 1 || $item->is_participant == 1) {
                 $invites->push($item);
             }
@@ -199,11 +218,11 @@ class TeamController extends Controller
 
         // get name mahasiswa from api
         foreach ($invites as $item2) {
-            $item2->nama_mhs = null;
+            $item2->mahasiswaRef = null;
             if ($item2->nim) {
                 try {
                     // Get nama mahasiswa
-                    $item2->nama_mhs = $this->getMahasiswaByNim($item2->nim);
+                    $item2->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($item2->nim);
                 } catch (\Throwable $err) {
                 }
             }
@@ -229,7 +248,7 @@ class TeamController extends Controller
         $ted = new TimEventDetail();
         $ted->tim_event_id = $id_tim;
         if ($pengguna->is_mahasiswa) {
-            $nama = $this->searchMahasiswa($pengguna->nim);
+            $nama = $this->api_mahasiswa->getMahasiswaByNim($pengguna->nim)->mahasiswa_nama;
             $ted->nim = $pengguna->nim;
         } else {
             $ted->participant_id = $pengguna->participant_id;
@@ -242,68 +261,6 @@ class TeamController extends Controller
         Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $event->nama_event, $ted->id_tim_event_detail));
         if ($ted) {
             return redirect()->back()->with('success', 'Berhasil mengundang');
-        }
-    }
-
-
-    public function searchMahasiswa($nim)
-    {
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-            $rMhs = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $mhs = json_decode($rMhs->getBody());
-            return $mhs->nama;
-        } catch (\Throwable $err) {
-        }
-    }
-
-    public function getAllDosen(){
-        $dosens = null;
-
-        try{
-            $client = new Client();
-            $url = env("SOURCE_API") . "dosen/";
-            $rDosens = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $dosens = json_decode($rDosens->getBody());
-        }catch(\Throwable $err){
-
-        }
-
-        return $dosens;
-    }
-
-    public function getDosenSingle($nidn)
-    {
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "dosen/" . $nidn;
-            $rDosen = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $dosen = json_decode($rDosen->getBody());
-
-            return $dosen->nama_dosen;
-        } catch (\Throwable $err) {
-        }
-    }
-
-    public function getMahasiswaByNim($nim)
-    {
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-            $rMhs = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $mhs = json_decode($rMhs->getBody());
-
-            return $mhs->nama;
-        } catch (\Throwable $err) {
         }
     }
 }

@@ -32,7 +32,11 @@
                                     <tr id="tr_{{$regis->id_event_internal_registration}}">
                                         <td>
                                             @if ($regis->nim)
-                                                {{$regis->nama_mhs}}
+                                                @if ($regis->mahasiswaRef)
+                                                    {{$regis->mahasiswaRef->mahasiswa_nama}}
+                                                @else
+                                                    {{$regis->penggunaMshRef->username}}
+                                                @endif
                                             @else
                                                 {{$regis->participantRef->nama_participant}}
                                             @endif
@@ -98,7 +102,11 @@
                                             @foreach ($regis->timRef->timDetailRef as $detail)
                                                 @if ($detail->role == "ketua")
                                                     @if ($detail->nim)
-                                                        {{$detail->nama_mhs}}
+                                                        @if ($detail->mahasiswaRef)
+                                                            {{$detail->mahasiswaRef->mahasiswa_nama}}
+                                                        @else
+                                                            {{$detail->penggunaMshRef->username}}
+                                                        @endif
                                                     @else
                                                         {{$detail->participantRef->nama_participant}}
                                                     @endif

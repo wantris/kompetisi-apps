@@ -58,11 +58,11 @@
                                     @if ($detail->status == "Done")
                                         @if ($detail->nim)
                                             @php
-                                                $pengguna = App\Pengguna::where('nim', $detail->nim)->first();
+                                                $pengguna_detail= $detail->penggunaMhsRef;
                                             @endphp
                                         @else
                                             @php
-                                                $pengguna = App\Pengguna::where('participant_id', $detail->participant_id)->first();
+                                                $pengguna_detail = $detail->penggunaParticipantRef;
                                             @endphp
                                         @endif
                                         <li class="col-xl-3 col-lg-3 col-md-4 col-sm-12 mb-4">
@@ -71,9 +71,9 @@
                                                 <div class="contact-dire-info text-center">
                                                     <div class="contact-avatar">
                                                         <span>
-                                                            @if ($pengguna)
-                                                                @if ($pengguna->photo)
-                                                                    <img src="{{asset('assets/img/photo-pengguna/'.$pengguna->photo)}}"  id="profil-image" alt="">
+                                                            @if ($pengguna_detail)
+                                                                @if ($pengguna_detail->photo)
+                                                                    <img src="{{asset('assets/img/photo-pengguna/'.$pengguna_detail->photo)}}"  id="profil-image" alt="">
                                                                 @else
                                                                     <img src="{{asset('assets/img/user.svg')}}" id="profil-image" alt="">
                                                                 @endif
@@ -85,15 +85,15 @@
                                                     <div class="contact-name">
                                                         <h4>
                                                             @if ($detail->nim)
-                                                                {{$detail->nama_mhs}}
+                                                                {{$detail->mahasiswaRef->mahasiswa_nama}}
                                                             @else
                                                                 {{$detail->participantRef->nama_participant}}
                                                             @endif
                                                         </h4>
                                                         {{-- <p>Teknik informatika</p> --}}
                                                         <div class="work text-success" style="font-size: 14px">
-                                                            @if ($pengguna)
-                                                            <i class="icon-copy dw dw-email-1 mr-1"></i>{{$pengguna->email}}
+                                                            @if ($pengguna_detail)
+                                                            <i class="icon-copy dw dw-email-1 mr-1"></i>{{$pengguna_detail->email}}
                                                             @endif
                                                         </div>
                                                     </div>
@@ -133,26 +133,26 @@
                                         @foreach ($invitationals as $invite)
                                             @if ($invite->penggunaParticipantRef)
                                                 @php
-                                                    $pengguna = $invite->penggunaParticipantRef;
+                                                    $pengguna_tim = $invite->penggunaParticipantRef;
                                                 @endphp
                                             @else
                                                 @php
-                                                    $pengguna = $invite->penggunaMhsRef;
+                                                    $pengguna_tim = $invite->penggunaMhsRef;
                                                 @endphp
                                             @endif
                                             <tr>
                                                 <td >
                                                     <div class="d-flex flex-items-center">
                                                         <div class="mx-3">
-                                                            @if ($pengguna->photo)
-                                                                <img  src="{{asset('assets/img/photo-pengguna/'.$pengguna->photo)}}" style="width: 30px ;height:30px; border-radius:50%"  id="profil-image" alt="">
+                                                            @if ($pengguna_tim->photo)
+                                                                <img  src="{{asset('assets/img/photo-pengguna/'.$pengguna_tim->photo)}}" style="width: 30px ;height:30px; border-radius:50%"  id="profil-image" alt="">
                                                             @else
                                                                 <img  src="{{asset('assets/img/user.svg')}}" style="width: 30px ;height:30px; border-radius:50%" id="profil-image" alt="">
                                                             @endif
                                                         </div>
                                                         <div class="d-flex flex-column flex-auto">
                                                             @if ($invite->nim)
-                                                                <a href="#" class="text-orange"><strong>{{$invite->nama_mhs}}</strong></a>
+                                                                <a href="#" class="text-orange"><strong>{{$invite->mahasiswaRef->mahasiswa_nama}}</strong></a>
                                                                 <small class="text-secondary">{{$invite->role}}</small>
                                                             @else
                                                                 <a href="#" class="text-orange"><strong>{{$invite->participantRef->nama_participant}}</strong></a>
@@ -185,8 +185,17 @@
                                     $jsonDosens = json_encode($dosens)
                                 @endphp
                                 @if ($tim->status == "0")
-                                    <a href="#" onclick="showModalDosen({{$tim->id_tim_event}}, {{$jsonDosens}})" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2" style="border:none;padding:5px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
-                                    Ajukan Pembimbing</a>
+                                    @foreach ($tim->timDetailRef as $check)
+                                        @if ($check->role == "ketua")
+                                            @if ($pengguna->nim == $check->nim)
+                                            <a href="#" onclick="showModalDosen({{$tim->id_tim_event}}, {{$jsonDosens}})" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2" style="border:none;padding:5px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                                                Ajukan Pembimbing</a>
+                                            @elseif ($pengguna->participant_id == $check->participant_id)
+                                            <a href="#" onclick="showModalDosen({{$tim->id_tim_event}}, {{$jsonDosens}})" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2" style="border:none;padding:5px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                                                Ajukan Pembimbing</a>
+                                            @endif
+                                        @endif
+                                    @endforeach
                                 @endif
                             </div>
                         </div>
@@ -308,12 +317,12 @@
                 dataType: "json",
                 success: function(values){
                     $.each(values, function (i, item) {
-                        if(item.nim){
+                        if(item.is_mahasiswa){
                             $('#invite-inp').append($('<option>', { 
                                 value: item.id_pengguna,
-                                text : item.nama_mhs + " ("+item.username+")"
+                                text : item.mahasiswaRef.mahasiswa_nama + " ("+item.username+")"
                             }));
-                        }else{
+                        }else if(item.is_participant){
                             $('#invite-inp').append($('<option>', { 
                                 value: item.id_pengguna,
                                 text : item.participant_ref.nama_participant + " ("+item.username+")"
@@ -336,8 +345,8 @@
 
             $.each(dosens, function (i, item) {
                 $('#pembimbing-inp').append($('<option>', { 
-                    value: item.nidn,
-                    text : item.nama_dosen
+                    value: item.dosen_nidn,
+                    text : item.dosen_nama
                 }));
             });
 

@@ -10,21 +10,32 @@ use App\Pengguna;
 use App\TimEvent;
 use App\EventEksternalRegistration;
 use App\EventEksternal;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
+use App\Http\Controllers\endpoint\ApiDosenController;
 
 class EventEksternalRegisController extends Controller
 {
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $pengguna;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
+        $this->pengguna = Pengguna::find(Session::get('id_pengguna'));
+    }
+
     public function getAllRegistration()
     {
-        $pengguna = Pengguna::find(Session::get('id_pengguna'));
+        $pengguna = $this->pengguna;
 
         if ($pengguna) {
 
             $registrations = collect();
 
             $tims = TimEvent::with('timDetailRef')->whereHas('timDetailRef', function ($query) use ($pengguna) {
-                if ($pengguna->is_mahasiswa) {
-                    $query->where('nim', $pengguna->nim);
-                }
+                $query->where('nim', $pengguna->nim);
                 $query->where('status', 'Done');
             })->get();
 
@@ -57,25 +68,18 @@ class EventEksternalRegisController extends Controller
 
                     if ($event) {
                         if ($event->role != "Team") {
-                            $item->mahasiswaRef = null;
-
-                            if ($item->nim) {
-                                try {
-                                    $mhs = $this->getMahasiswaByNim($item->nim);
-                                    $item->mahasiswaRef = $mhs;
-                                } catch (\Throwable $err) {
-                                }
+                            $item->mahasiswaRef = $item->nim;
+                            $mhs = $this->api_mahasiswa->getMahasiswaByNim($item->nim);
+                            if ($mhs) {
+                                $item->mahasiswaRef = $mhs;
                             }
                         } else {
                             foreach ($item->timRef->timDetailRef as $detail) {
                                 if ($detail->role == "ketua") {
-                                    $detail->mahasiswaRef = null;
-                                    if ($detail->nim) {
-                                        try {
-                                            $mhs = $this->getMahasiswaByNim($detail->nim);
-                                            $detail->mahasiswaRef = $mhs;
-                                        } catch (\Throwable $err) {
-                                        }
+                                    $detail->mahasiswaRef = $detail->nim;
+                                    $mhs = $this->api_mahasiswa->getMahasiswaByNim($detail->nim);
+                                    if ($mhs) {
+                                        $detail->mahasiswaRef = $mhs;
                                     }
                                 }
                             }
@@ -83,25 +87,8 @@ class EventEksternalRegisController extends Controller
                     }
                 }
             }
+
+            return $registrations;
         }
-
-        return $registrations;
-    }
-
-    public function getMahasiswaByNim($nim)
-    {
-        $msh = null;
-
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-            $rMhs = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $mhs = json_decode($rMhs->getBody());
-        } catch (\Throwable $err) {
-        }
-
-        return $mhs;
     }
 }

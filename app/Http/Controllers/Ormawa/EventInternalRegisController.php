@@ -4,6 +4,8 @@ namespace App\Http\Controllers\ormawa;
 
 use App\EventInternal;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\endpoint\ApiDosenController;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use Illuminate\Http\Request;
 use App\EventInternalRegistration;
 use App\Ormawa;
@@ -12,12 +14,24 @@ use Illuminate\Support\Facades\Session;
 
 class EventInternalRegisController extends Controller
 {
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $ormawa;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
+        $this->ormawa =  Ormawa::find(Session::get('id_ormawa'));
+    }
+
     public function index()
     {
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Semua Peserta Event Internal';
 
 
         $registrations = $this->getAllRegistration();
+        dd($registrations);
         $events = EventInternal::where('ormawa_id', Session::get('id_ormawa'))->get();
 
         return view('ormawa.pendaftar.event_internal.index', compact(
@@ -72,7 +86,7 @@ class EventInternalRegisController extends Controller
                     $item->mahasiswaRef = null;
                     if ($item->nim) {
                         try {
-                            $mhs = $this->getMahasiswaByNim($item->nim);
+                            $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
                             $item->mahasiswaRef = $mhs;
                         } catch (\Throwable $err) {
                         }
@@ -83,7 +97,7 @@ class EventInternalRegisController extends Controller
                             $detail->mahasiswaRef = null;
                             if ($detail->nim) {
                                 try {
-                                    $mhs = $this->getMahasiswaByNim($detail->nim);
+                                    $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
                                     $detail->mahasiswaRef = $mhs;
                                 } catch (\Throwable $err) {
                                 }
@@ -95,22 +109,5 @@ class EventInternalRegisController extends Controller
         }
 
         return $registrations;
-    }
-
-    public function getMahasiswaByNim($nim)
-    {
-        $msh = null;
-
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-            $rMhs = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $mhs = json_decode($rMhs->getBody());
-        } catch (\Throwable $err) {
-        }
-
-        return $mhs;
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Ormawa;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
+use App\Http\Controllers\endpoint\ApiDosenController;
 use App\{EventInternal, EventInternalDetail, EventInternalRegistration, FileEventInternalDetail, FileEventInternalRegistration, Ormawa, KategoriEvent, TipePeserta, TimEvent};
 use App\Http\Requests\EventInternalStoreRequest;
 use App\Http\Requests\EventInternalUpdateRequest;
@@ -18,6 +20,21 @@ use App\Exports\EventInternalRegisEksport;
 
 class EventInternalController extends Controller
 {
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $ormawa;
+    protected $kategoris;
+    protected $tipes;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
+        $this->ormawa =  Ormawa::find(Session::get('id_ormawa'));
+        $this->kategoris = KategoriEvent::all();
+        $this->tipes = TipePeserta::all();
+    }
+
     // ==================================== BASIC CRUD =======================================
     public function index()
     {
@@ -31,9 +48,9 @@ class EventInternalController extends Controller
 
     public function add()
     {
-        $ormawa = Ormawa::find(Session::get('id_ormawa'));
-        $kategoris = KategoriEvent::all();
-        $tipes = TipePeserta::all();
+        $ormawa = $this->ormawa;
+        $kategoris = $this->kategoris;
+        $tipes = $this->tipes;
 
         if ($ormawa) {
             $navTitle = '<span class="micon dw dw-clipboard1 mr-2"></span>Buat Event';
@@ -126,11 +143,13 @@ class EventInternalController extends Controller
             $title = "Detail " . $ei->nama_event;
         }
 
-        $kategoris = KategoriEvent::all();
-        $tipes = TipePeserta::all();
+        $kategoris = $this->kategoris;
+        $tipes = $this->tipes;
+
         $feids = FileEventInternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventinternal) {
             $q->where('event_internal_id', '=', $id_eventinternal);
         })->where('tipe', 'pendaftaran')->get();
+
         $feips = FileEventInternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventinternal) {
             $q->where('event_internal_id', '=', $id_eventinternal);
         })->where('tipe', 'pengajuan')->get();
@@ -215,6 +234,7 @@ class EventInternalController extends Controller
     {
         $ei = EventInternal::find($id_eventinternal);
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Pendaftar ' . $ei->nama_event;
+
         $pendaftaran = $this->getPendaftarById($ei);
         $feeds = $this->getAllFilePendaftaran($ei->id_event_internal);
 
@@ -259,6 +279,7 @@ class EventInternalController extends Controller
         ]);
 
         $ei = EventInternal::find($req->id_event);
+
         if ($ei) {
             if ($req->file('berkas')) {
                 $resorceBerkas = $req->file('berkas');
@@ -304,6 +325,7 @@ class EventInternalController extends Controller
         ]);
 
         $ei = EventInternal::find($req->id_event);
+
         if ($ei) {
             if ($req->file('berkas_pendaftaran')) {
                 $resorceBerkas = $req->file('berkas_pendaftaran');
@@ -355,14 +377,14 @@ class EventInternalController extends Controller
     public function getPendaftarById($event)
     {
         $registrations = EventInternalRegistration::with('timRef', 'participantRef')->where('event_internal_id', $event->id_event_internal)->get();
+
         if ($event->role != "Team") {
             foreach ($registrations as $item) {
-                $item->nama_mhs = null;
+                $item->mahasiswaRef = null;
                 if ($item->nim) {
-                    try {
-                        $mhs = $this->getMahasiswaByNim($item->nim);
-                        $item->nama_mhs = $mhs->nama;
-                    } catch (\Throwable $err) {
+                    $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
+                    if ($mhs) {
+                        $item->mahasiswaRef = $mhs;
                     }
                 }
             }
@@ -372,10 +394,9 @@ class EventInternalController extends Controller
                     if ($detail->role == "ketua") {
                         $detail->nama_mhs = null;
                         if ($detail->nim) {
-                            try {
-                                $mhs = $this->getMahasiswaByNim($detail->nim);
-                                $detail->nama_mhs = $mhs->nama;
-                            } catch (\Throwable $err) {
+                            $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
+                            if ($mhs) {
+                                $detail->mahasiswaRef = $mhs;
                             }
                         }
                     }

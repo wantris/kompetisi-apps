@@ -121,7 +121,7 @@
                                                     <tr>
                                                         <td>
                                                             @if ($regis->nim)
-                                                                {{$regis->nama_mhs}}
+                                                                {{$regis->mahasiswaRef->mahasiswa_nama}}
                                                             @else
                                                                 {{$regis->participantRef->nama_participant}}
                                                             @endif
@@ -155,7 +155,7 @@
                                                             @foreach ($regis->timRef->timDetailRef as $detail)
                                                                 @if ($detail->role == "ketua")
                                                                     @if ($detail->nim)
-                                                                        {{$detail->nama_mhs}}
+                                                                        {{$detail->mahasiswaRef->mahasiswa_nama}}
                                                                     @else
                                                                         {{$detail->participantRef->nama_participant}}
                                                                     @endif
@@ -180,12 +180,21 @@
                                         @php
                                             $jsonRegis = json_encode($check_regis->eventInternalRegisRef);
                                         @endphp
+                                        @foreach ($check_regis->timDetailRef as $check)
+                                            @if ($check->role == "ketua")
+                                                @if ($check->nim && $pengguna->nim == $check->nim)
+                                                    <button class="btn btn-primary shadow" onclick="addBerkas({{$jsonRegis}})" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;">Upload Berkas</button>
+                                                @elseif ($check->participant_id && $pengguna->participant_id == $check->participant_id)
+                                                    <button class="btn btn-primary shadow" onclick="addBerkas({{$jsonRegis}})" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;">Upload Berkas</button>
+                                                @endif
+                                            @endif
+                                        @endforeach
                                     @else
                                         @php
                                             $jsonRegis = json_encode($check_regis);
                                         @endphp
+                                         <button class="btn btn-primary shadow" onclick="addBerkas({{$jsonRegis}})" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;">Upload Berkas</button>
                                     @endif
-                                    <button class="btn btn-primary shadow" onclick="addBerkas({{$jsonRegis}})" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;">Upload Berkas</button>
                                 </div>
                             </div>
                             <table class="table">

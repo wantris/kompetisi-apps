@@ -3,13 +3,23 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Pengguna;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Throwable;
 
 class MahasiswaController extends Controller
 {
+    public function index()
+    {
+
+        $mahasiswas = Pengguna::where('is_mahasiswa', 1)->get();
+
+        return response()->json($mahasiswas);
+    }
     public function edit($nim)
     {
         try {

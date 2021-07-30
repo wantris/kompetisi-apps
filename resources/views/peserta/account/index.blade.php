@@ -37,7 +37,7 @@
             </div>
             <h5 class="text-center h5 mb-0">
                 @if ($pengguna->is_mahasiswa)
-                    {{$pengguna->nama_mhs}}
+                    {{$pengguna->mahasiswaRef->mahasiswa_nama}}
                 @else
                     {{$pengguna->participantRef->nama_participant}}
                 @endif
