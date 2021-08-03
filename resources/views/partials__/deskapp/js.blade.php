@@ -35,13 +35,14 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 @if (session()->has('failed'))
-<script>
-    Notiflix.Notify.Failure("{{ Session::get('failed') }}");
-</script>
+    <script>
+        console.log("asdad")
+        Notiflix.Notify.Failure("{{ Session::get('failed') }}");
+    </script>
 @endif
 
 @if (session()->has('success'))
-<script>
-    Notiflix.Notify.Success("{{ Session::get('success') }}");
-</script>
+    <script>
+        Notiflix.Notify.Success("{{ Session::get('success') }}");
+    </script>
 @endif

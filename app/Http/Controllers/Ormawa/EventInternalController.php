@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Ormawa;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
-use App\{EventInternal, EventInternalDetail, EventInternalRegistration, FileEventInternalDetail, FileEventInternalRegistration, Ormawa, KategoriEvent, TipePeserta, TimEvent};
+use App\{EventInternal, EventInternalDetail, EventInternalRegistration, FileEventInternalDetail, FileEventInternalRegistration, Ormawa, KategoriEvent, PrestasiEventInternal, TipePeserta, TimEvent};
 use App\Http\Requests\EventInternalStoreRequest;
 use App\Http\Requests\EventInternalUpdateRequest;
 use Illuminate\Console\Scheduling\Event;
@@ -82,6 +83,7 @@ class EventInternalController extends Controller
             $ei = new EventInternal();
             $ei->ormawa_id = Session::get('id_ormawa');
             $ei->nama_event = $req->event_title;
+            $ei->slug =  Str::slug($req->event_title);
             $ei->kategori_id = $req->category;
             $ei->tipe_peserta_id = $req->jenis_peserta;
             $ei->maks_participant = $req->peserta;
@@ -237,6 +239,8 @@ class EventInternalController extends Controller
 
         $pendaftaran = $this->getPendaftarById($ei);
         $feeds = $this->getAllFilePendaftaran($ei->id_event_internal);
+        $prestasis = $this->getPrestasiByEvent($id_eventinternal);
+
 
         return view('ormawa.event_internal.list_peserta', compact('navTitle', 'navTitle', 'pendaftaran', 'ei', 'feeds'));
     }
@@ -376,7 +380,7 @@ class EventInternalController extends Controller
     // ======= Pendaftaran =====
     public function getPendaftarById($event)
     {
-        $registrations = EventInternalRegistration::with('timRef', 'participantRef')->where('event_internal_id', $event->id_event_internal)->get();
+        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'prestasiRef')->where('event_internal_id', $event->id_event_internal)->get();
 
         if ($event->role != "Team") {
             foreach ($registrations as $item) {
@@ -405,6 +409,13 @@ class EventInternalController extends Controller
         }
 
         return $registrations;
+    }
+
+    public function getPrestasiByEvent($id_eventinternal)
+    {
+        $prestasis = PrestasiEventInternal::whereHas('eventInternalRegisRef', function ($query) use ($id_eventinternal) {
+            $query->where('event_internal_id', $id_eventinternal);
+        })->get();
     }
 
     public function getAllFilePendaftaran($id_eventinternal)
@@ -453,6 +464,8 @@ class EventInternalController extends Controller
             "message" => "Pendaftaran berhasil divalidasi semua",
         ]);
     }
+
+
 
     public function exportPendaftar($id_eventinternal, $status)
     {

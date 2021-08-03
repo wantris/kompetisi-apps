@@ -94,6 +94,16 @@ Route::group(['namespace' => 'ormawa'], function () {
         Route::get('/eventeksternal/validasiregis/{id_regis}/{status}', 'EventEksternalRegisController@updateStatusRegis')->name('ormawa.registration.eventeksternal.updatestatus');
     });
 
+    # =========== Prestasi peserta =========== #
+    Route::group(['prefix' => 'prestasi', 'middleware' => 'ormawa'], function () {
+
+        // event internal regis
+        Route::post('/eventinternal', 'PrestasiEventInternalController@save')->name('ormawa.prestasi.eventinternal.add');
+
+        // event eksetrnal regis
+        Route::post('/eventeksternal', 'PrestasiEventEksternalController@save')->name('ormawa.prestasi.eventieksternal.add');
+    });
+
 
     # =========== Team peserta =========== #
     Route::group(['prefix' => 'team', 'middleware' => 'ormawa'], function () {

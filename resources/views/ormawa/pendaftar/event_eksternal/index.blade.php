@@ -64,7 +64,11 @@
                                                     <td>{{$regis->id_event_eksternal_registration}}</td>
                                                     <td></td>
                                                     <td>
-                                                        {{$regis->mahasiswaRef->nama}}
+                                                        @if ($regis->mahasiswaRef)
+                                                            {{$regis->mahasiswaRef->mahasiswa_nama}}
+                                                        @else
+                                                            {{$regis->nim}}
+                                                        @endif
                                                     </td>
                                                     <td>{{$regis->eventEksternalRef->nama_event}}</td>
                                                     <td>
@@ -106,7 +110,11 @@
                                                     <td>
                                                         @foreach ($regis->timRef->timDetailRef as $detail)
                                                             @if ($detail->role == "ketua")
-                                                                {{$detail->mahasiswaRef->nama}}
+                                                                @if ($detail->mahasiswaRef)
+                                                                    {{$detail->mahasiswaRef->mahasiswa_nama}}
+                                                                @else
+                                                                    {{$detail->nim}}
+                                                                @endif
                                                             @endif
                                                         @endforeach    
                                                     </td>

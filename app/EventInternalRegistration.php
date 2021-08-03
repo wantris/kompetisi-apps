@@ -8,6 +8,10 @@ class EventInternalRegistration extends Model
 {
     protected $primaryKey = "id_event_internal_registration";
 
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
     public function eventInternalRef()
     {
         return $this->belongsTo(EventInternal::class, 'event_internal_id', 'id_event_internal');
@@ -31,5 +35,10 @@ class EventInternalRegistration extends Model
     public function fileEiRegisRef()
     {
         return $this->hasMany(FileEventInternalRegistration::class, 'event_internal_regis_id', 'id_event_internal_registration');
+    }
+
+    public function prestasiRef()
+    {
+        return $this->hasOne(PrestasiEventInternal::class, 'event_internal_registration_id', 'id_event_internal_registration');
     }
 }

@@ -9,9 +9,16 @@ class Pengguna extends Model
 {
     protected $primaryKey = "id_pengguna";
 
+    protected $appends = ['photo_image_url'];
+
+    public function getPhotoImageUrlAttribute($value)
+    {
+        return request()->getSchemeAndHttpHost() . 'assets/img/photo-pengguna/' . $this->photo;
+    }
+
     public function pembinaRef()
     {
-        return $this->hasOne(Pembina::class, 'id_pembina', 'pembina_id');
+        return $this->hasMany(Pembina::class, 'id_pembina', 'pembina_id');
     }
 
     public function participantRef()

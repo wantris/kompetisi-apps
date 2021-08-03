@@ -13,12 +13,32 @@ use Throwable;
 
 class MahasiswaController extends Controller
 {
+    protected $api_mahasiswa;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+    }
+
     public function index()
     {
 
-        $mahasiswas = Pengguna::where('is_mahasiswa', 1)->get();
+        $mahasiswas = $this->getAllData();
 
-        return response()->json($mahasiswas);
+
+        if ($mahasiswas->count() > 0) {
+            return response()->json([
+                'status' => 200,
+                'message' => "Get data success!",
+                'data' => $mahasiswas
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 404,
+            'message' => "Data not found!",
+            'data' => $mahasiswas
+        ], 404);
     }
     public function edit($nim)
     {
@@ -80,5 +100,24 @@ class MahasiswaController extends Controller
                 "message" => $namePhoto,
             ]);
         }
+    }
+
+    public function getAllData()
+    {
+        $api_mahasiswa = $this->api_mahasiswa;
+
+        $mahasiswas = Pengguna::where('is_mahasiswa', 1)->get();
+
+        if ($mahasiswas->count() > 0) {
+            $mahasiswas->each(function ($item, $key) use ($api_mahasiswa) {
+                $item->mahasiswaRef = null;
+                $mhs = $api_mahasiswa->getMahasiswaSomeField($item->nim);
+                if ($mhs) {
+                    $item->mahasiswaRef = $mhs;
+                }
+            });
+        }
+
+        return $mahasiswas;
     }
 }

@@ -102,7 +102,16 @@
             $('#arrow-icon').removeClass('icofont-rounded-up');
         }
     });
-
-    
-    
 </script>
+
+@if (Session::get('failed'))
+    <script>
+        Notiflix.Notify.Failure("{{ Session::get('failed') }}");
+    </script>
+@endif
+
+@if (Session::get('success'))
+    <script>
+        Notiflix.Notify.Success("{{ Session::get('success') }}");
+    </script>
+@endif

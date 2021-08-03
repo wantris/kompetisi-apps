@@ -31,7 +31,6 @@ class EventInternalRegisController extends Controller
 
 
         $registrations = $this->getAllRegistration();
-        dd($registrations);
         $events = EventInternal::where('ormawa_id', Session::get('id_ormawa'))->get();
 
         return view('ormawa.pendaftar.event_internal.index', compact(

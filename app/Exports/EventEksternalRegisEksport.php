@@ -3,6 +3,8 @@
 namespace App\Exports;
 
 use App\EventEksternal;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
+use App\Http\Controllers\endpoint\ApiDosenController;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -15,11 +17,15 @@ class EventEksternalRegisEksport implements FromView, ShouldAutoSize
 {
     protected $id_event_eksternal;
     protected $status;
+    protected $api_mahasiswa;
+    protected $api_dosen;
 
     function __construct($id_event_eksternal, $status)
     {
         $this->id_event_eksternal = $id_event_eksternal;
         $this->status = $status;
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
     }
 
     /**
@@ -40,7 +46,7 @@ class EventEksternalRegisEksport implements FromView, ShouldAutoSize
     {
         $status = $this->status;
         if ($status != "all") {
-            $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef')->where('event_eksternal_id', $event->id_event_eksternal)->where(function ($query) use ($status) {
+            $registrations = EventEksternalRegistration::with('timRef')->where('event_eksternal_id', $event->id_event_eksternal)->where(function ($query) use ($status) {
                 if ($status == "1") {
                     $query->where('status', 1);
                 } else {
@@ -48,7 +54,7 @@ class EventEksternalRegisEksport implements FromView, ShouldAutoSize
                 }
             })->get();
         } else {
-            $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
+            $registrations = EventEksternalRegistration::with('timRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
         }
 
 
@@ -56,10 +62,9 @@ class EventEksternalRegisEksport implements FromView, ShouldAutoSize
             foreach ($registrations as $item) {
                 $item->mahasiswaRef = null;
                 if ($item->nim) {
-                    try {
-                        $mhs = $this->getMahasiswaByNim($item->nim);
+                    $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
+                    if ($mhs) {
                         $item->mahasiswaRef = $mhs;
-                    } catch (\Throwable $err) {
                     }
                 }
             }
@@ -68,17 +73,19 @@ class EventEksternalRegisEksport implements FromView, ShouldAutoSize
 
                 $item->timRef->pembimbingRef = null;
                 if ($item->timRef->nidn) {
-                    $dosen = $this->getDosenSingle($item->timRef->nidn);
-                    $item->timRef->pembimbingRef = $dosen;
+                    $dosen = $this->api_dosen->getDosenOnlySomeField($item->timRef->nidn);
+                    if ($dosen) {
+                        $item->timRef->pembimbingRef = $dosen;
+                    }
                 }
 
                 foreach ($item->timRef->timDetailRef as $detail) {
                     $detail->mahasiswaRef = null;
                     if ($detail->nim) {
-                        try {
-                            $mhs = $this->getMahasiswaByNim($detail->nim);
+                        $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
+
+                        if ($mhs) {
                             $detail->mahasiswaRef = $mhs;
-                        } catch (\Throwable $err) {
                         }
                     }
                 }
@@ -86,52 +93,5 @@ class EventEksternalRegisEksport implements FromView, ShouldAutoSize
         }
 
         return $registrations;
-    }
-
-    public function getMahasiswaByNim($nim)
-    {
-        $msh = null;
-
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-            $rMhs = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $mhs = json_decode($rMhs->getBody());
-        } catch (\Throwable $err) {
-        }
-
-        return $mhs;
-    }
-
-    public function getAllDosen()
-    {
-        $dosens = null;
-
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "dosen/";
-            $rDosens = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $dosens = json_decode($rDosens->getBody());
-        } catch (\Throwable $err) {
-        }
-
-        return $dosens;
-    }
-
-    public function getDosenSingle($nidn)
-    {
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "dosen/" . $nidn;
-            $rDosen = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $dosen = json_decode($rDosen->getBody());
-        } catch (\Throwable $err) {
-        }
     }
 }

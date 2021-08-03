@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Ormawa;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
+use App\Http\Controllers\endpoint\ApiDosenController;
 use App\{CakupanOrmawa, EventEksternal, Ormawa, KategoriEvent, TipePeserta, EventEksternalDetail, FileEventEksternalDetail, EventEksternalRegistration, FileEventEksternalRegistration};
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -16,11 +19,26 @@ use App\Exports\EventEksternalRegisEksport;
 
 class EventEksternalController extends Controller
 {
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $cakupan;
+    protected $kategoris;
+    protected $tipes;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
+        $this->cakupan =  CakupanOrmawa::where('ormawa_id', Session::get('id_ormawa'))->first();
+        $this->kategoris = KategoriEvent::all();
+        $this->tipes = TipePeserta::all();
+    }
 
     public function index()
     {
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Event Eksternal';
-        $cakupan = CakupanOrmawa::where('ormawa_id', Session::get('id_ormawa'))->first();
+        $cakupan = $this->cakupan;
+
         $cakupanAll = CakupanOrmawa::where('role', 'All')->first();
         if ($cakupan) {
             $eeas = EventEksternal::with('kategoriRef', 'tipePesertaRef')->where('cakupan_ormawa_id', $cakupan->ormawa_id)->where('status', 1)->get();
@@ -36,8 +54,8 @@ class EventEksternalController extends Controller
     public function add()
     {
         $ormawa = Ormawa::find(Session::get('id_ormawa'));
-        $kategoris = KategoriEvent::all();
-        $tipes = TipePeserta::all();
+        $kategoris = $this->kategoris;
+        $tipes = $this->tipes;
 
         if ($ormawa) {
             $navTitle = '<span class="micon dw dw-clipboard1 mr-2"></span>Buat Event';
@@ -54,7 +72,8 @@ class EventEksternalController extends Controller
         $nameBanner = null;
         $namePoster = null;
 
-        $cakupan = CakupanOrmawa::where('ormawa_id', Session::get('id_ormawa'))->first();
+        $cakupan = $this->cakupan;
+
         if (!$cakupan) {
             return redirect()->back()->with('failed', 'Uppps terjadi error');
         }
@@ -71,30 +90,31 @@ class EventEksternalController extends Controller
         }
 
         try {
-            $ei = new EventEksternal();
-            $ei->cakupan_ormawa_id = $cakupan->id_cakupan_ormawa;
-            $ei->nama_event = $req->event_title;
-            $ei->kategori_id = $req->category;
-            $ei->tipe_peserta_id = $req->jenis_peserta;
-            $ei->maks_participant = $req->peserta;
-            $ei->role = $req->jenis;
-            $ei->tgl_buka = $req->tgl_mulai;
-            $ei->tgl_tutup = $req->tgl_tutup;
-            $ei->deskripsi = $req->deskripsi;
-            $ei->ketentuan = $req->ketentuan;
-            $ei->status = 0;
-            $ei->status_validasi = 0;
-            $ei->poster_image = $namePoster;
-            $ei->banner_image = $nameBanner;
-            $ei->save();
+            $ee = new EventEksternal();
+            $ee->cakupan_ormawa_id = $cakupan->id_cakupan_ormawa;
+            $ee->nama_event = $req->event_title;
+            $ee->slug =  Str::slug($req->event_title);
+            $ee->kategori_id = $req->category;
+            $ee->tipe_peserta_id = $req->jenis_peserta;
+            $ee->maks_participant = $req->peserta;
+            $ee->role = $req->jenis;
+            $ee->tgl_buka = $req->tgl_mulai;
+            $ee->tgl_tutup = $req->tgl_tutup;
+            $ee->deskripsi = $req->deskripsi;
+            $ee->ketentuan = $req->ketentuan;
+            $ee->status = 0;
+            $ee->status_validasi = 0;
+            $ee->poster_image = $namePoster;
+            $ee->banner_image = $nameBanner;
+            $ee->save();
 
             // Store event eksternal detail
-            if ($ei) {
-                $eid = new EventEksternalDetail();
-                $eid->event_eksternal_id = $ei->id_event_eksternal;
-                $eid->is_validated_pembina = 0;
-                $eid->is_validated_wadir3 = 0;
-                $eid->save();
+            if ($ee) {
+                $eed = new EventEksternalDetail();
+                $eed->event_eksternal_id = $ee->id_event_eksternal;
+                $eed->is_validated_pembina = 0;
+                $eed->is_validated_wadir3 = 0;
+                $eed->save();
             }
 
             // Jika ada berkas untuk pendaftaran
@@ -105,12 +125,12 @@ class EventEksternalController extends Controller
                     $resorcedokumen->move(\base_path() . "/public/assets/file/dokumen-event/", $namedokumen);
                 }
 
-                $feid = new FileEventEksternalDetail();
-                $feid->event_eksternal_detail_id = $eid->id_event_eksternal_detail;
-                $feid->nama_file = $req->nama_dokumen[$key];
-                $feid->filename = $namedokumen;
-                $feid->tipe = "pendaftaran";
-                $feid->save();
+                $feed = new FileEventEksternalDetail();
+                $feed->event_eksternal_detail_id = $eed->id_event_eksternal_detail;
+                $feed->nama_file = $req->nama_dokumen[$key];
+                $feed->filename = $namedokumen;
+                $feed->tipe = "pendaftaran";
+                $feed->save();
             }
 
             return redirect()->route('ormawa.eventeksternal.index')->with('success', 'Event eksternal berhasil disimpan');
@@ -135,8 +155,9 @@ class EventEksternalController extends Controller
             $title = "Detail " . $ee->nama_event;
         }
 
-        $kategoris = KategoriEvent::all();
-        $tipes = TipePeserta::all();
+        $kategoris = $this->kategoris;
+        $tipes = $this->tipes;
+
         $feeds = FileEventEksternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventeksternal) {
             $q->where('event_eksternal_id', '=', $id_eventeksternal);
         })->where('tipe', 'pendaftaran')->get();
@@ -255,6 +276,7 @@ class EventEksternalController extends Controller
         ]);
 
         $ei = EventEksternal::find($req->id_event);
+
         if ($ei) {
             if ($req->file('berkas')) {
                 $resorceBerkas = $req->file('berkas');
@@ -370,14 +392,15 @@ class EventEksternalController extends Controller
 
     public function getPendaftarById($event)
     {
-        $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
+        $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef', 'prestasiRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
+
         if ($event->role != "Team") {
             foreach ($registrations as $item) {
-                $item->nama_mhs = null;
+                $item->mahasiswaRef = null;
                 if ($item->nim) {
                     try {
-                        $mhs = $this->getMahasiswaByNim($item->nim);
-                        $item->nama_mhs = $mhs->nama;
+                        $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
+                        $item->mahasiswaRef = $mhs;
                     } catch (\Throwable $err) {
                     }
                 }
@@ -386,11 +409,11 @@ class EventEksternalController extends Controller
             foreach ($registrations as $item) {
                 foreach ($item->timRef->timDetailRef as $detail) {
                     if ($detail->role == "ketua") {
-                        $detail->nama_mhs = null;
+                        $detail->mahasiswaRef = null;
                         if ($detail->nim) {
                             try {
-                                $mhs = $this->getMahasiswaByNim($detail->nim);
-                                $detail->nama_mhs = $mhs->nama;
+                                $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
+                                $detail->mahasiswaRef = $mhs;
                             } catch (\Throwable $err) {
                             }
                         }

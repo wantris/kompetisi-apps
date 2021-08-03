@@ -63,10 +63,7 @@ class eventEksternalController extends Controller
 
     public function detail($slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
-
-        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
 
         if ($event) {
             $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Event ' . $event->nama_event;
@@ -103,9 +100,7 @@ class eventEksternalController extends Controller
 
     public function register(Request $request, $slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
-        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
 
         $pengguna = $this->pengguna;
 
@@ -154,7 +149,7 @@ class eventEksternalController extends Controller
                             $nama = $pengguna->nim;
                         }
 
-                        Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $removeSlug, $ted->id_tim_event_detail));
+                        Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $event->nama_event, $ted->id_tim_event_detail));
                     } catch (\Throwable $err) {
                     }
                 }
@@ -167,6 +162,7 @@ class eventEksternalController extends Controller
             $regis->event_eksternal_id = $event->id_event_eksternal;
             $regis->nim = $pengguna->nim;
             $regis->is_win = json_encode($is_win);
+            $regis->status = 0;
             $regis->save();
 
             return redirect()->route('peserta.eventeksternal.index');
@@ -192,13 +188,11 @@ class eventEksternalController extends Controller
 
     public function timeline($slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
 
-        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
 
         if ($event) {
-            $navTitle = '<span claorss="micon dw dw-up-chevron-1 mr-2"></span>Timeline ' . $removeSlug;
+            $navTitle = '<span claorss="micon dw dw-up-chevron-1 mr-2"></span>Timeline ' . $slug;
             $tls = Timeline::where('event_eksternal_id', $event->id_event_eksternal)->get();
 
             return view('peserta.eventeksternal.timeline', compact('navTitle', 'tls', 'slug'));
@@ -207,12 +201,9 @@ class eventEksternalController extends Controller
 
     public function notification($slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
-
-        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
         if ($event) {
-            $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Daftar Pengumuman ' . $removeSlug;
+            $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Daftar Pengumuman ' . $slug;
             $pengumumans = Pengumuman::where('event_eksternal_id', $event->id_event_eksternal)->get();
 
             return view('peserta.eventeksternal.notification', compact('slug', 'navTitle', 'event', 'pengumumans'));

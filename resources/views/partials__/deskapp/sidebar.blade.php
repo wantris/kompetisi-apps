@@ -181,12 +181,6 @@
                     </a>
                 </li>
                 @endif
-                
-                <li>
-                    <a href="{{route('peserta.team.index')}}" class="dropdown-toggle no-arrow">
-                        <span class="micon dw dw-group"></span><span class="mtext">Tim</span>
-                    </a>
-                </li>
                 <li>
                     <a href="{{route('ormawa.settings.index')}}" class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-settings2"></span><span class="mtext">Profil Ormawa</span>

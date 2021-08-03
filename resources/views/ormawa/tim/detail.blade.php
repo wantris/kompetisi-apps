@@ -80,7 +80,11 @@
                                                     <div class="contact-name">
                                                         <h4>
                                                             @if ($detail->nim)
-                                                                {{$detail->nama_mhs}}
+                                                                @if ($detail->mahasiswaRef)
+                                                                    {{$detail->mahasiswaRef->mahasiswa_nama}}
+                                                                @else
+                                                                    {{$detail->nim}}
+                                                                @endif
                                                             @else
                                                                 {{$detail->participantRef->nama_participant}}
                                                             @endif
@@ -128,12 +132,22 @@
                                         <th>Jurusan</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td >
-                                                {{$tim->nama_dosen}}
-                                            </td>
-                                            <td> Teknik informatika</td>
-                                        </tr>
+                                        @if ($tim->nidn)
+                                            <tr>
+                                                <td >
+                                                    @if ($tim->dosenRef)
+                                                        {{$tim->dosenRef->dosen_lengkap_nama}}
+                                                    @else
+                                                        {{$tim->nidn}}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($tim->dosenRef)
+                                                        {{$tim->dosenRef->program_studi_nama}}
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -200,8 +214,8 @@
 
             $.each(dosens, function (i, item) {
                 $('#pembimbing-inp').append($('<option>', { 
-                    value: item.nidn,
-                    text : item.nama_dosen
+                    value: item.dosen_nidn,
+                    text : item.dosen_nama+" "+item.dosen_gelar_belakang
                 }));
             });
 

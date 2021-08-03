@@ -41,18 +41,6 @@
     <!-- Custom script -->
     @stack('cs-script')
 
-    @if (session()->has('failed'))
-    <script>
-        Notiflix.Report.Failure( 'Oooopss', "{{Session::get('failed')}}", 'Ok' ); 
-    </script>
-    @endif
-
-    @if (session()->has('success'))
-    <script>
-        Notiflix.Report.Success( 'Berhasil', "{{Session::get('success')}}", 'Click' ); 
-    </script>
-    @endif
-
     {{-- Validation --}}
     @if ($errors->has('username_mhs') || $errors->has('password_mhs'))
     <script>

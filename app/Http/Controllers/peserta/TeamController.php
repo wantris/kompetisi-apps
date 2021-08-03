@@ -66,11 +66,12 @@ class TeamController extends Controller
                 if ($item->status == "Pending") {
                     $search = null;
                     $search = TimEventDetail::with('penggunaMhsRef', 'penggunaParticipantRef')->where('tim_event_id', $item->tim_event_id)->where('role', 'ketua')->first();
+
                     if ($search) {
                         $search->mahasiswaRef = null;
                         if ($search->nim) {
                             try {
-                                $search->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($search->nim);
+                                $search->mahasiswaRef = $this->api_mahasiswa->getMahasiswaSomeField($search->nim);
                             } catch (\Throwable $err) {
                             }
                         }
@@ -96,8 +97,11 @@ class TeamController extends Controller
 
             // Get nama dosen
             if ($tim->nidn) {
-                $tim->dosenRef = $tim->nidn;
-                $tim->dosenRef =  $this->api_dosen->getDosenSingle($tim->nidn);
+                $tim->dosenRef = null;
+                $dosen =  $this->api_dosen->getDosenOnlySomeField($tim->nidn);
+                if ($dosen) {
+                    $tim->dosenRef = $dosen;
+                }
             }
 
             // Check if session login has role ketua

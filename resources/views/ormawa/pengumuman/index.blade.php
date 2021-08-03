@@ -55,7 +55,7 @@
                             Tambah</a>
                         @endif
                     </div>
-                    <div class="product-wrap">
+                    <div class="product-wrap px-4" style="width: 100% !important">
                         <div class="product-list">
                             <ul class="row">
                                 @foreach ($plis as $pli)
@@ -128,12 +128,12 @@
                             Tambah</a>
                         @endif
                     </div>
-                    <div class="product-wrap">
+                    <div class="product-wrap px-4" style="width: 100% !important">
                         <div class="product-list">
                             <ul class="row">
                                 @foreach ($ples as $ple)
                                     <li id="list_{{$ple->id_pengumuman}}" class="col-lg-4 col-md-6 col-sm-12">
-                                        <div class="product-box shadow" >
+                                        <div class="product-box shadow">
                                             <div class="producct-img">
                                                 @if ($ple->photo)
                                                     <img src="{{asset('assets/img/notif-event/'. $ple->photo)}}" alt="">

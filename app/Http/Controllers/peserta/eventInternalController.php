@@ -167,14 +167,12 @@ class eventInternalController extends Controller
     public function detail($slug)
     {
 
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
-
         $pengguna = $this->pengguna;
 
-        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
 
         if ($event) {
-            $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>' . $removeSlug;
+            $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>' . $event->nama_event;
             $registrations = EventInternalRegistration::with('timRef', 'participantRef')->where('event_internal_id', $event->id_event_internal)->get();
             $check_regis = $this->checkIsRegis($pengguna, $event);
             $feeds = $this->getAllFilePendaftaran($event->id_event_internal);
@@ -252,12 +250,10 @@ class eventInternalController extends Controller
 
     public function notification($slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
 
-        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
         if ($event) {
-            $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Daftar Pengumuman ' . $removeSlug;
+            $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Daftar Pengumuman ' . $event->nama_event;
             $pengumumans = Pengumuman::where('event_internal_id', $event->id_event_internal)->get();
 
             return view('peserta.eventinternal.notification', compact('slug', 'navTitle', 'event', 'pengumumans'));
@@ -280,13 +276,11 @@ class eventInternalController extends Controller
 
     public function timeline($slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
 
-        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
 
         if ($event) {
-            $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Timeline ' . $removeSlug;
+            $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Timeline ' . $event->nama_event;
             $tls = Timeline::where('event_internal_id', $event->id_event_internal)->get();
 
             return view('peserta.eventinternal.timeline', compact('navTitle', 'tls', 'slug'));

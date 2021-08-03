@@ -280,7 +280,8 @@ class EventInternalController extends Controller
     public function changeStatusEvent($id_eventinternal)
     {
         EventInternal::where('id_event_internal', $id_eventinternal)->update([
-            'status' => 1,
+            'status_validasi' => 1,
+            'status' => 1
         ]);
     }
 }

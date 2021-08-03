@@ -207,12 +207,17 @@
                                         <th>Jurusan</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td >
-                                                {{$tim->nama_dosen}}
-                                            </td>
-                                            <td> Teknik informatika</td>
-                                        </tr>
+                                        @if ($tim->nidn)
+                                            <tr>
+                                                @if ($tim->dosenRef)
+                                                    <td>{{$tim->dosenRef->dosen_lengkap_nama}}</td>
+                                                    <td>{{$tim->dosenRef->program_studi_nama}}</td>
+                                                @else
+                                                    <td>{{$tim->nidn}}</td>
+                                                    <td></td>
+                                                @endif
+                                            </tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>

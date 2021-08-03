@@ -3,6 +3,8 @@
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
+use App\Http\Controllers\endpoint\ApiDosenController;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -15,11 +17,15 @@ class EventInternalRegisEksport implements FromView, ShouldAutoSize
 {
     protected $id_event_internal;
     protected $status;
+    protected $api_mahasiswa;
+    protected $api_dosen;
 
     function __construct($id_event_internal, $status)
     {
         $this->id_event_internal = $id_event_internal;
         $this->status = $status;
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
     }
 
     /**
@@ -45,7 +51,7 @@ class EventInternalRegisEksport implements FromView, ShouldAutoSize
                 $item->mahasiswaRef = null;
                 if ($item->nim) {
                     try {
-                        $mhs = $this->getMahasiswaByNim($item->nim);
+                        $mhs = $this->api_mahasiswa->getDosenOnlySomeField($item->nim);
                         $item->mahasiswaRef = $mhs;
                     } catch (\Throwable $err) {
                     }
@@ -55,7 +61,7 @@ class EventInternalRegisEksport implements FromView, ShouldAutoSize
             foreach ($registrations as $item) {
                 $item->timRef->pembimbingRef = null;
                 if ($item->timRef->nidn) {
-                    $dosen = $this->getDosenSingle($item->timRef->nidn);
+                    $dosen = $this->api_dosen->getDosenOnlySomeField($item->timRef->nidn);
                     $item->timRef->pembimbingRef = $dosen;
                 }
 
@@ -64,7 +70,7 @@ class EventInternalRegisEksport implements FromView, ShouldAutoSize
                         $detail->mahasiswaRef = null;
                         if ($detail->nim) {
                             try {
-                                $mhs = $this->getMahasiswaByNim($detail->nim);
+                                $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
                                 $detail->mahasiswaRef = $mhs;
                             } catch (\Throwable $err) {
                             }
@@ -75,54 +81,5 @@ class EventInternalRegisEksport implements FromView, ShouldAutoSize
         }
 
         return $registrations;
-    }
-
-    public function getMahasiswaByNim($nim)
-    {
-        $msh = null;
-
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-            $rMhs = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $mhs = json_decode($rMhs->getBody());
-        } catch (\Throwable $err) {
-        }
-
-        return $mhs;
-    }
-
-    public function getAllDosen()
-    {
-        $dosens = null;
-
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "dosen/";
-            $rDosens = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $dosens = json_decode($rDosens->getBody());
-        } catch (\Throwable $err) {
-        }
-
-        return $dosens;
-    }
-
-    public function getDosenSingle($nidn)
-    {
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "dosen/" . $nidn;
-            $rDosen = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $dosen = json_decode($rDosen->getBody());
-
-            return $dosen;
-        } catch (\Throwable $err) {
-        }
     }
 }

@@ -280,7 +280,7 @@
                                     <div class="row">
                                         <div class="col-xs-12 col-lg-12">
                                             @php
-                                                 $slug = \Str::slug($event->nama_event);
+                                                 $slug = $event->slug;
                                             @endphp
                                             <nav>
                                                 <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
@@ -420,7 +420,7 @@
                                     </div>
                                 @else
                                     @php
-                                        $slug = \Str::slug($event->nama_event);
+                                        $slug = $event->slug;
                                     @endphp
                                     
                                     @if ($event->tipe_peserta_id == "2" && Session::get('is_mahasiswa') == "1")

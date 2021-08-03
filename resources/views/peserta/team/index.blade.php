@@ -69,7 +69,7 @@
                                     <div class="product-caption">
                                         <h4><a href="{{route('peserta.team.detail', $tim->id_tim_event)}}">{{$tim->eventEksternalRegisRef->eventEksternalRef->nama_event}}</a></h4>
                                         <small class="text-muted">Oleh: <a href="#" class="text-orange" target="_blank" rel="noopener noreferrer">
-                                            {{$tim->eventEksternalRegisRef->eventEksternalRef->cakupanOrmawaRef->nama_ormawa}}
+                                            {{$tim->eventEksternalRegisRef->eventEksternalRef->cakupanOrmawaRef->role}}
                                         </a></small>
                                         <div class="mb-3">
                                             @php
@@ -101,6 +101,7 @@
                                 <tbody>
                                     @foreach ($tim_pendings as $item)
                                         @foreach ($item->timDetailRef as $invite)
+                                            @if ($invite->role == "anggota")
                                             @if ($pengguna->nim == $invite->nim || $pengguna->participant_id == $invite->participant_id)
                                             <tr id="tr_{{$invite->id_tim_event_detail}}">
                                                 <td >
@@ -109,7 +110,7 @@
                                                             @if ($invite->invited_by->photo)
                                                                 <img  src="{{asset('assets/img/photo-pengguna/'.$invite->photo)}}" style="width: 30px ;height:30px; border-radius:50%"  id="profil-image" alt="">
                                                             @else
-                                                                <img  src="{{asset('assets/img/user.svg')}}" style="width: 30px ;height:30px; border-radius:50%" id="profil-image" alt="">
+                                                                <img  src="{{asset('assets/img/icon/pengguna_icon2.png')}}" style="width: 30px ;height:30px; border-radius:50%" id="profil-image" alt="">
                                                             @endif
                                                         </div>
                                                         <div class="d-flex flex-column flex-auto">
@@ -138,6 +139,7 @@
                                                     <a href="#" onclick="tolakUndangan({{$json}})" class="btn btn-danger d-inline" style="font-size: 13px" title="Tolak"><i class="icon-copy dw dw-ban"></i></a>
                                                 </td>
                                             </tr>
+                                            @endif
                                             @endif
                                         @endforeach
                                     @endforeach

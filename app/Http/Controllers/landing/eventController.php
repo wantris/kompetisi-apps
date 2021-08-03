@@ -53,10 +53,8 @@ class eventController extends Controller
 
     public function detail($slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
 
-        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
         $check_regis = null;
 
         if ($event) {
@@ -105,10 +103,7 @@ class eventController extends Controller
 
     public function timeline($slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
-
-        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
 
         if ($event) {
             $tls = Timeline::where('event_internal_id', $event->id_event_internal)->get();
@@ -122,8 +117,6 @@ class eventController extends Controller
     // ADDITIONAL FEATURE
     public function registration($slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
 
         if (Session::get('id_pengguna') != null) {
             $pengguna = $this->pengguna;
@@ -134,7 +127,7 @@ class eventController extends Controller
             }
         }
 
-        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
         if ($event) {
             switch ($event->role) {
                 case 'Team':
@@ -166,35 +159,30 @@ class eventController extends Controller
 
     public function registrationTeam($slug)
     {
-        // remove slug string "-"
-
-
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
-        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
 
         $user_logged = $this->pengguna;
+
 
         if (!$user_logged) {
             return redirect()->route('project.index')->with('failed', 'Anda harus login');
         }
 
         if ($user_logged->nim) {
-            try {
-                $user_logged->mahasiswaRef = null;
-                $mhs = $this->api_mahasiswa->getMahasiswaByNim($user_logged->nim);
-                // dd($user_logged->nim);
+            $user_logged->mahasiswaRef = null;
+            $mhs = $this->api_mahasiswa->getMahasiswaSomeField($user_logged->nim);
+            dd($mhs);
+            if ($mhs) {
                 $user_logged->mahasiswaRef = $mhs;
-            } catch (\Throwable $err) {
             }
         }
+        dd($user_logged);
         return view('landing.event.registrationTeam', compact('slug', 'user_logged', 'event'));
     }
 
     public function saveRegistrationTeam(Request $request, $slug)
     {
-        // remove slug string "-"
-        $removeSlug = str_ireplace(array('-'), ' ', $slug);
-        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('nama_event', $removeSlug)->first();
+        $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
 
         $tim = new TimEvent();
         $tim->status = 0;
@@ -248,7 +236,7 @@ class eventController extends Controller
                     } else {
                         $nama = $pengguna->participantRef->nama_participant;
                     }
-                    Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $removeSlug, $ted->id_tim_event_detail));
+                    Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $slug, $ted->id_tim_event_detail));
                 } catch (\Throwable $err) {
                 }
             }

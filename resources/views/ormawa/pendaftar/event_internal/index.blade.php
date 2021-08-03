@@ -55,7 +55,11 @@
                                         <td></td>
                                         <td>
                                             @if ($regis->nim)
-                                                {{$regis->mahasiswaRef->nama}}
+                                                @if ($regis->mahasiswaRef)
+                                                    {{$regis->mahasiswaRef->mahasiswa_nama}}
+                                                @else
+                                                    {{$regis->nim}}
+                                                @endif
                                             @else
                                                 {{$regis->participantRef->nama_participant}}
                                             @endif
@@ -105,7 +109,11 @@
                                             @foreach ($regis->timRef->timDetailRef as $detail)
                                                 @if ($detail->role == "ketua")
                                                     @if ($detail->nim)
-                                                        {{$detail->mahasiswaRef->nama}}
+                                                        @if ($detail->mahasiswaRef)
+                                                            {{$detail->mahasiswaRef->mahasiswa_nama}}
+                                                        @else
+                                                            {{$detail->nim}}
+                                                        @endif
                                                     @else
                                                         {{$detail->participantRef->nama_participant}}
                                                     @endif

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\ormawa;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\endpoint\ApiDosenController;
+use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use GuzzleHttp\Client;
@@ -13,13 +15,27 @@ use App\Ormawa;
 
 class EventEksternalRegisController extends Controller
 {
+    protected $api_mahasiswa;
+    protected $api_dosen;
+    protected $ormawa;
+    protected $cakupan;
+
+    public function __construct()
+    {
+        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->api_dosen = new ApiDosenController;
+        $this->cakupan = CakupanOrmawa::where('ormawa_id', Session::get('id_ormawa'))->first();
+        $this->ormawa =  Ormawa::find(Session::get('id_ormawa'));
+    }
+
     public function index()
     {
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Semua Peserta Event Eksternal';
 
-        $cakupan = CakupanOrmawa::where('ormawa_id', Session::get('id_ormawa'))->first();
+        $cakupan = $this->cakupan;
         $events = EventEksternal::where('cakupan_ormawa_id', $cakupan->id_cakupan_ormawa)->get();
-        $ormawa = Ormawa::find(Session::get('id_ormawa'));
+        $ormawa = $this->ormawa;
+
         $registrations = $this->getAllRegistration($cakupan);
         $regis_all_cakupans = $this->getAllCakupanRegis();
 
@@ -79,7 +95,7 @@ class EventEksternalRegisController extends Controller
                         $item->mahasiswaRef = null;
                         if ($item->nim) {
                             try {
-                                $mhs = $this->getMahasiswaByNim($item->nim);
+                                $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
                                 $item->mahasiswaRef = $mhs;
                             } catch (\Throwable $err) {
                             }
@@ -90,7 +106,7 @@ class EventEksternalRegisController extends Controller
                                 $detail->mahasiswaRef = null;
                                 if ($detail->nim) {
                                     try {
-                                        $mhs = $this->getMahasiswaByNim($detail->nim);
+                                        $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
                                         $detail->mahasiswaRef = $mhs;
                                     } catch (\Throwable $err) {
                                     }
@@ -122,7 +138,7 @@ class EventEksternalRegisController extends Controller
                         $item->mahasiswaRef = null;
                         if ($item->nim) {
                             try {
-                                $mhs = $this->getMahasiswaByNim($item->nim);
+                                $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
                                 $item->mahasiswaRef = $mhs;
                             } catch (\Throwable $err) {
                             }
@@ -133,7 +149,7 @@ class EventEksternalRegisController extends Controller
                                 $detail->mahasiswaRef = null;
                                 if ($detail->nim) {
                                     try {
-                                        $mhs = $this->getMahasiswaByNim($detail->nim);
+                                        $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
                                         $detail->mahasiswaRef = $mhs;
                                     } catch (\Throwable $err) {
                                     }
@@ -146,24 +162,5 @@ class EventEksternalRegisController extends Controller
         }
 
         return $registrations;
-    }
-
-
-
-    public function getMahasiswaByNim($nim)
-    {
-        $msh = null;
-
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-            $rMhs = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $mhs = json_decode($rMhs->getBody());
-        } catch (\Throwable $err) {
-        }
-
-        return $mhs;
     }
 }

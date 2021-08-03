@@ -39,7 +39,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::delete('/delete/{id_participant}', 'Api\participantController@edit')->name('participant.delete');
     });
 
-    Route::group(['prefix' => 'mahasiswa'], function () {
+    Route::group(['prefix' => 'pengguna/mahasiswa'], function () {
         Route::get('/', 'Api\mahasiswaController@index')->name('mahasiswa.index');
         Route::get('/add', 'Api\mahasiswaController@add')->name('mahasiswa.add');
         Route::post('/add', 'Api\mahasiswaController@save')->name('mahasiswa.save');
@@ -47,6 +47,16 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/edit/{nim}', 'Api\mahasiswaController@edit')->name('mahasiswa.edit');
         Route::post('/update/{nim}', 'Api\mahasiswaController@update')->name('mahasiswa.update');
         Route::delete('/delete/{nim}', 'Api\mahasiswaController@edit')->name('mahasiswa.delete');
+    });
+
+    Route::group(['prefix' => 'pengguna/dosen'], function () {
+        Route::get('/', 'Api\dosenController@index')->name('dosen.index');
+        Route::get('/add', 'Api\dosenController@add')->name('dosen.add');
+        Route::post('/add', 'Api\dosenController@save')->name('dosen.save');
+        Route::get('/detail/{nidn}', 'Api\dosenController@detail')->name('dosen.detail');
+        Route::get('/edit/{nidn}', 'Api\dosenController@edit')->name('dosen.edit');
+        Route::post('/update/{nidn}', 'Api\dosenController@update')->name('dosen.update');
+        Route::delete('/delete/{nidn}', 'Api\dosenController@edit')->name('dosen.delete');
     });
 
     Route::group(['prefix' => 'eventinternal'], function () {
@@ -83,5 +93,24 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/edit/{id_pengguna}', 'Api\penggunaController@edit')->name('pengguna.edit');
         Route::post('/update/{id_pengguna}', 'Api\penggunaController@update')->name('pengguna.update');
         Route::delete('/delete/{id_pengguna}', 'Api\penggunaController@edit')->name('pengguna.delete');
+    });
+
+    Route::group(['prefix' => 'team'], function () {
+        Route::get('/', 'Api\teamController@index')->name('team.index');
+        Route::get('/eventinternal', 'Api\teamController@getAllByEventInternal')->name('team.eventinternal.index');
+        Route::get('/eventeksternal', 'Api\teamController@getAllByEventEksternal')->name('team.eventeksternal.index');
+        Route::get('/add', 'Api\teamController@add')->name('team.add');
+        Route::post('/add', 'Api\teamController@save')->name('team.save');
+        Route::get('/detail/{id_team}', 'Api\teamController@detail')->name('team.detail');
+        Route::get('/edit/{id_team}', 'Api\teamController@edit')->name('team.edit');
+        Route::post('/update/{id_team}', 'Api\teamController@update')->name('team.update');
+        Route::delete('/delete/{id_team}', 'Api\teamController@edit')->name('team.delete');
+    });
+
+    Route::group(['prefix' => 'registration'], function () {
+        // eventinternal 
+        Route::get('/eventinternal', 'Api\EventInternalRegisController@index')->name('registrations.eventinternal.index');
+
+        Route::get('/eventeksternal', 'Api\EventEksternalRegisController@index')->name('registrations.eventeksternal.index');
     });
 });

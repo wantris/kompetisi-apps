@@ -11,6 +11,9 @@ use App\Http\Controllers\endpoint\ApiMahasiswaController;
 
 class TeamController extends Controller
 {
+    protected $api_dosen;
+    protected $api_mahasiswa;
+
     public function __construct()
     {
         $this->api_mahasiswa = new ApiMahasiswaController;
@@ -29,17 +32,20 @@ class TeamController extends Controller
 
         // Get nama dosen
         if ($tim->nidn) {
-            $tim->nama_dosen = $tim->nidn;
-            $tim->nama_dosen =  $this->getDosenSingle($tim->nidn);
+            $tim->dosenRef = null;
+            $dosen =  $this->api_dosen->getDosenOnlySomeField($tim->nidn);
+            if ($dosen) {
+                $tim->dosenRef = $dosen;
+            }
         }
 
         // Get name of mahasiswa
         foreach ($tim->timDetailRef as $detail) {
             if ($detail->nim) {
-                $detail->nama_mhs = $detail->nim;
-                try {
-                    $detail->nama_mhs = $this->getMahasiswaByNim($detail->nim)->nama;
-                } catch (\Throwable $err) {
+                $detail->mahasiswaRef = null;
+                $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
+                if ($mhs) {
+                    $detail->mahasiswaRef = $mhs;
                 }
             }
         }
@@ -60,56 +66,6 @@ class TeamController extends Controller
             return redirect()->back()->with('success', 'Pengajuan Berhasil');
         } catch (\Throwable $err) {
             dd($err);
-        }
-    }
-
-
-    public function getMahasiswaByNim($nim)
-    {
-        $msh = null;
-
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-            $rMhs = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $mhs = json_decode($rMhs->getBody());
-        } catch (\Throwable $err) {
-        }
-
-        return $mhs;
-    }
-
-    public function getAllDosen()
-    {
-        $dosens = null;
-
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "dosen/";
-            $rDosens = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $dosens = json_decode($rDosens->getBody());
-        } catch (\Throwable $err) {
-        }
-
-        return $dosens;
-    }
-
-    public function getDosenSingle($nidn)
-    {
-        try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "dosen/" . $nidn;
-            $rDosen = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $dosen = json_decode($rDosen->getBody());
-
-            return $dosen->nama_dosen;
-        } catch (\Throwable $err) {
         }
     }
 }

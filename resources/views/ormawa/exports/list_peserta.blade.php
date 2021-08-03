@@ -2,7 +2,9 @@
     <table style="width: 100%">
         <thead>
             <tr>
+                <th>No.</th>
                 <th>Nama</th>
+                <th>Kelas</th>
                 <th>Email</th>
                 <th>Nomor Telepon</th>
                 <th>Status Pendaftar</th>
@@ -12,8 +14,18 @@
         <tbody>
             @foreach ($pendaftaran as $regis)
                 <tr id="tr_{{$regis->id_event_eksternal_registration}}">
+                    <td>{{$loop->iteration}}</td>
                     <td>
-                        {{$regis->mahasiswaRef->nama}}
+                        @if ($regis->mahasiswaRef)
+                            {{$regis->mahasiswaRef->mahasiswa_nama}}
+                        @else
+                            {{$regis->nim}}
+                        @endif
+                    </td>
+                    <td>
+                        @if ($regis->mahasiswaRef)
+                            {{$regis->mahasiswaRef->kelas_kode}}
+                        @endif
                     </td>
                     <td>
                         {{$regis->penggunaMhsRef->email}}
@@ -39,9 +51,11 @@
     <table style="width: 100%">
         <thead>
             <tr>
+                <th>No.</th>
                 <th>ID Tim</th>
                 <th>Pembimbing</th>
                 <th>Keanggotaan</th>
+                <th>Kelas</th>
                 <th>Role</th>
                 <th>Email</th>
                 <th>Nomor Telepon</th>
@@ -60,14 +74,26 @@
                     $count = $not_done->count();
                 @endphp
                 <tr id="tr_{{$regis->id_event_eksternal_registration}}">
+                    <td rowspan="{{$count}}" valign="center">{{$loop->iteration}}</td>
                     <td rowspan="{{$count}}" valign="center">{{$regis->tim_event_id}}</td>
                     <td rowspan="{{$count}}" valign="center">
                         @if ($regis->timRef->pembimbingRef)
-                            {{$regis->timRef->pembimbingRef->nama_dosen}}
+                            {{$regis->timRef->pembimbingRef->dosen_lengkap_nama}}
+                        @else
+                            {{$regis->timRef->nidn}}
                         @endif
                     </td>
                     <td valign="center">
-                        {{$regis->timRef->timDetailRef[0]->mahasiswaRef->nama}}
+                        @if ($regis->timRef->timDetailRef[0]->mahasiswaRef)
+                            {{$regis->timRef->timDetailRef[0]->mahasiswaRef->mahasiswa_nama}}
+                        @else
+                            {{$regis->timRef->timDetailRef[0]->nim}}
+                        @endif
+                    </td>
+                    <td valign="center">
+                        @if ($regis->timRef->timDetailRef[0]->mahasiswaRef)
+                            {{$regis->timRef->timDetailRef[0]->mahasiswaRef->kelas_kode}}
+                        @endif
                     </td>
                     <td valign="center">
                         {{ucfirst($regis->timRef->timDetailRef[0]->role)}} 
@@ -80,17 +106,26 @@
                     </td>
                     <td rowspan="{{$count}}" valign="center">
                         @if ($regis->status == "0")
-                            Belum</a> 
+                            Belum
                         @else
                             Tervalidasi
                         @endif
                     </td>
                 </tr>
-                @for($i=1;$i<=$count;$i++)
+                @for($i=1;$i<$count;$i++)
                     @if ($regis->timRef->timDetailRef[$i]->status == "Done")
                         <tr>
                             <td valign="center">
-                                {{$regis->timRef->timDetailRef[$i]->mahasiswaRef->nama}} ({{$regis->timRef->timDetailRef[$i]->nim}} )
+                                @if ($regis->timRef->timDetailRef[$i]->mahasiswaRef)
+                                    {{$regis->timRef->timDetailRef[$i]->mahasiswaRef->mahasiswa_nama}}
+                                @else
+                                    {{$regis->timRef->timDetailRef[$i]->nim}}
+                                @endif
+                            </td>
+                            <td valign="center">
+                                @if ($regis->timRef->timDetailRef[$i]->mahasiswaRef)
+                                    {{$regis->timRef->timDetailRef[$i]->mahasiswaRef->kelas_kode}}
+                                @endif
                             </td>
                             <td valign="center">
                                 {{ucfirst($regis->timRef->timDetailRef[$i]->role)}}

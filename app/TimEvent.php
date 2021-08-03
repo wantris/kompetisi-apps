@@ -8,6 +8,10 @@ class TimEvent extends Model
 {
     protected $primaryKey = "id_tim_event";
 
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+    ];
+
 
     public function timDetailRef()
     {
