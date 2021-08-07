@@ -200,7 +200,6 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="hero-cap text-center">
-                            <h2>Ikuti Kompetisi yang Kamu Inginkan</h2>
                         </div>
                     </div>
                 </div>
@@ -241,7 +240,7 @@
                                                 <h1>Diselenggarakan Oleh</h1>
                                             </div>
                                             <div class="detail-komp__ormawa-desc mt-4 text-left">
-                                                <h2><a href="{{route('ormawa.detail.index','HIMATIF')}}" style="text-decoration: none !important">{{$event->ormawaRef->nama_ormawa}}</a></h2>
+                                                <h2><a href="{{route('ormawa.detail.index', $event->ormawa_id)}}" style="text-decoration: none !important">{{$event->ormawaRef->nama_ormawa}}</a></h2>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
@@ -320,7 +319,7 @@
                                                                     style="width:100%" id="">
                                                             </div>
                                                             <div class="col-lg-3">
-                                                                <a href="#" class="float-right buttonDownload" 
+                                                                <a href="{{route('event.detail.file.download', $fei->id_file_event_internal_detail)}}" class="float-right buttonDownload" 
                                                                     title="Tambah dokumen"><i class="icofont-download"></i></a>
                                                             </div>
                                                         </div>
@@ -337,9 +336,6 @@
                                                                     @else
                                                                         <img class="card-img" src="{{asset('assets/img/kompetisi-thumb/'. $pn->eventInternalRef->poster_image)}}" style="max-width: 355px; max-height:268px" alt="Bologna">
                                                                     @endif
-                                                                    {{-- <div class="card-img-overlay">
-                                                                        <a href="#" class="btn btn-light btn-sm" style="padding: 20px 20px">Pemenang</a>
-                                                                    </div> --}}
                                                                     <div class="card-body">
                                                                         <h4 class="card-title">{{$pn->title}}</h4>
                                                                         <small class="text-muted cat">

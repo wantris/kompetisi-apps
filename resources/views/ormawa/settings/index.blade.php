@@ -7,6 +7,14 @@
     .nav-link:hover {
         color: #f5a461 !important;
     }
+
+    .dataTables_length {
+        margin-bottom: 20px !important;
+    }
+    
+    .dataTables_paginate {
+        margin-top: 20px !important;
+    }
 </style>
 @endpush
 

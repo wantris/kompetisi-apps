@@ -16,8 +16,11 @@ class TeamController extends Controller
 
     public function __construct()
     {
-        $this->api_mahasiswa = new ApiMahasiswaController;
-        $this->api_dosen = new ApiDosenController;
+        $this->middleware(function ($request, $next) {
+            $this->api_mahasiswa = new ApiMahasiswaController;
+            $this->api_dosen = new ApiDosenController;
+            return $next($request);
+        });
     }
 
     public function detail($id_tim)

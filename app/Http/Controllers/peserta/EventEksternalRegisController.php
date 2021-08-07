@@ -28,7 +28,7 @@ class EventEksternalRegisController extends Controller
 
     public function getAllRegistration()
     {
-        $pengguna = $this->pengguna;
+        $pengguna = Pengguna::find(Session::get('id_pengguna'));
 
         if ($pengguna) {
 
@@ -69,7 +69,7 @@ class EventEksternalRegisController extends Controller
                     if ($event) {
                         if ($event->role != "Team") {
                             $item->mahasiswaRef = $item->nim;
-                            $mhs = $this->api_mahasiswa->getMahasiswaByNim($item->nim);
+                            $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
                             if ($mhs) {
                                 $item->mahasiswaRef = $mhs;
                             }
@@ -77,7 +77,7 @@ class EventEksternalRegisController extends Controller
                             foreach ($item->timRef->timDetailRef as $detail) {
                                 if ($detail->role == "ketua") {
                                     $detail->mahasiswaRef = $detail->nim;
-                                    $mhs = $this->api_mahasiswa->getMahasiswaByNim($detail->nim);
+                                    $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
                                     if ($mhs) {
                                         $detail->mahasiswaRef = $mhs;
                                     }

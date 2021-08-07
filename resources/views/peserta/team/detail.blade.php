@@ -194,6 +194,7 @@
                                             <a href="#" onclick="showModalDosen({{$tim->id_tim_event}}, {{$jsonDosens}})" class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2" style="border:none;padding:5px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
                                                 Ajukan Pembimbing</a>
                                             @endif
+                                            {{$check}}
                                         @endif
                                     @endforeach
                                 @endif

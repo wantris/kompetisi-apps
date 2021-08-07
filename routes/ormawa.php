@@ -10,7 +10,7 @@ Route::group(['namespace' => 'ormawa'], function () {
         Route::get('/logout', 'AuthController@logout')->name('ormawa.logout');
     });
 
-    Route::group(['prefix' => 'dashboard', 'middleware' => 'ormawa'], function () {
+    Route::group(['prefix' => 'dashboard', 'middleware' => 'ormawa', 'prevent-back-history'], function () {
         Route::get('/page', 'HomeController@index')->name('ormawa.index');
     });
 

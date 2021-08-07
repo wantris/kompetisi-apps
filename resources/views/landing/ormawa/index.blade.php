@@ -48,11 +48,12 @@
 
   <!-- Hero Area Start-->
   <div class="slider-area ">
-    <div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="{{url('assets/img/banner-ormawa/himatif_banner.jpg')}}">
+    <div class="single-slider section-overly slider-height2 d-flex align-items-center" @if($ormawa->banner) data-background="{{url('assets/img/banner-ormawa/'.$ormawa->banner)}}" @else data-background="{{url('assets/img/ormawa-default-banner.png')}}" @endif>
         <div class="container">
             <div class="row">
                 <div class="col-xl-12">
                     <div class="hero-cap text-center">
+                        <h2 class="font-weight-bold">{{$ormawa->nama_ormawa}}</h2>
                     </div>
                 </div>
             </div>
@@ -65,16 +66,24 @@
     <div class="row">
         <div class="col-lg-2 col-sm-12 col-12 col-md-4 mb-sm-7">
             <div class="px-3 mx-auto py-3 wrapper-kelas rounded shadow minus-top logo-center wrapper-kelas-sm user-profile-picture">
-                <img src="{{url('assets/img/ormawa-logo/himatif.png')}}" class="img-fluid" alt="Dicoding Indonesia">
+                @if ($ormawa->photo)
+                    <img src="{{url('assets/img/ormawa-logo/'.$ormawa->photo)}}" class="img-fluid" alt="{{$ormawa->nama_ormawa}}">
+                @else
+                    <img src="{{url('assets/img/ormawa-default-logo.png')}}" class="img-fluid rounded-circle" alt="Organisasi Mahasiswa">
+                @endif
+               
             </div>
         </div>
         <div class="col-lg-9 mx-4 col-sm-7 col-md-8 pt-3 pl-xl-4 pl-lg-5 pl-sm-4">
             <div class="d-flex">
-                <h2>Himpunan Mahasiswa Teknik Informatika</h2>
+                <h2>{{$ormawa->nama_ormawa}}</h2>
             </div>
             <p>
                 <span class="text-icon" title="XP">
-                    <i class="fas fa-trophy mr-2"></i>2 Kompetisi
+                    @php
+                        $total_event = $event_internals->count() + $event_eksternals->count();
+                    @endphp
+                    <i class="fas fa-trophy mr-2"></i>{{$total_event}} Event
                 </span>
             </p>
             <p>
@@ -84,7 +93,7 @@
             </p>
             <p>
                 <span class="text-icon">
-                    <i class="far fa-clock mr-2"></i>Bergabung sejak 07 Apr 2020
+                    <i class="far fa-clock mr-2"></i>Bergabung sejak {{$ormawa->created_at->isoFormat('D MMM Y')}}
                 </span>
             </p>
         </div>
@@ -99,149 +108,73 @@
                   <a class="nav-link active text-dark" id="about-tab" data-toggle="tab" href="#about" role="tab" aria-controls="home" aria-selected="true">Tentang Kami</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link text-dark" id="competition-tab" data-toggle="tab" href="#competition" role="tab" aria-controls="profile" aria-selected="false">Kompetisi</a>
+                  <a class="nav-link text-dark" id="competition-tab" data-toggle="tab" href="#competition" role="tab" aria-controls="profile" aria-selected="false">Event</a>
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                   <a class="nav-link text-dark" id="notification-tab" data-toggle="tab" href="#notification" role="tab" aria-controls="contact" aria-selected="false">Pengumuman</a>
-                </li>
+                </li> --}}
               </ul>
               <div class="tab-content" id="myTabContent">
 
-                 <!-- Tentang Saya -->
+                 <!-- Tentang kami -->
                 <div class="tab-pane fade show active" id="about" role="tabpanel" aria-labelledby="about-tab">
-                   
+                    <div class="container-fluid mt-4">
+                        <div class="col-12" >
+                            {!!$ormawa->deskripsi!!}
+                        </div>
+                    </div>
                 </div>
 
-                 <!-- Kompetisi -->
+                 <!-- Event -->
                 <div class="tab-pane fade" id="competition" role="tabpanel" aria-labelledby="competition-tab">
                     <div class="container-fluid mt-4">
                         <div class="col-12 col-lg-3 text-left" style="padding-left: 0px !important;">
                             <select class="form-control" style="margin-left: 0px!important;box-shadow: 0 2px 4px 0 #dedede;">
-                                <option>Semua Kompetisi</option>
+                                <option>Semua Event</option>
                               </select>
                         </div>
                     </div>
                     <div class="row mt-5">
+                        @foreach ($event_internals as $event)
                         <div class="col-lg-3 col-md-6 col-12 mb-3">
                             <div class="komp-card2 mx-auto">
-                                <div class="komp-thumbnail" data-background="{{url('assets/img/kompetisi-thumb/thumbnail.jpg')}}">
+                                <div class="komp-thumbnail" data-background="{{asset('assets/img/kompetisi-thumb/'.$event->poster_image)}}">
                                 </div>
                                 <div class="komp-banner">
                                     <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                            May 07, 2021
+                                        @php
+                                            $tgl_buka = Carbon\Carbon::parse($event->tgl_buka)->toDatetime()->format('M, d Y');
+                                        @endphp
+                                        {{$tgl_buka}}
                                     </div>
-                                    <div class="komp-banner__date text-right pr-2 pt-1">
-                                        Kotak Pena
+                                    <div class="komp-banner__date text-right pr-2 pt-1" data-toggle="tooltip" data-placement="top" title="{{$event->ormawaRef->nama_ormawa}}">
+                                        @php
+                                            $count = str_word_count($event->ormawaRef->nama_ormawa);
+                                            $nama_ormawa = $event->ormawaRef->nama_ormawa;
+                                            if($count > 3){
+                                                $nama_ormawa = $event->ormawaRef->nama_akronim;
+                                            }
+                                        @endphp
+                                        {{$nama_ormawa}}
                                     </div>
                                 </div>
                                 <div class="komp-title pl-3">
-                                    <a href="{{route('event.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
-                                        Poster Design Competition 2021 
+                                    <a href="{{route('event.detail', $event->slug)}}"><h1 class="mt-3">
+                                        {{$event->nama_event}} 
                                     </h1></a>
                                 </div>
                                 <div class="komp-description pl-3 pr-3">
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                    </p>
+                                    {!!$event->deskripsi_excerpt!!}
                                 </div>
                                 <div class="komp-created pl-3 pr-3">
                                     <i class="far fa-clock text-secondary mr-1 d-inline"></i>
                                     <p class="text-secondary d-inline">
-                                        May 02, 2021
+                                        {{$event->created_at->isoFormat('MMM, d Y')}}
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6 col-12 mb-3">
-                            <div class="komp-card2 mx-auto">
-                                <div class="komp-thumbnail" data-background="{{url('assets/img/kompetisi-thumb/thumbnail.jpg')}}">
-                                </div>
-                                <div class="komp-banner">
-                                    <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                            May 07, 2021
-                                    </div>
-                                    <div class="komp-banner__date text-right pr-2 pt-1">
-                                        Kotak Pena
-                                    </div>
-                                </div>
-                                <div class="komp-title pl-3">
-                                    <a href="{{route('event.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
-                                        Poster Design Competition 2021 
-                                    </h1></a>
-                                </div>
-                                <div class="komp-description pl-3 pr-3">
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                    </p>
-                                </div>
-                                <div class="komp-created pl-3 pr-3">
-                                    <i class="far fa-clock text-secondary mr-1 d-inline"></i>
-                                    <p class="text-secondary d-inline">
-                                        May 02, 2021
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-12 mb-3">
-                            <div class="komp-card2 mx-auto">
-                                <div class="komp-thumbnail" data-background="{{url('assets/img/kompetisi-thumb/thumbnail.jpg')}}">
-                                </div>
-                                <div class="komp-banner">
-                                    <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                            May 07, 2021
-                                    </div>
-                                    <div class="komp-banner__date text-right pr-2 pt-1">
-                                        Kotak Pena
-                                    </div>
-                                </div>
-                                <div class="komp-title pl-3">
-                                    <a href="{{route('event.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
-                                        Poster Design Competition 2021 
-                                    </h1></a>
-                                </div>
-                                <div class="komp-description pl-3 pr-3">
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                    </p>
-                                </div>
-                                <div class="komp-created pl-3 pr-3">
-                                    <i class="far fa-clock text-secondary mr-1 d-inline"></i>
-                                    <p class="text-secondary d-inline">
-                                        May 02, 2021
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6 col-12 mb-3">
-                            <div class="komp-card2 mx-auto">
-                                <div class="komp-thumbnail" data-background="{{url('assets/img/kompetisi-thumb/thumbnail.jpg')}}">
-                                </div>
-                                <div class="komp-banner">
-                                    <div class="komp-banner__date text-left pl-2 pt-1" >  
-                                            May 07, 2021
-                                    </div>
-                                    <div class="komp-banner__date text-right pr-2 pt-1">
-                                        Kotak Pena
-                                    </div>
-                                </div>
-                                <div class="komp-title pl-3">
-                                    <a href="{{route('event.detail', 'Poster-Design-Competition')}}"><h1 class="mt-3">
-                                        Poster Design Competition 2021 
-                                    </h1></a>
-                                </div>
-                                <div class="komp-description pl-3 pr-3">
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius libero vitae ullamcorper efficitur. Suspendisse potenti...
-                                    </p>
-                                </div>
-                                <div class="komp-created pl-3 pr-3">
-                                    <i class="far fa-clock text-secondary mr-1 d-inline"></i>
-                                    <p class="text-secondary d-inline">
-                                        May 02, 2021
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
 

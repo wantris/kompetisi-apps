@@ -537,6 +537,8 @@
         slider.scrollLeft = scrollLeft - walk;
         console.log(walk);
     });
+
+   
 </script>
 @endpush
 

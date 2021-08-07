@@ -6,6 +6,7 @@ use App\EventInternal;
 use App\Http\Controllers\Controller;
 use App\Ormawa;
 use App\Pengguna;
+use App\Slider;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class HomeController extends Controller
     {
         $ormawas = Ormawa::all();
         $events = EventInternal::where('status', '1')->take(2)->get();
-        return view('home', compact('ormawas', 'events'));
+        $sliders = Slider::where('is_active', 1)->get();
+        return view('home', compact('ormawas', 'events', 'sliders'));
     }
 
     public function login()

@@ -21,10 +21,13 @@ class settingsController extends Controller
 
     public function __construct()
     {
-        $this->api_mahasiswa = new ApiMahasiswaController;
-        $this->api_dosen = new ApiDosenController;
-        $this->ormawa =  Ormawa::find(Session::get('id_ormawa'));
-        $this->dosens = $this->api_dosen->getAllDosen();
+        $this->middleware(function ($request, $next) {
+            $this->api_mahasiswa = new ApiMahasiswaController;
+            $this->api_dosen = new ApiDosenController;
+            $this->ormawa =  Ormawa::find(Session::get('id_ormawa'));
+            $this->dosens = $this->api_dosen->getAllDosen();
+            return $next($request);
+        });
     }
 
     public function index()

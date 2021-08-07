@@ -29,6 +29,12 @@ class TeamController extends Controller
 
             if ($tims->count() > 0) {
                 $tims->each(function ($item, $key) {
+                    $item->dosen_ref = null;
+                    $dosen = $this->api_dosen->getDosenOnlySomeField($item->nidn);
+                    if ($dosen) {
+                        $item->dosen_ref = $dosen;
+                    }
+
                     foreach ($item->timDetailRef as $detail) {
                         $detail->mahasiswa_ref = null;
                         if ($detail->nim) {
@@ -66,6 +72,7 @@ class TeamController extends Controller
 
     public function getAllByEventEksternal()
     {
+        $tims = collect();
         try {
             $tims = TimEvent::with('timDetailRef', 'eventEksternalRegisRef',  'eventEksternalRegisRef.eventEksternalRef:id_event_eksternal,nama_event')->whereHas('eventEksternalRegisRef')->whereHas('timDetailRef', function ($query) {
                 $query->where('status', 'Done');
@@ -100,7 +107,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 404,
                 'message' => "Get data empty!",
-                'data' => null
+                'data' => $tims
             ], 404);
         } catch (\Throwable $err) {
             return response()->json([

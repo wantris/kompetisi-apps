@@ -28,9 +28,12 @@ class TeamController extends Controller
 
     public function __construct()
     {
-        $this->api_mahasiswa = new ApiMahasiswaController;
-        $this->api_dosen = new ApiDosenController;
-        $this->pengguna = Pengguna::find(Session::get('id_pengguna'));
+        $this->middleware(function ($request, $next) {
+            $this->api_mahasiswa = new ApiMahasiswaController;
+            $this->api_dosen = new ApiDosenController;
+            $this->pengguna = Pengguna::find(Session::get('id_pengguna'));
+            return $next($request);
+        });
     }
 
     public function index()
@@ -119,7 +122,7 @@ class TeamController extends Controller
                 if ($detail->nim) {
                     $detail->mahasiswaRef = $detail->nim;
                     try {
-                        $detail->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($detail->nim);
+                        $detail->mahasiswaRef = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
                     } catch (\Throwable $err) {
                     }
                 }
@@ -133,7 +136,7 @@ class TeamController extends Controller
                     if ($tim_detail->nim) {
                         $tim_detail->mahasiswaRef = $tim_detail->nim;
                         try {
-                            $tim_detail->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($tim_detail->nim);
+                            $tim_detail->mahasiswaRef = $this->api_mahasiswa->getMahasiswaSomeField($tim_detail->nim);
                         } catch (\Throwable $err) {
                         }
                     }
@@ -226,7 +229,7 @@ class TeamController extends Controller
             if ($item2->nim) {
                 try {
                     // Get nama mahasiswa
-                    $item2->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($item2->nim);
+                    $item2->mahasiswaRef = $this->api_mahasiswa->getMahasiswaSomeField($item2->nim);
                 } catch (\Throwable $err) {
                 }
             }
@@ -252,7 +255,7 @@ class TeamController extends Controller
         $ted = new TimEventDetail();
         $ted->tim_event_id = $id_tim;
         if ($pengguna->is_mahasiswa) {
-            $nama = $this->api_mahasiswa->getMahasiswaByNim($pengguna->nim)->mahasiswa_nama;
+            $nama = $this->api_mahasiswa->getMahasiswaSomeField($pengguna->nim)->mahasiswa_nama;
             $ted->nim = $pengguna->nim;
         } else {
             $ted->participant_id = $pengguna->participant_id;

@@ -157,6 +157,17 @@ class eventController extends Controller
         }
     }
 
+    public function download($id_file)
+    {
+        $check = FileEventInternalDetail::find($id_file);
+
+        if ($check) {
+            $file = public_path() . "/assets/file/dokumen_event/" . $check->filename;
+
+            return response()->download($file, $check->nama_file);
+        }
+    }
+
     public function registrationTeam($slug)
     {
         $event = EventInternal::with('ormawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();

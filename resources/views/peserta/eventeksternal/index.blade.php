@@ -83,7 +83,7 @@
                                             </div>
                                             <div class="komp-title pl-3">
                                                 @php
-                                                        $slug = \Str::slug($event->nama_event);
+                                                        $slug = $event->slug;
                                                 @endphp
                                                 <a href="{{route('peserta.eventeksternal.detail', $slug)}}"><h1 class="mt-3">
                                                     {{$event->nama_event}} 

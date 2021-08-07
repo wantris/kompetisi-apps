@@ -22,20 +22,43 @@
                             <div class="main-menu ">
                                 <nav class="d-none d-lg-block">
                                     <ul id="navigation">
-                                        <li><a href="{{url('/')}}">Beranda</a></li>
-                                        <li><a href="{{route('event.index')}}">Event</a></li>
-                                        <li><a href="{{route('blog.index')}}">Blog</a>
+                                        <li><a class="cool-link" href="{{url('/')}}">Beranda</a></li>
+                                        <li><a class="cool-link" href="{{route('event.index')}}">Event</a></li>
+                                        <li><a class="cool-link" href="{{route('blog.index')}}">Blog</a>
                                         </li>
-                                        <li><a href="{{route('contact.index')}}">Kontak</a></li>
-                                        <li class="d-lg-none "><a href="#"><img src=""
-                                                    style="width: 50px; height:50px; border-radius:20px" alt=""></a>
-                                            <ul class="submenu">
-                                                <li><a href="blog.html">Profil</a></li>
-                                                <li><a href="single-blog.html">Ganti Password</a></li>
-                                                <li><a href="elements.html">Profil Publik</a></li>
-                                                <li><a href="job_details.html">Sign out</a></li>
-                                            </ul>
-                                        </li>
+                                        <li><a class="cool-link" href="{{route('contact.index')}}">Kontak</a></li>
+                                        @if (Session::get('id_pengguna'))
+                                            @php
+                                                $pengguna = App\Pengguna::find(Session::get('id_pengguna'));
+                                            @endphp
+                                            <li class="d-lg-none ">
+                                                <a href="#">
+                                                    @if ($pengguna->photo)
+                                                        <img src="{{asset('assets/img/photo-pengguna/'.$pengguna->photo)}}" style="width: 50px; height:50px; border-radius:20px">
+                                                    @else
+                                                        <img src="{{asset('assets/img/user.svg')}}" style="width: 50px; height:50px; border-radius:20px">
+                                                    @endif
+                                                </a>
+                                                <ul class="submenu">
+                                                    <li><a href="{{route('peserta.index')}}">Dashboard</a></li>
+                                                    <li><a href="single-blog.html">Ganti Password</a></li>
+                                                    <li><a href="elements.html">Profil Publik</a></li>
+                                                    <li><a href="job_details.html">Sign out</a></li>
+                                                </ul>
+                                            </li>
+                                        @elseif(Session::get('id_ormawa'))
+                                            <li class="d-lg-none "><a href="#"><img src="" style="width: 50px; height:50px; border-radius:20px" alt=""></a>
+                                                <ul class="submenu">
+                                                    <li><a href="{{route('ormawa.index')}}">Dashboard</a></li>
+                                                    <li><a href="single-blog.html">Ganti Password</a></li>
+                                                    <li><a href="elements.html">Profil Publik</a></li>
+                                                    <li><a href="{{route('ormawa.logout')}}">Sign out</a></li>
+                                                </ul>
+                                            </li>
+                                        @else
+                                            <li class="d-block d-sm-none"><a href="#" data-toggle="modal" data-target="#mahasiswaLoginModal" class="btn-login-mobile bg-app btn-round text-white mb-2">Peserta</a></li>
+                                            <li class="d-block d-sm-none"><a href="#" data-toggle="modal" data-target="#ormawaLoginModal" class="btn-login-mobile bg-app-secondary btn-round text-white">Ormawa</a></li>
+                                        @endif
                                     </ul>
                                 </nav>
                             </div>

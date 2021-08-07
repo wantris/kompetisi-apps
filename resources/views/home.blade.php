@@ -56,6 +56,9 @@
             color: #3A4166 !important;
             text-decoration: none !important;
         }
+        .slider-hero{
+            filter: brightness(50%)
+        }
     </style>
         
     @endpush
@@ -66,41 +69,26 @@
             <!-- Mobile Menu -->
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
-                  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                  <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                  <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                    @foreach ($sliders as $key => $slider)
+                        @if ($key == 0)
+                            <li data-target="#carouselExampleIndicators" data-slide-to="{{$key}}" class="active"></li>
+                        @else
+                            <li data-target="#carouselExampleIndicators" data-slide-to="{{$key}}" ></li>
+                        @endif
+                        
+                    @endforeach
                 </ol>
                 <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img class="d-block img-fluid" src="assets/img/hero/h1_hero.jpg"  alt="First slide">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h1>Third slide label</h1>
-                            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                    @foreach ($sliders as $key => $slider)
+                        <div class="carousel-item @if($key == 0) active @endif">
+                            <img class="d-block img-fluid slider-hero"  src="{{$slider->image_url}}"  alt="First slide">
+                            <div class="carousel-caption">
+                                <h1>{{$slider->title}}</h1>
+                                <p>{{$slider->deskripsi}}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block img-fluid" src="assets/img/hero/about.jpg"  alt="Second slide">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h1>Third slide label</h1>
-                            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <img class="d-block img-fluid" src="assets/img/gallery/cv_bg.jpg"  alt="Third slide">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h1>Third slide label</h1>
-                            <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
-                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="sr-only">Next</span>
-                </a>
               </div>
         </div>
         <!-- slider Area End-->
@@ -124,7 +112,9 @@
                             <h1>SIEVENT</h1>
                         </div>
                         <div class="section-desc">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus et rutrum nibh, ac elementum orci. Praesent metus dui, blandit at rutrum a, dapibus eget diam. Curabitur a nunc luctus, pretium mi vel, vulputate libero. Curabitur finibus quam quis ipsum blandit, eget scelerisque turpis ornare.</p>
+                            <p>
+                                Sievent adalah portal bagi Unit Kegiatan Mahasiswa (UKM) dan Bidang Kemahasiswaan Politeknik Negeri Indramayu dalam memperkenalkan event ke khalayak umum. Sievent memberikan kemudahan bagi calon partisipan dalam mendaftar event yang telah tersedia. 
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -146,7 +136,11 @@
                     @foreach ($ormawas as $ormawa)
                         <div class="col-lg-2 col-md-3 col-6 mt-5" data-toggle="tooltip" data-placement="top" title="{{$ormawa->nama_ormawa}}">
                             <div class="card-ormawa mx-auto">
-                                <img src="{{url('assets/img/ormawa-logo/'.$ormawa->photo)}}" class="img-fluid" alt="Responsive image">
+                                @if ($ormawa->photo)
+                                    <img src="{{url('assets/img/ormawa-logo/'.$ormawa->photo)}}" class="img-fluid" alt="Responsive image">
+                                @else
+                                    <img src="{{url('assets/img/ormawa-default-logo.png')}}" class="img-fluid rounded-circle" alt="Responsive image">
+                                @endif
                             </div>
                         </div>
                     @endforeach

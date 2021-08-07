@@ -109,7 +109,7 @@ class EventInternalController extends Controller
             return response()->json([
                 "success" => true,
                 'status' => 200,
-                "message" => "Event internal berhasil diupdate",
+                "message" => "Event internal berhasil disimpan",
             ]);
         } catch (\Throwable $err) {
             return response()->json([

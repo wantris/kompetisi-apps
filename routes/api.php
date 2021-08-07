@@ -113,4 +113,19 @@ Route::group(['prefix' => 'v1'], function () {
 
         Route::get('/eventeksternal', 'Api\EventEksternalRegisController@index')->name('registrations.eventeksternal.index');
     });
+
+    Route::group(['prefix' => 'slider'], function () {
+        Route::get('/', 'Api\SliderController@index')->name('slider.index');
+        Route::post('/save', 'Api\SliderController@save')->name('slider.save');
+        Route::get('/delete/{id_slider}', 'Api\SliderController@delete')->name('slider.delete');
+        Route::post('/update/{id_slider}', 'Api\SliderController@update')->name('slider.update');
+    });
+
+    Route::group(['prefix' => 'blog'], function () {
+        Route::get('/', 'Api\blogController@index')->name('blog.index');
+        Route::get('/search', 'Api\blogController@search')->name('blog.search');
+        Route::post('/save', 'Api\blogController@save')->name('blog.save');
+        Route::get('/delete/{id_blog}', 'Api\blogController@delete')->name('blog.delete');
+        Route::post('/update/{id_blog}', 'Api\blogController@update')->name('blog.update');
+    });
 });

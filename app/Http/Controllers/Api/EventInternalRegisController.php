@@ -24,10 +24,10 @@ class EventInternalRegisController extends Controller
     {
         try {
 
-            if (!request()->idevent) {
-                $registrations = $this->getAllData();
-            } else {
+            if (request()->idevent) {
                 $registrations = $this->getDataByEvent(request()->idevent);
+            } else {
+                $registrations = $this->getAllData();
             }
 
             return response()->json([

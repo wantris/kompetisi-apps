@@ -26,13 +26,13 @@
 }
 
 .carousel-caption {
-    top: 50%;
+    top: 70%;
     transform: translateY(-50%);
 }
 
 .carousel-caption h1 {
     color: #fff;
-    font-size: 60px;
+    font-size: 40px;
     font-family: "Poppins", Arial, sans-serif;
     font-weight: 800;
 }
@@ -532,8 +532,36 @@
     text-align: center;
     text-transform: unset !important;
     transition: all 0.15s ease-in-out;
-    background-color: #010b1d;
-    border-color: #010b1d;
+    background-color: #007aff;
+    border-color: #007aff;
+    color: #fff;
+}
+
+.bg-app {
+    background-color: #007aff !important;
+}
+
+.bg-app-secondary {
+    background-color: #fb8c00 !important;
+}
+
+.btn-login-mobile {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    border-radius: 5px !important;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    outline: 1px solid transparent !important;
+    outline-offset: -4px;
+    cursor: pointer;
+    background: 0 0;
+    font-size: 12px !important;
+    font-weight: 700;
+    line-height: 12px;
+    text-align: center;
+    text-transform: unset !important;
+    transition: all 0.15s ease-in-out;
     color: #fff;
 }
 
@@ -2400,6 +2428,14 @@ hr {
         padding-bottom: 200px;
     }
 }
+@media only screen and (min-width: 375px) and (max-width: 768px) {
+    .carousel-caption {
+        top: 60%;
+    }
+    .carousel-caption h1 {
+        font-size: 16px;
+    }
+}
 @media only screen and (min-width: 768px) and (max-width: 991px) {
     .section-padding2 {
         padding-top: 100px;
@@ -2410,7 +2446,7 @@ hr {
         max-height: 320px;
     }
     .carousel-caption h1 {
-        font-size: 40px;
+        font-size: 20px;
     }
 
     .carousel-caption p {
@@ -5391,9 +5427,26 @@ del {
         padding: 30px 13px;
     }
 }
-.header-area .main-menu ul li:hover > a {
-    color: #fb8c00;
+.cool-link:after {
+    content: "";
+    display: block;
+    margin: auto;
+    margin-top: 5px;
+    height: 3px;
+    width: 0px;
+    background: #126afe;
+    transition: all 0.3s linear;
 }
+
+.cool-link:hover {
+    color: #126afe !important;
+    background: none !important;
+}
+
+.cool-link:hover::after {
+    width: 100%;
+}
+
 .header-area .main-menu ul ul.submenu {
     position: absolute;
     width: 170px;
@@ -5459,7 +5512,7 @@ del {
     }
 }
 .slicknav_menu .slicknav_icon-bar {
-    background-color: #fb246a !important;
+    background-color: #126afe !important;
 }
 .header-sticky.sticky-bar.sticky .header-btn .get-btn {
     padding: 20px 20px;
@@ -5469,7 +5522,7 @@ del {
 }
 .slicknav_menu .slicknav_nav a:hover {
     background: transparent;
-    color: #fb246a;
+    color: #126afe;
 }
 .slicknav_menu {
     background: transparent;

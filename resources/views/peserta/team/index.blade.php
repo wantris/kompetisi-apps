@@ -60,34 +60,42 @@
                         </div>
                     </div>
                 </div>
-                <div class="tab-pane fade" id="eksternal" role="tabpanel">
-                    @foreach ($tims as $tim)
-                        @if ($tim->eventEksternalRegisRef)
-                            <li class="col-lg-4 col-md-6 col-sm-12" style="list-style-type: none">
-                                <div class="product-box">
-                                    <div class="producct-img"><img src="{{url('assets/img/kompetisi-thumb/'.$tim->eventEksternalRegisRef->eventEksternalRef->poster_image)}}" alt=""></div>
-                                    <div class="product-caption">
-                                        <h4><a href="{{route('peserta.team.detail', $tim->id_tim_event)}}">{{$tim->eventEksternalRegisRef->eventEksternalRef->nama_event}}</a></h4>
-                                        <small class="text-muted">Oleh: <a href="#" class="text-orange" target="_blank" rel="noopener noreferrer">
-                                            {{$tim->eventEksternalRegisRef->eventEksternalRef->cakupanOrmawaRef->role}}
-                                        </a></small>
-                                        <div class="mb-3">
-                                            @php
-                                                $jlm_tim = collect();
-                                                foreach ($tim->timDetailRef as $key => $anggota) {
-                                                    if($anggota->status == "Done"){
-                                                        $jlm_tim->push($anggota);
-                                                    }
-                                                }
-                                            @endphp
-                                            <small class="text-muted">{{$jlm_tim->count()}} Orang</small>
-                                        </div>
-                                        <span class="my-3 d-block" style="font-size: 12px">Terdaftar: {{$tim->eventEksternalRegisRef->created_at->isoFormat('D MMM Y')}}</span>
-                                    </div>
-                                </div>
-                            </li>
-                        @endif
-                    @endforeach
+                <div class="tab-pane fade " id="eksternal" role="tabpanel">
+                    <div class="pd-20">
+                        <div class="product-wrap">
+                            <div class="product-list">
+                                <ul class="row">
+                                    @foreach ($tims as $tim)
+                                        @if ($tim->eventEksternalRegisRef)
+                                            <li class="col-lg-4 col-md-6 col-sm-12" style="list-style-type: none">
+                                                <div class="product-box">
+                                                    <div class="producct-img"><img src="{{url('assets/img/kompetisi-thumb/'.$tim->eventEksternalRegisRef->eventEksternalRef->poster_image)}}" alt=""></div>
+                                                    <div class="product-caption">
+                                                        <h4><a href="{{route('peserta.team.detail', $tim->id_tim_event)}}">{{$tim->eventEksternalRegisRef->eventEksternalRef->nama_event}}</a></h4>
+                                                        <small class="text-muted">Oleh: <a href="#" class="text-orange" target="_blank" rel="noopener noreferrer">
+                                                            {{$tim->eventEksternalRegisRef->eventEksternalRef->cakupanOrmawaRef->role}}
+                                                        </a></small>
+                                                        <div class="mb-3">
+                                                            @php
+                                                                $jlm_tim = collect();
+                                                                foreach ($tim->timDetailRef as $key => $anggota) {
+                                                                    if($anggota->status == "Done"){
+                                                                        $jlm_tim->push($anggota);
+                                                                    }
+                                                                }
+                                                            @endphp
+                                                            <small class="text-muted">{{$jlm_tim->count()}} Orang</small>
+                                                        </div>
+                                                        <span class="my-3 d-block" style="font-size: 12px">Terdaftar: {{$tim->eventEksternalRegisRef->created_at->isoFormat('D MMM Y')}}</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        @endif
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="tab-pane fade" style="margin-bottom: 40px !important" id="invite" role="tabpanel">
                     <div class="card-box mb-5 mt-3">

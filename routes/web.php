@@ -26,7 +26,10 @@ Route::post('/login', 'landing\homeController@postLogin')->name('project.login.p
 // event
 Route::group(['prefix' => 'event', 'namespace' => 'landing'], function () {
     Route::get('/', 'eventController@index')->name('event.index');
+
     Route::get('/detail/{slug}', 'eventController@detail')->name('event.detail');
+    Route::get('/detail/file/download/{id_file}', 'eventController@download')->name('event.detail.file.download');
+
     Route::get('/timeline/{slug}', 'eventController@timeline')->name('event.timeline');
     Route::get('/registration/{slug}', 'eventController@registration')->name('event.registration.get');
     Route::get('/registration/team/{slug}', 'eventController@registrationTeam')->name('event.registration.team');
@@ -66,13 +69,6 @@ Route::group(['prefix' => 'admin', 'namespace' => 'admin'], function () {
         Route::get('/', 'adminLoginController@index')->name('admin.login.index');
     });
 });
-
-
-
-
-
-
-
 
 
 // Dosen

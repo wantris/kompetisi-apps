@@ -29,11 +29,14 @@ class EventInternalController extends Controller
 
     public function __construct()
     {
-        $this->api_mahasiswa = new ApiMahasiswaController;
-        $this->api_dosen = new ApiDosenController;
-        $this->ormawa =  Ormawa::find(Session::get('id_ormawa'));
-        $this->kategoris = KategoriEvent::all();
-        $this->tipes = TipePeserta::all();
+        $this->middleware(function ($request, $next) {
+            $this->api_mahasiswa = new ApiMahasiswaController;
+            $this->api_dosen = new ApiDosenController;
+            $this->ormawa =  Ormawa::find(Session::get('id_ormawa'));
+            $this->kategoris = KategoriEvent::all();
+            $this->tipes = TipePeserta::all();
+            return $next($request);
+        });
     }
 
     // ==================================== BASIC CRUD =======================================

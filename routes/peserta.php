@@ -14,6 +14,7 @@ Route::group(['namespace' => 'peserta'], function () {
     });
 
     Route::get('/dashboard', 'HomeController@index')->name('peserta.index');
+    Route::get('/dashboard/getalldata', 'HomeController@getAll')->name('peserta.index.getall');
 
 
     Route::group(['prefix' => 'eventinternal'], function () {

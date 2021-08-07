@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="card-dash-body mt-4">
-                <span class="d-inline card-body-number ml-2" >0</span>
+                <span class="d-inline card-body-number ml-2" id="event-active-text">0</span>
                 <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Event</span>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="card-dash-body mt-4">
-                <span class="d-inline card-body-number ml-2" >0</span>
+                <span class="d-inline card-body-number ml-2" id="event-total-text">0</span>
                 <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Event</span>
             </div>
         </div>
@@ -84,7 +84,7 @@
                 </div>
             </div>
             <div class="card-dash-body mt-4">
-                <span class="d-inline card-body-number ml-2" >0</span>
+                <span class="d-inline card-body-number ml-2" id="event-prestasi-text" >0</span>
                 <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Event</span>
             </div>
         </div>
@@ -153,12 +153,34 @@
         })
 
         function percentageToDegrees(percentage) {
-
-        return percentage / 100 * 360
-
+            return percentage / 100 * 360
         }
 
+    });
+
+    $(document).ready( function () {
+        getAllData();
+    });
+
+    const getAllData = () => {
+        $.ajax({
+            url: "/peserta/dashboard/getalldata",
+            type:"GET",
+            dataType: "json",
+            success: function(values){
+                console.log(values);
+                $('#event-active-text').text(values.event_active_count);
+                $('#event-total-text').text(values.event_active_count + values.event_inactive_count);
+                $('#event-prestasi-text').text(values.prestasi_count);
+            },
+            error:function(err){
+                console.log(err);
+            },
         });
+
+    }
+
+   
 </script>
 
 @endpush

@@ -17,7 +17,10 @@ class AccountController extends Controller
 
     public function __construct()
     {
-        $this->api_mahasiswa = new ApiMahasiswaController;
+        $this->middleware(function ($request, $next) {
+            $this->api_mahasiswa = new ApiMahasiswaController;
+            return $next($request);
+        });
     }
 
     public function index()

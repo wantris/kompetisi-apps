@@ -4,10 +4,7 @@
 
 @section('content')
 
-
-
 <div class="row">
-    
     <div class="col-lg-4 col-12 mt-3">
         <div class="input-group input-underline">
             <div class="input-group-prepend">

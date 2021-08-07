@@ -27,11 +27,14 @@ class EventEksternalController extends Controller
 
     public function __construct()
     {
-        $this->api_mahasiswa = new ApiMahasiswaController;
-        $this->api_dosen = new ApiDosenController;
-        $this->cakupan =  CakupanOrmawa::where('ormawa_id', Session::get('id_ormawa'))->first();
-        $this->kategoris = KategoriEvent::all();
-        $this->tipes = TipePeserta::all();
+        $this->middleware(function ($request, $next) {
+            $this->api_mahasiswa = new ApiMahasiswaController;
+            $this->api_dosen = new ApiDosenController;
+            $this->cakupan =  CakupanOrmawa::where('ormawa_id', Session::get('id_ormawa'))->first();
+            $this->kategoris = KategoriEvent::all();
+            $this->tipes = TipePeserta::all();
+            return $next($request);
+        });
     }
 
     public function index()

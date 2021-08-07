@@ -54,21 +54,21 @@ class EventEksternalRegisController extends Controller
 
             if ($event) {
                 if ($event->role != "Team") {
-                    $item->mahasiswaRef = null;
+                    $item->mahasiswa_ref = null;
                     if ($item->nim) {
                         try {
                             $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
-                            $item->mahasiswaRef = $mhs;
+                            $item->mahasiswa_ref = $mhs;
                         } catch (\Throwable $err) {
                         }
                     }
                 } else {
                     foreach ($item->timRef->timDetailRef as $detail) {
-                        $detail->mahasiswaRef = null;
+                        $detail->mahasiswa_ref = null;
                         if ($detail->nim) {
                             try {
                                 $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
-                                $detail->mahasiswaRef = $mhs;
+                                $detail->mahasiswa_ref = $mhs;
                             } catch (\Throwable $err) {
                             }
                         }
@@ -91,21 +91,21 @@ class EventEksternalRegisController extends Controller
 
             if ($event) {
                 if ($event->role != "Team") {
-                    $item->mahasiswaRef = null;
+                    $item->mahasiswa_ref = null;
                     if ($item->nim) {
                         try {
                             $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
-                            $item->mahasiswaRef = $mhs;
+                            $item->mahasiswa_ref = $mhs;
                         } catch (\Throwable $err) {
                         }
                     }
                 } else {
                     foreach ($item->timRef->timDetailRef as $detail) {
-                        $detail->mahasiswaRef = null;
+                        $detail->mahasiswa_ref = null;
                         if ($detail->nim) {
                             try {
                                 $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
-                                $detail->mahasiswaRef = $mhs;
+                                $detail->mahasiswa_ref = $mhs;
                             } catch (\Throwable $err) {
                             }
                         }

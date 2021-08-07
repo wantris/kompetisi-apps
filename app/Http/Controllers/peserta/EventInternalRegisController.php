@@ -22,9 +22,12 @@ class EventInternalRegisController extends Controller
 
     public function __construct()
     {
-        $this->api_mahasiswa = new ApiMahasiswaController;
-        $this->api_dosen = new ApiDosenController;
-        $this->pengguna = Pengguna::find(Session::get('id_pengguna'));
+        $this->middleware(function ($request, $next) {
+            $this->api_mahasiswa = new ApiMahasiswaController;
+            $this->api_dosen = new ApiDosenController;
+            $this->pengguna = Pengguna::find(Session::get('id_pengguna'));
+            return $next($request);
+        });
     }
 
     public function index()
