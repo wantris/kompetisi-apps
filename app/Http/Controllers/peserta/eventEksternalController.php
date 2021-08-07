@@ -9,6 +9,8 @@ use App\KategoriEvent;
 use App\Pengguna;
 use App\EventEksternalRegistration;
 use App\EventEksternal;
+use App\EventEksternalFavourite;
+use App\EventInternalFavourite;
 use App\FileEventEksternalDetail;
 use App\FileEventEksternalRegistration;
 use App\Timeline;
@@ -21,6 +23,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
+use Illuminate\Support\Facades\Cache;
 
 class eventEksternalController extends Controller
 {
@@ -50,9 +53,11 @@ class eventEksternalController extends Controller
         // get Active event registration by session login
         $active_regis = $this->getEventActiveBySession();
 
-
         // get Inactive event registration by session login
         $inactive_regis = $this->getEventInactiveBySession();
+
+        // get all favourite data
+        $favs = $this->getAllFavourite();
 
         return view('peserta.eventeksternal.index', compact(
             'ormawas',
@@ -60,12 +65,14 @@ class eventEksternalController extends Controller
             'navTitle',
             'event_eksternals',
             'active_regis',
-            'inactive_regis'
+            'inactive_regis',
+            'favs'
         ));
     }
 
     public function detail($slug)
     {
+
         $event = EventEksternal::with('cakupanOrmawaRef', 'kategoriRef', 'tipePesertaRef')->where('slug', $slug)->first();
 
         if ($event) {
@@ -83,7 +90,6 @@ class eventEksternalController extends Controller
 
             $registrations = $this->getAllRegisInByEvent($event);
             $feeds = $this->getAllDocPendaftaran($event);
-            $search = $this->searchPengguna($event->id_event_eksternal);
 
 
             return view('peserta.eventeksternal.detail', compact(
@@ -93,8 +99,7 @@ class eventEksternalController extends Controller
                 'pengguna',
                 'check_regis',
                 'registrations',
-                'feeds',
-                'search'
+                'feeds'
             ));
         }
 
@@ -377,39 +382,109 @@ class eventEksternalController extends Controller
 
     public function searchPengguna($id)
     {
-        // Cari pengguna yang tidak ada dalam tim detail dan yang tidak terdaftar pada tim $id
-        $invites = Pengguna::where('id_pengguna', '!=', Session::get('id_pengguna'))
-            ->where(function ($query) {
-                $query->where('is_mahasiswa', 1);
-            })->get();
+        $api_mahasiswa = $this->api_mahasiswa;
 
-        // get name mahasiswa from api
-        foreach ($invites as $item2) {
-            $item2->mahasiswaRef = null;
-            if ($item2->nim) {
-                try {
-                    // Get nama mahasiswa
-                    $item2->mahasiswaRef = $this->api_mahasiswa->getMahasiswaByNim($item2->nim);
-                } catch (\Throwable $err) {
+        $mahasiswas = Cache::remember('all_mahasiswa', 120, function () use ($api_mahasiswa) {
+            $mahasiswas = Pengguna::where('is_mahasiswa', 1)->where('id_pengguna', '!=', Session::get('id_pengguna'))->get();
+
+            $mahasiswas->each(function ($item, $key) use ($api_mahasiswa) {
+                $item->mahasiswaRef = null;
+                $mhs = $api_mahasiswa->getMahasiswaSomeField($item->nim);
+                if ($mhs) {
+                    $item->mahasiswaRef = $mhs;
+                }
+            });
+
+            return $mahasiswas;
+        });
+
+        $new_mahasiswas = collect();
+        $year = \Carbon\Carbon::now()->year;
+
+        foreach ($mahasiswas as $item) {
+            $cut_prodi = $item->mahasiswaRef->program_studi_kode[0] . $item->mahasiswaRef->program_studi_kode[1];
+
+            if ($cut_prodi == "D4") {
+                $minus_year = $year - 4;
+                if ($item->tahun_index >= $minus_year && $item->tahun_index <= $year) {
+                    $new_mahasiswas->push($item);
+                }
+            } elseif ($cut_prodi == "D3") {
+                $minus_year = $year - 3;
+                if ($item->mahasiswaRef->tahun_index >= $minus_year && $item->mahasiswaRef->tahun_index <= $year) {
+                    $new_mahasiswas->push($item);
                 }
             }
         }
 
-        return $invites;
+        return response()->json($new_mahasiswas);
     }
 
-    public function getMahasiswaByNim($nim)
+    public function getAllFavourite()
+    {
+        $favs = EventEksternalFavourite::with('eventEksternalRef')->where('pengguna_id', Session::get('id_pengguna'))->get();
+
+        return $favs;
+    }
+
+    public function checkIsFavourite($id_eventeksternal)
+    {
+        $fav = EventEksternalFavourite::where('pengguna_id', Session::get('id_pengguna'))->where('event_eksternal_id', $id_eventeksternal)->first();
+        if ($fav) {
+            $data = (object)[
+                'status' => true,
+                'data' => $fav
+            ];
+        } else {
+            $data = (object)[
+                'status' => false,
+                'data' => null
+            ];
+        }
+        return response()->json($data);
+    }
+
+    public function addFavourite($id_eventeksternal)
     {
         try {
-            $client = new Client();
-            $url = env("SOURCE_API") . "mahasiswa/detail/" . $nim;
-            $rMhs = $client->request('GET', $url, [
-                'verify'  => false,
-            ]);
-            $mhs = json_decode($rMhs->getBody());
+            $fav = new EventEksternalFavourite();
+            $fav->pengguna_id = Session::get('id_pengguna');
+            $fav->event_eksternal_id = $id_eventeksternal;
+            $fav->save();
 
-            return $mhs;
+            if ($fav) {
+                $data = (object)[
+                    'status' => true,
+                    'data' => $fav
+                ];
+            } else {
+                $data = (object)[
+                    'status' => false,
+                    'data' => null
+                ];
+            }
+            return response()->json($data);
         } catch (\Throwable $err) {
+            return response()->json($err);
+        }
+    }
+
+    public function removeFavourite($id_eventeksternal)
+    {
+        try {
+            $fav = EventEksternalFavourite::where('pengguna_id', Session::get('id_pengguna'))->where('event_eksternal_id', $id_eventeksternal)->first();
+
+            if ($fav) {
+                EventEksternalFavourite::destroy($fav->id_event_eksternal_favourites);
+            }
+
+            $data = (object)[
+                'status' => false,
+                'data' => null
+            ];
+            return response()->json($data);
+        } catch (\Throwable $err) {
+            return response()->json($err);
         }
     }
 }

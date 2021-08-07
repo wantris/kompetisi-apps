@@ -299,9 +299,8 @@
                                 @php
                                     $jsonPengguna = json_encode($pengguna);
                                     $jsonEvent = json_encode($event);
-                                    $jsonSearch = json_encode($search);
                                 @endphp
-                                <button class="btn btn-primary shadow" onclick="showModalInvite({{$jsonPengguna}}, {{$jsonEvent}}, {{$jsonSearch}})" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff; width:100%">Daftar Sekarang</button>
+                                <button class="btn btn-primary shadow" onclick="showModalInvite({{$jsonPengguna}}, {{$jsonEvent}})" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff; width:100%">Daftar Sekarang</button>
                             @else
                                 <button class="btn btn-primary shadow" onclick="registerEvent()" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff; width:100%">Daftar Sekarang</button>
                             @endif                  
@@ -396,6 +395,12 @@
 <script>
     let events = null;
 
+    $(document).ready( function () {
+        let id_eventeksternal = "{{$event->id_event_eksternal}}";
+  
+        checkIsFavourite(id_eventeksternal);
+    });
+
      $("[data-background]").each(function () {
         $(this).css("background-image", "url(" + $(this).attr("data-background") + ")")
     });
@@ -404,7 +409,7 @@
         $('#regis-event-form').submit();
     }
 
-    const showModalInvite = (pengguna, events, search) => {
+    const showModalInvite = (pengguna, events) => {
         event.preventDefault();
         this.events = events;
         
@@ -423,24 +428,30 @@
         }
         $('#id-ketua-text').val(pengguna.id_pengguna);
 
-        $.each(search, function (i, item) {
-            if(item.is_mahasiswa){
-                $('#invite-inp').append($('<option>', { 
-                    value: item.id_pengguna,
-                    text : item.mahasiswaRef.mahasiswa_nama + " ("+item.username+")"
-                }));
-            }else if(item.is_participant){
-                $('#invite-inp').append($('<option>', { 
-                    value: item.id_pengguna,
-                    text : item.participant_ref.nama_participant + " ("+item.username+")"
-                }));
-            }
+        $.ajax({
+            url: "/peserta/eventeksternal/users/search/"+events.id_event_eksternal,
+            type:"GET",
+            dataType: "json",
+            success: function(values){
+                console.log(values);
+                $.each(values, function (i, item) {
+                    if(item.is_mahasiswa){
+                        $('#invite-inp').append($('<option>', { 
+                            value: item.id_pengguna,
+                            text : item.mahasiswaRef.mahasiswa_nama + " ("+item.username+")"
+                        }));
+                    }
+                });
+            },
+            error:function(err){
+                console.log(err);
+            },
         });
     } 
 
     const renderInviteSelect = (id, id_event) => {
         $.ajax({
-            url: "/event/users/search/"+id_event,
+            url: "/peserta/eventeksternal/users/search/"+id_event,
             type:"GET",
             dataType: "json",
             success: function(values){
@@ -537,6 +548,65 @@
         slider.scrollLeft = scrollLeft - walk;
         console.log(walk);
     });
+
+    const checkIsFavourite = (id_eventeksternal) => {
+        $.ajax({
+            url: "/peserta/eventeksternal/detail/favourite/check/"+id_eventeksternal,
+            type:"GET",
+            dataType: "json",
+            success: function(values){
+                renderLikeButton(values);
+            },
+            error:function(err){
+                console.log(err);
+            },
+        });
+    }
+
+    // add to favourite
+    $('.like-btn').on('click', function(){
+        event.preventDefault();
+        let id_eventeksternal = "{{$event->id_event_eksternal}}";
+
+        if(!$(this).hasClass('has-liked')){
+            $.ajax({
+                url: "/peserta/eventeksternal/detail/favourite/add/"+id_eventeksternal,
+                type:"GET",
+                dataType: "json",
+                success: function(values){
+                    renderLikeButton(values);
+                },
+                error:function(err){
+                    console.log(err);
+                },
+            });
+        }else{
+            $.ajax({
+                url: "/peserta/eventeksternal/detail/favourite/remove/"+id_eventeksternal,
+                type:"GET",
+                dataType: "json",
+                success: function(values){
+                   renderLikeButton(values);
+
+                },
+                error:function(err){
+                    console.log(err);
+                },
+            });
+        }
+    });
+
+    const renderLikeButton = (values) => {
+        if(values.status == true){
+            $('.like-btn').addClass('has-liked');
+            $('.like-btn').removeClass('not-liked');
+            $('.like-btn').html('<i class="icon-copy fa fa-heart  my-like-btn" aria-hidden="true"></i>');
+        }else{
+            $('.like-btn').removeClass('has-liked');
+            $('.like-btn').addClass('not-liked');
+            $('.like-btn').html('<i class="icon-copy fa fa-heart-o  my-like-btn" aria-hidden="true"></i>');
+        }
+    }
 
    
 </script>

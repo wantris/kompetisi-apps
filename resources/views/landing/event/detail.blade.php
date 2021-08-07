@@ -371,6 +371,14 @@
                             <img src="{{url('assets/img/kompetisi-thumb/'.$event->poster_image)}}" id="poster-image" alt="{{$event->nama_event}}" class="img-fluid" alt="Responsive image">
                         </div>
                     </div>
+                    <div class="row mt-5 mb-4">
+                        <div class="col-12 pl-4 mb-3 mt-3">
+                            <a href="#" style="text-decoration:none" class="text-orange like-button" id="button-like"><i style="font-size: 18px !important; " class="far fa-heart mr-2 "></i>Sukai Event</a>
+                        </div>
+                        <div class="col-12 pl-4">
+                            <a href="#" style="text-decoration:none"  data-toggle="modal" data-target="#shareModal" class="text-orange share-button" id="button-share"><i style="font-size: 18px !important; " class="fas fa-share-alt mr-2"></i>Share Event</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row mt-5 ">
@@ -504,10 +512,43 @@
         <img class="poster-modal-content" id="img01">
         <div id="caption"></div>
     </div>
+
+    <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content col-12">
+                <div class="modal-header">
+                    <h5 class="modal-title">Share</h5> <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                </div>
+                <div class="modal-body">
+                    <div class="icon-container1 d-flex">
+                        <div class="smd"> <i class="img-thumbnail fab fa-twitter fa-2x" style="color:#4c6ef5;background-color: aliceblue"></i>
+                            <p>Twitter</p>
+                        </div>
+                        <div class="smd"> <i class="img-thumbnail fab fa-facebook fa-2x" style="color: #3b5998;background-color: #eceff5;"></i>
+                            <p>Facebook</p>
+                        </div>
+                        <div class="smd"> <i class="img-thumbnail fab fa-whatsapp fa-2x" style="color: #25D366;background-color: #cef5dc;"></i>
+                            <p>Whatsapp</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"> <label style="font-weight: 600">Page Link <span class="message"></span></label><br />
+                    <div class="row"> <input class="col-10 ur" disabled type="url" placeholder="{{Request::url()}}" id="myInput" aria-describedby="inputGroup-sizing-default" style="height: 40px;"> <button class="cpy" onclick="myFunction()"><i class="far fa-clone"></i></button> </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('cs-script')
     <script>
+        let id_pengguna = "{{Session::get('id_pengguna')}}";
+         $(document).ready( function () {
+            let id_eventinternal = "{{$event->id_event_internal}}";
+    
+            checkIsFavourite(id_eventinternal);
+        });
+
         // Get the modal
         var modal = document.getElementById("myModal");
 
@@ -527,6 +568,71 @@
         // When the user clicks on <span> (x), close the modal
         span.onclick = function() { 
         modal.style.display = "none";
+        }
+
+        const checkIsFavourite = (id_eventinternal) => {
+            if(id_pengguna){
+                $.ajax({
+                    url: "/peserta/eventinternal/detail/favourite/check/"+id_eventinternal,
+                    type:"GET",
+                    dataType: "json",
+                    success: function(values){
+                        renderLikeButton(values);
+                    },
+                    error:function(err){
+                        console.log(err);
+                    },
+                });
+            }
+        }
+
+        // add to favourite
+        $('#button-like').on('click', function(){
+            event.preventDefault();
+            let id_eventinternal = "{{$event->id_event_internal}}";
+            
+            if(id_pengguna){
+                if(!$(this).hasClass('liked-button')){
+                    $.ajax({
+                        url: "/peserta/eventinternal/detail/favourite/add/"+id_eventinternal,
+                        type:"GET",
+                        dataType: "json",
+                        success: function(values){
+                            renderLikeButton(values);
+                        },
+                        error:function(err){
+                            console.log(err);
+                        },
+                    });
+                }else{
+                    $.ajax({
+                        url: "/peserta/eventinternal/detail/favourite/remove/"+id_eventinternal,
+                        type:"GET",
+                        dataType: "json",
+                        success: function(values){
+                            renderLikeButton(values);
+                        },
+                        error:function(err){
+                            console.log(err);
+                        },
+                    });
+                }
+            }else{
+                console.log(id_pengguna);
+                Notiflix.Notify.Failure("Anda harus login terlebih dahulu");
+            }
+        });
+
+        const renderLikeButton = (values) => {
+            if(values.status == true){
+                $('#button-like').addClass('liked-button');
+                $('#button-like').removeClass('like-button');
+                $('#button-like').html('<i style="font-size: 18px !important; " class="fas fa-heart mr-2 "></i>Event Favorit');
+            }else{
+                $('#button-like').removeClass('liked-button');
+                $('#button-like').addClass('like-button');
+                $('#button-like').html('<i style="font-size: 18px !important; " class="far fa-heart mr-2 "></i>Favoritkan Event');
+            }
         }
     </script>
 @endpush

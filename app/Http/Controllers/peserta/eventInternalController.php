@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\peserta;
 
 use App\EventInternal;
+use App\EventInternalFavourite;
 use App\EventInternalRegistration;
 use App\Http\Controllers\Controller;
 use App\KategoriEvent;
@@ -338,5 +339,65 @@ class eventInternalController extends Controller
         }
 
         return $mhs;
+    }
+
+    public function checkIsFavourite($id_eventinternal)
+    {
+        $fav = EventInternalFavourite::where('pengguna_id', Session::get('id_pengguna'))->where('event_internal_id', $id_eventinternal)->first();
+        if ($fav) {
+            $data = (object)[
+                'status' => true,
+                'data' => $fav
+            ];
+        } else {
+            $data = (object)[
+                'status' => false,
+                'data' => null
+            ];
+        }
+        return response()->json($data);
+    }
+
+    public function addFavourite($id_eventinternal)
+    {
+        try {
+            $fav = new EventInternalFavourite();
+            $fav->pengguna_id = Session::get('id_pengguna');
+            $fav->event_internal_id = $id_eventinternal;
+            $fav->save();
+
+            if ($fav) {
+                $data = (object)[
+                    'status' => true,
+                    'data' => $fav
+                ];
+            } else {
+                $data = (object)[
+                    'status' => false,
+                    'data' => null
+                ];
+            }
+            return response()->json($data);
+        } catch (\Throwable $err) {
+            return response()->json($err);
+        }
+    }
+
+    public function removeFavourite($id_eventinternal)
+    {
+        try {
+            $fav = EventInternalFavourite::where('pengguna_id', Session::get('id_pengguna'))->where('event_internal_id', $id_eventinternal)->first();
+
+            if ($fav) {
+                EventInternalFavourite::destroy($fav->id_event_internal_favourites);
+            }
+            $data = (object)[
+                'status' => false,
+                'data' => null
+            ];
+            return response()->json($data);
+        } catch (\Throwable $err) {
+            return response()->json($err);
+        }
     }
 }

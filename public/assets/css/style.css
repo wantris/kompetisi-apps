@@ -1,9 +1,75 @@
 @import url("https://fonts.googleapis.com/css?family=Barlow:300,400,500,600,700,900|Muli:300,400,500,600,700,800,900&display=swap");
 @import url("https://fonts.googleapis.com/css?family=Nunito:400,300,700");
 
+.img-thumbnail {
+    border-radius: 33px;
+    width: 61px;
+    height: 61px;
+}
+
+.fab:before {
+    position: relative;
+    top: 13px;
+}
+
+.smd {
+    width: 200px;
+    font-size: small;
+    text-align: center;
+}
+
+.modal-footer {
+    display: block;
+}
+
+.ur {
+    border: none;
+    background-color: #e6e2e2;
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+    width: 100%;
+}
+
+.cpy {
+    border: none;
+    background-color: #e6e2e2;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+    cursor: pointer;
+}
+
+.ur.focus,
+.ur:focus {
+    outline: 0;
+    box-shadow: none !important;
+}
+
+.message {
+    font-size: 11px;
+    color: #ee5535;
+}
+
 .text-orange {
     color: #fb8c00;
 }
+
+#button-like,
+#button-share {
+    font-size: 16px;
+    color: #0078ff !important;
+    text-decoration: none !important;
+}
+
+#button-like:hover,
+#button-like:focus {
+    color: #0078ff !important;
+}
+
+#button-share:hover,
+#button-share:focus {
+    color: #0078ff !important;
+}
+
 .control-label {
     font-weight: 600;
     color: #3d3d3d;

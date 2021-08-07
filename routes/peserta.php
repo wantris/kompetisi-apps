@@ -24,6 +24,9 @@ Route::group(['namespace' => 'peserta'], function () {
 
         Route::group(['prefix' => 'detail'], function () {
             Route::get('/{slug}', 'eventInternalController@detail')->name('peserta.eventinternal.detail');
+            Route::get('/favourite/check/{id_eventinternal}', 'eventInternalController@checkIsFavourite')->name('peserta.eventinternal.favourite.check');
+            Route::get('/favourite/add/{id_eventinternal}', 'eventInternalController@addFavourite')->name('peserta.eventinternal.favourite.add');
+            Route::get('/favourite/remove/{id_eventinternal}', 'eventInternalController@removeFavourite')->name('peserta.eventinternal.favourite.remove');
             Route::post('/uploadfile/{id_regis}', 'eventInternalController@uploadFile')->name('peserta.eventinternal.detail.upload');
 
             Route::get('/submission/{slug}/all', 'eventInternalController@submission')->name('peserta.event.submission');
@@ -37,11 +40,17 @@ Route::group(['namespace' => 'peserta'], function () {
 
     Route::group(['prefix' => 'eventeksternal'], function () {
         Route::get('/', 'eventEksternalController@index')->name('peserta.eventeksternal.index');
+        Route::get('/users/search/{id}', 'eventEksternalController@searchPengguna')->name('peserta.eventeksternal.search');
+
 
         // Route::post('/filter/active', 'eventEksternalController@filterEventAktif')->name('peserta.eventeksternal.filterkategori.aktif');
 
         Route::group(['prefix' => 'detail'], function () {
             Route::get('/{slug}', 'eventEksternalController@detail')->name('peserta.eventeksternal.detail');
+            Route::get('/favourite/check/{id_eventeksternal}', 'eventEksternalController@checkIsFavourite')->name('peserta.eventeksternal.favourite.check');
+            Route::get('/favourite/add/{id_eventeksternal}', 'eventEksternalController@addFavourite')->name('peserta.eventeksternal.favourite.add');
+            Route::get('/favourite/remove/{id_eventeksternal}', 'eventEksternalController@removeFavourite')->name('peserta.eventeksternal.favourite.remove');
+
             Route::post('/uploadfile/{id_regis}', 'eventEksternalController@uploadFile')->name('peserta.eventeksternal.detail.upload');
             Route::post('/register/{slug}', 'eventEksternalController@register')->name('peserta.eventeksternal.register');
             Route::get('/submission/{slug}/all', 'eventEksternalController@submission')->name('peserta.event.submission');

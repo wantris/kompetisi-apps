@@ -317,6 +317,12 @@
         $(this).css("background-image", "url(" + $(this).attr("data-background") + ")")
     });
 
+    $(document).ready( function () {
+        let id_eventinternal = "{{$event->id_event_internal}}";
+  
+        checkIsFavourite(id_eventinternal);
+    });
+
     $(".dial1").knob();
     $({ animatedVal: 0 }).animate(
         { animatedVal: "{{$registrations->count()}}" },
@@ -369,6 +375,65 @@
         slider.scrollLeft = scrollLeft - walk;
         console.log(walk);
     });
+
+    const checkIsFavourite = (id_eventinternal) => {
+        $.ajax({
+            url: "/peserta/eventinternal/detail/favourite/check/"+id_eventinternal,
+            type:"GET",
+            dataType: "json",
+            success: function(values){
+                renderLikeButton(values);
+            },
+            error:function(err){
+                console.log(err);
+            },
+        });
+    }
+
+    // add to favourite
+    $('.like-btn').on('click', function(){
+        event.preventDefault();
+        let id_eventinternal = "{{$event->id_event_internal}}";
+
+        if(!$(this).hasClass('has-liked')){
+            $.ajax({
+                url: "/peserta/eventinternal/detail/favourite/add/"+id_eventinternal,
+                type:"GET",
+                dataType: "json",
+                success: function(values){
+                    renderLikeButton(values);
+                },
+                error:function(err){
+                    console.log(err);
+                },
+            });
+        }else{
+            $.ajax({
+                url: "/peserta/eventinternal/detail/favourite/remove/"+id_eventinternal,
+                type:"GET",
+                dataType: "json",
+                success: function(values){
+                   renderLikeButton(values);
+
+                },
+                error:function(err){
+                    console.log(err);
+                },
+            });
+        }
+    });
+
+    const renderLikeButton = (values) => {
+        if(values.status == true){
+            $('.like-btn').addClass('has-liked');
+            $('.like-btn').removeClass('not-liked');
+            $('.like-btn').html('<i class="icon-copy fa fa-heart  my-like-btn" aria-hidden="true"></i>');
+        }else{
+            $('.like-btn').removeClass('has-liked');
+            $('.like-btn').addClass('not-liked');
+            $('.like-btn').html('<i class="icon-copy fa fa-heart-o  my-like-btn" aria-hidden="true"></i>');
+        }
+    }
 </script>
 @endpush
 
