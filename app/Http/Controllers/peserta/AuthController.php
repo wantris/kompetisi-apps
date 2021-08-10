@@ -36,19 +36,19 @@ class AuthController extends Controller
                     Session::put('id_pengguna', $pengguna->id_pengguna);
                     Session::put('nim', $pengguna->nim);
                     Session::put('participant_id', null);
-
-                    return redirect()->back();
                 } elseif ($pengguna->is_mahasiswa == "0" && $pengguna->is_participant == "1") {
                     Session::put('is_mahasiswa', '0');
                     Session::put('is_participant', '1');
                     Session::put('id_pengguna', $pengguna->id_pengguna);
                     Session::put('nim', null);
                     Session::put('participant_id', $pengguna->participant_id);
-
-                    return redirect()->back();
                 }
 
-                return redirect()->back()->with('failed', 'Upps terjadi error');
+                if ($request->remember) {
+                    setcookie("peserta_login", $pengguna->username, time() + (10 * 365 * 24 * 60 * 60));
+                }
+
+                return redirect()->back();
             } else {
                 return redirect()->back()->with('failed', 'Password Salah');
             }

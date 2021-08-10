@@ -41,7 +41,6 @@
 <script>
     $(document).ready(function() {
         $('.select-single').select2();
-
     });
 
     const failureAlert = (message) => {

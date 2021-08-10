@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Blog extends Model
 {
@@ -10,12 +11,13 @@ class Blog extends Model
 
     protected $appends = ['image_url'];
 
-    protected $casts = [
-        'created_at' => 'date:Y-m-d',
-    ];
-
     public function getImageUrlAttribute($value)
     {
         return request()->getSchemeAndHttpHost() . '/assets/img/blog/' . $this->image_name;
+    }
+
+    public function getKontenExcerptAttribute()
+    {
+        return Str::words($this->konten, '15');
     }
 }

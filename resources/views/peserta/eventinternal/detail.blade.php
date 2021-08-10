@@ -97,7 +97,7 @@
                                         <tr>
                                             <td>{{$file->nama_file}}</td>
                                             <td>
-                                                <a href="#" class="btn btn-primary" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff">Download</a>
+                                                <a href="{{route('event.detail.file.download', $file->id_file_event_internal_detail)}}" class="btn btn-primary" style="font-size: 14px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff">Download</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -114,6 +114,7 @@
                                                 <tr>
                                                     <th class="table-plus datatable-nosort">Nama</th>
                                                     <th>Status</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -133,6 +134,7 @@
                                                                 Partisipan Eksternal
                                                             @endif
                                                         </td>
+                                                        <td > <a class="btn btn-primary" style="font-size: 12px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;" href="{{route('peserta.account.profile.registrasi', $regis->id_event_internal_registration)}}">Profil</a></td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
@@ -173,7 +175,6 @@
                         <div class="tab-pane fade" id="berkas-pendaftaran" role="tabpanel">
                             <div class="row mb-2">
                                 <div class="col-6">
-
                                 </div>
                                 <div class="col-6 text-right">
                                     @if ($event->role == "Team")

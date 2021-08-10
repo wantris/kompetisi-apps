@@ -112,8 +112,19 @@ class eventInternalController extends Controller
                 }
             }
 
-            return view('peserta.eventinternal.index', compact('navTitle', 'active_regis', 'inactive_regis', 'ormawas', 'kategoris'));
+            $favs = $this->getFavourite();
+
+            return view('peserta.eventinternal.index', compact('navTitle', 'active_regis', 'inactive_regis', 'ormawas', 'kategoris', 'favs'));
         }
+    }
+
+    public function getFavourite()
+    {
+        $pengguna = $this->pengguna;
+
+        $favs = EventInternalFavourite::with('eventInternalRef')->where('pengguna_id', $pengguna->id_pengguna)->get();
+
+        return $favs;
     }
 
     public function filterEventAktif(Request $request)

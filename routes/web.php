@@ -24,8 +24,9 @@ Route::get('/login', 'landing\homeController@login')->name('project.login.index'
 Route::post('/login', 'landing\homeController@postLogin')->name('project.login.post');
 
 // event
-Route::group(['prefix' => 'event', 'namespace' => 'landing'], function () {
+Route::group(['prefix' => 'event', 'namespace' => 'landing', 'middleware' => 'optimizeImages'], function () {
     Route::get('/', 'eventController@index')->name('event.index');
+    Route::post('/search', 'eventController@search')->name('event.search');
 
     Route::get('/detail/{slug}', 'eventController@detail')->name('event.detail');
     Route::get('/detail/file/download/{id_file}', 'eventController@download')->name('event.detail.file.download');

@@ -3826,7 +3826,7 @@ body.IE .register-page-wrap .container {
 .profile-timeline-list ul li {
     margin-bottom: 10px;
     position: relative;
-    padding-left: 100px;
+    padding-left: 30px;
     line-height: 24px;
     padding-top: 8px;
 }
@@ -3836,7 +3836,7 @@ body.IE .register-page-wrap .container {
     line-height: 1.5;
     font-weight: 500;
 }
-.profile-timeline-list ul li:before {
+/* .profile-timeline-list ul li:before {
     content: "";
     width: 12px;
     height: 12px;
@@ -3846,7 +3846,7 @@ body.IE .register-page-wrap .container {
     left: -16px;
     top: 15px;
     background: #126afe;
-}
+} */
 .profile-timeline-list .date {
     position: absolute;
     top: 8px;

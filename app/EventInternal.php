@@ -11,7 +11,7 @@ class EventInternal extends Model
     protected $primaryKey = "id_event_internal";
 
     protected $casts = [
-        'created_at' => 'date:Y-m-d',
+        'created_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     protected $appends = ['poster_image_url', 'banner_image_url'];
@@ -30,6 +30,7 @@ class EventInternal extends Model
     {
         return Str::words($this->deskripsi, '15');
     }
+
 
     public function ormawaRef()
     {

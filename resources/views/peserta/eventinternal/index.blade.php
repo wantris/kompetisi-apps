@@ -53,7 +53,7 @@
                             <div class="row mt-5" id="container-event-active">
                                 @if ($active_regis->count() > 0)
                                     @foreach ($active_regis as $active)
-                                        <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
+                                    <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
                                         <div class="komp-card2 mx-auto">
                                             <div class="komp-thumbnail" data-background="{{asset('assets/img/kompetisi-thumb/'.$active->eventInternalRef->poster_image)}}">
                                             </div>
@@ -119,39 +119,48 @@
                                 </div>
                             </div>
                             <div class="row mt-5">
-                                <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
-                                    <div class="card card-box" style="position: relative">
-                                        <div class='star-div'><i class="icon-copy fa fa-star text-orange fa-lg float-right mr-2 mt-2" aria-hidden="true"></i></div>
-                                        <img class="card-img-top" src="{{url('assets/img/kompetisi-thumb/thumbnail.jpg')}}" alt="Card image cap">
-                                        <div class="card-body">
-                                            <h5 class="card-title weight-500"><a href="{{route('peserta.eventinternal.detail','Design-Competition')}}">Design Competition</a></h5>
-                                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                            <p class="card-text"><small class="text-muted">Terdaftar 3 hari lalu</small></p>
+                                @foreach ($favs as $fav)
+                                    <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
+                                        <div class="komp-card2 mx-auto">
+                                            <div class="komp-thumbnail" data-background="{{asset('assets/img/kompetisi-thumb/'.$fav->eventInternalRef->poster_image)}}">
+                                            </div>
+                                            <div class="komp-banner">
+                                                <div class="komp-banner__date text-left pl-2 pt-1" >  
+                                                    @php
+                                                        $tgl_buka = Carbon\Carbon::parse($fav->eventInternalRef->tgl_buka)->toDatetime()->format('M, d Y');
+                                                    @endphp
+                                                    {{$tgl_buka}}
+                                                </div>
+                                                <div class="komp-banner__date text-right pr-2 pt-1" data-toggle="tooltip" data-placement="top" title="{{$fav->eventInternalRef->ormawaRef->nama_ormawa}}">
+                                                    @php
+                                                        $count = str_word_count($fav->eventInternalRef->ormawaRef->nama_ormawa);
+                                                        $nama_ormawa = $fav->eventInternalRef->ormawaRef->nama_ormawa;
+                                                        if($count > 3){
+                                                            $nama_ormawa = $fav->eventInternalRef->ormawaRef->nama_akronim;
+                                                        }
+                                                    @endphp
+                                                    {{$nama_ormawa}}
+                                                </div>
+                                            </div>
+                                            <div class="komp-title pl-3">
+                                                @php
+                                                    $slug = \Str::slug($fav->eventInternalRef->nama_event);
+                                                @endphp
+                                                <a href="{{route('peserta.eventinternal.detail', $slug)}}"><h1 class="mt-3">
+                                                    {{$fav->eventInternalRef->nama_event}} 
+                                                </h1></a>
+                                            </div>
+                                            <div class="komp-description pl-3 pr-3 mt-2">
+                                                {!!$fav->eventInternalRef->deskripsi_excerpt!!}
+                                            </div>
+                                            <div class="komp-created pl-3 pr-3 mt-3">
+                                                <p class="text-secondary d-inline">
+                                                    Terdaftar {{$fav->created_at->isoFormat('MMM, d Y')}}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
-                                    <div class="card card-box" style="position: relative">
-                                        <div class='star-div'><i class="icon-copy fa fa-star text-orange fa-lg float-right mr-2 mt-2" aria-hidden="true"></i></div>
-                                        <img class="card-img-top" src="{{url('assets/img/kompetisi-thumb/thumbnail.jpg')}}" alt="Card image cap">
-                                        <div class="card-body">
-                                            <h5 class="card-title weight-500">Design Competition</h5>
-                                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                            <p class="card-text"><small class="text-muted">Terdaftar 3 hari lalu</small></p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-6 col-lg-4 mb-30">
-                                    <div class="card card-box" style="position: relative">
-                                        <div class='star-div'><i class="icon-copy fa fa-star text-orange fa-lg float-right mr-2 mt-2" aria-hidden="true"></i></div>
-                                        <img class="card-img-top" src="{{url('assets/img/kompetisi-thumb/thumbnail.jpg')}}" alt="Card image cap">
-                                        <div class="card-body">
-                                            <h5 class="card-title weight-500">Design Competition</h5>
-                                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                            <p class="card-text"><small class="text-muted">Terdaftar 3 hari lalu</small></p>
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>

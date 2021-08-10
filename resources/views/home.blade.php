@@ -150,7 +150,7 @@
         <!-- End Ormawa -->
 
         <!-- Our Services Start -->
-        <div class="our-services section-pad-t30">
+        {{-- <div class="our-services section-pad-t30">
             <div class="container">
                 <!-- Section Tittle -->
                 <div class="row">
@@ -164,7 +164,7 @@
                     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
                         <div class="single-services text-center mb-30">
                             <div class="services-ion">
-                                <span class="flaticon-tour"></span>
+                                <span><i class="icofont-addons"></i></span>
                             </div>
                             <div class="services-cap">
                                <h5><a href="job_listing.html">Design & Creative</a></h5>
@@ -175,7 +175,7 @@
                     <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
                         <div class="single-services text-center mb-30">
                             <div class="services-ion">
-                                <span class="flaticon-cms"></span>
+                                <span class="flaticon-cms"><i class="icofont-address-book"></i></span>
                             </div>
                             <div class="services-cap">
                                <h5><a href="job_listing.html">Design & Development</a></h5>
@@ -260,7 +260,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
         <!-- Our Services End -->
 
         <!-- Online CV Area Start -->

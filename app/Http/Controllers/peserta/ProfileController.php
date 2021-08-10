@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers\peserta;
 
-use App\EventEksternalRegistration;
 use App\EventInternalRegistration;
 use App\Http\Controllers\Controller;
-use App\Participant;
-use App\Pengguna;
-use App\TimEvent;
-use Illuminate\Http\Request;
-use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
-use App\PrestasiEventEksternal;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use App\Pengguna;
+use App\EventInternal;
+use App\EventEksternalRegistration;
+use App\TimEvent;
 use App\PrestasiEventInternal;
+use App\PrestasiEventEksternal;
 
-class AccountController extends Controller
+class ProfileController extends Controller
 {
     protected $api_mahasiswa;
 
@@ -27,102 +26,61 @@ class AccountController extends Controller
         });
     }
 
-    public function index()
+    public function getByRegis($id_regis)
     {
-        $navTitle = '<span class="micon dw dw-user-12 mr-2"></span> Pengaturan Profil';
-        $pengguna = Pengguna::find(Session::get('id_pengguna'));
+        $regis = EventInternalRegistration::find($id_regis);
+        if ($regis) {
+            if ($regis->nim) {
+                $pengguna = Pengguna::where('nim', $regis->nim)->first();
+            } else {
+                $pengguna = Pengguna::where('participant_id', $regis->participant_id)->first();
+            }
+
+            return $this->index($pengguna->id_pengguna);
+        }
+    }
+
+    public function index($id_pengguna)
+    {
+
+        $pengguna = Pengguna::find($id_pengguna);
         if ($pengguna) {
             $pengguna->mahasiswaRef = null;
             if ($pengguna->nim) {
                 $mhs = $this->api_mahasiswa->getMahasiswaSomeField($pengguna->nim);
                 if ($mhs) {
                     $pengguna->mahasiswaRef = $mhs;
+                    $navTitle = '<span class="micon dw dw-user-12 mr-2"> ' . $pengguna->mahasiswaRef->mahasiswa_nama . '</span>';
+                } else {
+                    $navTitle = '<span class="micon dw dw-user-12 mr-2"> ' . $pengguna->username . '</span>';
                 }
+            } else {
+                $navTitle = '<span class="micon dw dw-user-12 mr-2"> ' . $pengguna->participantRef->nama_participant . '</span>';
             }
-            return view('peserta.account.index', compact('navTitle', 'pengguna'));
+            return view('peserta.account.profile', compact('navTitle', 'pengguna'));
         }
     }
 
-    public function postAccount(Request $request)
+    public function getAllEvent($id_pengguna)
     {
-        try {
-            if (Session::get('is_participant') == "1") {
-                $pengguna = Pengguna::findOrFail(Session::get('id_pengguna'));
-                $ps = Participant::findOrFail($pengguna->participant_id);
-                $ps->nama_participant = $request->nama;
-                $ps->save();
-            }
+        $pengguna = Pengguna::find($id_pengguna);
 
-            $user = Pengguna::find(Session::get('id_pengguna'));
-            $user->email = $request->email;
-            $user->phone = $request->phone;
-            $user->alamat = $request->alamat;
-            $user->save();
+        // $pendaftaran = collect();
+        // $pendaftaran_internals = $this->getEventInternal($pengguna);
+        // $pendaftaran_eksternals = $this->getEventEksternal($pengguna);
+        // foreach ($pendaftaran_internals as $internal) {
+        //     $pendaftaran->push($internal);
+        // }
 
-            return redirect()->back()->with('success', 'Update profil berhasil');
-        } catch (\Throwable $err) {
-            dd($err);
-            return redirect()->back()->with('failed', 'Update profil gagal');
-        }
-    }
+        // foreach ($pendaftaran_eksternals as $eksternal) {
+        //     $pendaftaran->push($eksternal);
+        // }
 
-    public function savePhoto(Request $request)
-    {
-        $namePhoto = $request->oldPhoto;
+        // $convert_pendaftaran = $pendaftaran->groupBy(function ($val) {
+        //     return \Carbon\Carbon::parse($val->created_at)->format('M_Y');
+        // });
 
-        if ($request->file('photo')) {
-            $resorcePhoto = $request->file('photo');
-            $namePhoto   = "photo_pengguna_" . rand(0000, 9999) . "." . $resorcePhoto->getClientOriginalExtension();
-            $resorcePhoto->move(\base_path() . "/public/assets/img/photo-pengguna/", $namePhoto);
-        }
-
-        try {
-            $user = Pengguna::find(Session::get('id_pengguna'));
-            $user->photo = $namePhoto;
-            $user->save();
-
-            return redirect()->back()->with('success', 'Update photo berhasil');
-        } catch (\Throwable $err) {
-            return redirect()->back()->with('failed', 'Update photo gagal');
-        }
-    }
-
-    public function saveSocialMedia(Request $request)
-    {
-        try {
-            $user = Pengguna::find(Session::get('id_pengguna'));
-            $user->facebook_url = $request->facebook;
-            $user->twitter_url = $request->twitter;
-            $user->insta_url = $request->instagram;
-            $user->linkedin_url = $request->linkedin;
-            $user->save();
-
-            return redirect()->back()->with('success', 'Update sosial media berhasil');
-        } catch (\Throwable $err) {
-            return redirect()->back()->with('failed', 'Update sosial media gagal');
-        }
-    }
-
-    public function getAllEvent()
-    {
-        $pengguna = Pengguna::find(Session::get('id_pengguna'));
-
-        $pendaftaran = collect();
-        $pendaftaran_internals = $this->getEventInternal($pengguna);
-        $pendaftaran_eksternals = $this->getEventEksternal($pengguna);
-        foreach ($pendaftaran_internals as $internal) {
-            $pendaftaran->push($internal);
-        }
-
-        foreach ($pendaftaran_eksternals as $eksternal) {
-            $pendaftaran->push($eksternal);
-        }
-
-        $convert_pendaftaran = $pendaftaran->groupBy(function ($val) {
-            return \Carbon\Carbon::parse($val->created_at)->format('M_Y');
-        });
-
-        return response()->json($convert_pendaftaran);
+        return response()->json($pengguna);
     }
 
     public function getEventInternal($pengguna)
@@ -204,9 +162,9 @@ class AccountController extends Controller
         return $pendaftaran;
     }
 
-    public function getPrestasi()
+    public function getPrestasi($id_pengguna)
     {
-        $pengguna = Pengguna::find(Session::get('id_pengguna'));
+        $pengguna = Pengguna::find($id_pengguna);
         $all_prestasi = collect();
         if ($pengguna) {
 

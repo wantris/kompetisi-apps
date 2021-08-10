@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class eventController extends Controller
 {
@@ -49,6 +50,80 @@ class eventController extends Controller
         $tipes = TipePeserta::all();
         $ormawas = Ormawa::all();
         return view('landing.event.index', compact('events', 'kategoris', 'tipes', 'ormawas'));
+    }
+
+    public function search(Request $request)
+    {
+        $data = (object)[
+            'ormawa_name' => $request->ormawa_name,
+            'category_name' => $request->category_name,
+            'event_name' => $request->event_name,
+            'status' => $request->status,
+            'peserta_amount_min' => $request->peserta_amount_min,
+            'peserta_amount_max' => $request->peserta_amount_max
+        ];
+
+        $events = EventInternal::with('ormawaRef', 'kategoriRef')->where(function ($query) use ($data) {
+            $query->where('ormawa_id', 'like', '%' . $data->ormawa_name . '%');
+            $query->where('nama_event', 'like', '%' . $data->event_name . '%');
+            $query->where('kategori_id', 'like', '%' . $data->category_name . '%');
+            $query->where('status', 'like', '%' . $data->status . '%');
+            $query->whereBetween('maks_participant', [$data->peserta_amount_min, $data->peserta_amount_max]);
+        })->get();
+
+        if ($events->count() > 0) {
+            $events->each(function ($item, $key) {
+                $item->created_date = $item->created_at->isoFormat('MMM, d Y');
+                $item->deskripsi_excerpt = Str::words($item->deskripsi, '15');
+                $item->tanggal_buka_parse = \Carbon\Carbon::parse($item->tgl_buka)->toDatetime()->format('M, d Y');
+            });
+
+            return response()->json([
+                'status' => '1',
+                'data' => $events
+            ]);
+        } else {
+            return response()->json([
+                'status' => '0',
+                'data' => null
+            ]);
+        }
+    }
+
+    public function renderEvent($events)
+    {
+
+        if ($events->count() > 0) {
+            foreach ($events as $event) {
+                $url_poster = asset('assets/img/kompetisi-thumb/' . $event->poster_image);
+                $tgl_buka = \Carbon\Carbon::parse($event->tgl_buka)->toDatetime()->format('M, d Y');
+                $url_detail = route('event.detail', $event->slug);
+                $count = str_word_count($event->ormawaRef->nama_ormawa);
+
+                $nama_ormawa = $event->ormawaRef->nama_ormawa;
+                if ($count > 3) {
+                    $nama_ormawa = $event->ormawaRef->nama_akronim;
+                }
+                echo '<div class="col-lg-6 col-md-6 col-12 mt-5">';
+                echo '<div class="komp-card2 mx-auto">';
+                echo '<div class="komp-thumbnail" data-background="' . $event->poster_image_url . '"></div>';
+                echo '<div class="komp-banner">';
+                echo '<div class="komp-banner__date text-left pl-2 pt-1" >' . $tgl_buka . '</div>';
+                echo '<div class="komp-banner__date text-right pr-2 pt-1" data-toggle="tooltip" data-placement="top" title="' . $event->ormawaRef->nama_ormawa . '">' . $nama_ormawa;
+                echo '</div>';
+                echo '</div>';
+                echo '<div class="komp-title pl-3">';
+                echo '<a href="' . $url_detail . '"><h1 class="mt-3"> ' . $event->nama_event . '</h1></a>';
+                echo '</div>';
+                echo '<div class="komp-description pl-3 pr-3">' . $event->deskripsi_excerpt . '</div>';
+                echo '<div class="komp-created pl-3 pr-3">';
+                echo '<i class="far fa-clock text-secondary mr-1 d-inline"></i>';
+                echo '<p class="text-secondary d-inline">' . $event->created_at->isoFormat('MMM, d Y') . '</p>';
+                echo '</div></div></div>';
+            }
+        } else {
+            echo '<p>asdada</p>';
+        }
     }
 
     public function detail($slug)
@@ -182,12 +257,10 @@ class eventController extends Controller
         if ($user_logged->nim) {
             $user_logged->mahasiswaRef = null;
             $mhs = $this->api_mahasiswa->getMahasiswaSomeField($user_logged->nim);
-            dd($mhs);
             if ($mhs) {
                 $user_logged->mahasiswaRef = $mhs;
             }
         }
-        dd($user_logged);
         return view('landing.event.registrationTeam', compact('slug', 'user_logged', 'event'));
     }
 
@@ -242,12 +315,12 @@ class eventController extends Controller
 
                 // send email
                 try {
-                    if ($pengguna->is_mahasiswa) {
-                        $nama = $this->api_mahasiswa->getMahasiswaByNim($pengguna->nim)->mahasiswa_nama;
+                    if ($anggota->is_mahasiswa) {
+                        $nama = $this->api_mahasiswa->getMahasiswaByNim($anggota->nim)->mahasiswa_nama;
                     } else {
-                        $nama = $pengguna->participantRef->nama_participant;
+                        $nama = $anggota->participantRef->nama_participant;
                     }
-                    Mail::to($pengguna->email)->send(new invitationTeamMail($nama, $slug, $ted->id_tim_event_detail));
+                    Mail::to($anggota->email)->send(new invitationTeamMail($nama, $slug, $ted->id_tim_event_detail));
                 } catch (\Throwable $err) {
                 }
             }

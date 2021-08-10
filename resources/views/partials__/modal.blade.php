@@ -1,8 +1,8 @@
 <!-- Modal Login Mahasiswa -->
 <div class="modal fade" id="mahasiswaLoginModal" style=" z-index: 99999; !important" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
+  <div class="modal-dialog modal-dialog-centered"  role="document">
+    <div class="modal-content" style="border: none; border-top:4px solid #126afe !important; border-radius:20px !important" >
       <div class="modal-header" style="">
         <h5 class="modal-title font-weight-bold" id="exampleModalCenterTitle">Login Peserta</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -37,7 +37,7 @@
                   @endif
                 </div>
                 <div class="form-check mt-4">
-                  <input type="checkbox" class="form-check-input login-mhs__card-checkbox" id="exampleCheck1"
+                  <input type="checkbox" class="form-check-input login-mhs__card-checkbox" name="remember" id="exampleCheck1"
                     style="background: #FB8C00">
                   <label class="form-check-label" for="exampleCheck1">Remember Me</label>
                   <a href="{{route('password.reset')}}" style="text-decoration: none; color:#010B1D"
@@ -64,7 +64,7 @@
 <div class="modal fade" id="ormawaLoginModal" style=" z-index: 99999; !important" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
+    <div class="modal-content" style="border: none; border-top:4px solid #fb8d02 !important; border-radius:20px !important">
       <div class="modal-header">
         <h5 class="modal-title font-weight-bold" id="exampleModalCenterTitle">Login Ormawa</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">

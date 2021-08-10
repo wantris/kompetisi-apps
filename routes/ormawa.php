@@ -16,7 +16,7 @@ Route::group(['namespace' => 'ormawa'], function () {
 
     # =========== Event Internal =========== #
 
-    Route::group(['prefix' => 'eventinternal', 'middleware' => 'ormawa'], function () {
+    Route::group(['prefix' => 'eventinternal', 'middleware' => 'ormawa', 'optimizeImages'], function () {
         // CRUD BASIC
         Route::get('/', 'EventInternalController@index')->name('ormawa.eventinternal.index');
         Route::get('/add', 'EventInternalController@add')->name('ormawa.eventinternal.add');
