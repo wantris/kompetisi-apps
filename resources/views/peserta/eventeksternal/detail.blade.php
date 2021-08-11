@@ -143,6 +143,7 @@
                                                 <tr>
                                                     <th class="table-plus datatable-nosort">Nama</th>
                                                     <th>Status</th>
+                                                    <th>Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -160,6 +161,11 @@
                                                                 Mahasiswa Polindra
                                                             @else
                                                                 Partisipan Eksternal
+                                                            @endif
+                                                        </td>
+                                                        <td> 
+                                                            @if ($regis->nim)
+                                                                <a class="btn btn-primary" style="font-size: 12px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;" href="{{route('peserta.account.profile.registrasi', ['nim' => $regis->nim])}}">Profil</a>
                                                             @endif
                                                         </td>
                                                     </tr>

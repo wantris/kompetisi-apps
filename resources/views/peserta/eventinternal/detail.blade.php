@@ -134,7 +134,13 @@
                                                                 Partisipan Eksternal
                                                             @endif
                                                         </td>
-                                                        <td > <a class="btn btn-primary" style="font-size: 12px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;" href="{{route('peserta.account.profile.registrasi', $regis->id_event_internal_registration)}}">Profil</a></td>
+                                                        <td> 
+                                                            @if ($regis->nim)
+                                                                <a class="btn btn-primary" style="font-size: 12px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;" href="{{route('peserta.account.profile.registrasi', ['nim' => $regis->nim])}}">Profil</a>
+                                                            @else
+                                                                <a class="btn btn-primary" style="font-size: 12px !important; padding:5px 10px;background-color:#0079ff;border-color:#0079ff;" href="{{route('peserta.account.profile.registrasi', ['participantid' => $regis->participant_id])}}">Profil</a>
+                                                            @endif
+                                                        </td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>

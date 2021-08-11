@@ -112,6 +112,23 @@
 </div>
 </div>
 
+{{-- Modal Prestasi --}}
+<div style="border: none !important" class="modal fade" id="modal-prestasi"  role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-orange" id="myLargeModalLabel"><i class="icon-copy dw-fire1 mr-2"></i>Catatan Prestasi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="container-fluid">
+                <div class="catatan-container y-5">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('script')
@@ -132,8 +149,7 @@
             type:"GET",
             dataType: "json",
             success: function(values){
-                console.log(values);
-                // renderPrestasi(values);
+                renderPrestasi(values);
             },
             error:function(err){
                 console.log(err);
@@ -161,7 +177,7 @@
                         <div class="card text-center shadow" style="border-radius: 20px;">
                             <img src="${img_url}" style="max-width: 90px;" alt="" class="text-center mx-auto img-fluid">
                             <div class="card-body">
-                                <h3 class="card-title" style="color: #fb8c00">${prestasi.event_internal_regis_ref.event_internal_ref.nama_event}</h3>
+                                <a class="card-title" href="#" style="color: #fb8c00" onclick="modalCatatanPrestasi('${prestasi.catatan}')" >${prestasi.event_internal_regis_ref.event_internal_ref.nama_event}</a>
                             </div>
                             <div class="card-footer">
                                 <div class="float-left">
@@ -188,7 +204,7 @@
                         <div class="card text-center shadow" style="border-radius: 20px;">
                             <img src="${img_url}" style="max-width: 90px;" alt="" class="text-center mx-auto img-fluid">
                             <div class="card-body">
-                                <h3 class="card-title" style="color: #fb8c00">${prestasi.event_eksternal_regis_ref.event_eksternal_ref.nama_event}</h3>
+                                <a class="card-title" href="#" style="color: #fb8c00" onclick="modalCatatanPrestasi('${prestasi.catatan}')" >${prestasi.event_eksternal_regis_ref.event_eksternal_ref.nama_event}</a>
                             </div>
                             <div class="card-footer">
                                 <div class="float-left">
@@ -210,15 +226,15 @@
 
     const getEventHistory = () => {
         $.ajax({
-            url: "/peserta/account/profile/eventhistory?"+id_pengguna,
+            url: "/peserta/account/profile/eventhistory/"+id_pengguna,
             type:"GET",
             dataType: "json",
             success: function(values){
                 console.log(values);
-                // renderHistoryEvent(values);
+                renderHistoryEvent(values);
             },
             error:function(err){
-                // console.log(err);
+                console.log(err);
             },
         });
     }
@@ -247,7 +263,7 @@
                 if(event.event_internal_ref){
                     html_event += `
                         <li>
-                            <div class="task-name"><i class="icon-copy dw dw-rocket mr-3"></i>${event.event_internal_ref.nama_event}</div>
+                            <div class="task-name"><i class="icon-copy dw dw-rocket mr-5"></i>${event.event_internal_ref.nama_event}</div>
                             <div class="task-time">${event.event_internal_ref.ormawa_ref.nama_ormawa}</div>
                             <div class="task-time">${event.created_at}</div>
                         </li>
@@ -255,7 +271,7 @@
                 }else{
                     html_event += `
                         <li>
-                            <div class="task-name"><i class="icon-copy dw dw-rocket mr-3"></i>${event.event_eksternal_ref.nama_event}</div>
+                            <div class="task-name"><i class="icon-copy dw dw-rocket mr-5"></i>${event.event_eksternal_ref.nama_event}</div>
                             <div class="task-time">${event.event_eksternal_ref.cakupan_ormawa_ref.ormawa_ref.nama_ormawa}</div>
                             <div class="task-time">${event.created_at}</div>
                         </li>
@@ -264,6 +280,12 @@
                 $('.'+key).html(html_event);
             });  
         }
+    }
+
+    const modalCatatanPrestasi = (catatan) => {
+        event.preventDefault();
+        $('.catatan-container').text(catatan);
+        $('#modal-prestasi').modal('show');
     }
 </script>
 @endpush

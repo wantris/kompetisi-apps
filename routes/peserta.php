@@ -84,7 +84,7 @@ Route::group(['namespace' => 'peserta'], function () {
             Route::get('/', 'AccountController@index')->name('peserta.account.index');
             Route::get('/prestasi', 'AccountController@getPrestasi')->name('peserta.account.prestasi');
             Route::get('/eventhistory', 'AccountController@getAllEvent')->name('peserta.account.eventhistory');
-            Route::get('/profile/{id_pengguna}', 'ProfileController@getByRegis')->name('peserta.account.profile.registrasi');
+            Route::get('/profile', 'ProfileController@getByRegis')->name('peserta.account.profile.registrasi');
             Route::get('/profile/prestasi/{id_pengguna}', 'ProfileController@getPrestasi')->name('peserta.account.profile.prestasi');
             Route::get('/profile/eventhistory/{id_pengguna}', 'ProfileController@getAllEvent')->name('peserta.account.profile.eventhistory');
 

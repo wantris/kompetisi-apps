@@ -26,17 +26,18 @@ class ProfileController extends Controller
         });
     }
 
-    public function getByRegis($id_regis)
+    public function getByRegis()
     {
-        $regis = EventInternalRegistration::find($id_regis);
-        if ($regis) {
-            if ($regis->nim) {
-                $pengguna = Pengguna::where('nim', $regis->nim)->first();
-            } else {
-                $pengguna = Pengguna::where('participant_id', $regis->participant_id)->first();
-            }
+        if (request()->nim) {
+            $pengguna =  Pengguna::where('nim', request()->nim)->first();
+        } else {
+            $pengguna =  Pengguna::where('participant_id', request()->participantid)->first();
+        }
 
+        if ($pengguna) {
             return $this->index($pengguna->id_pengguna);
+        } else {
+            return redirect()->back()->with('failed', 'Data tidak ada');
         }
     }
 
@@ -65,22 +66,22 @@ class ProfileController extends Controller
     {
         $pengguna = Pengguna::find($id_pengguna);
 
-        // $pendaftaran = collect();
-        // $pendaftaran_internals = $this->getEventInternal($pengguna);
-        // $pendaftaran_eksternals = $this->getEventEksternal($pengguna);
-        // foreach ($pendaftaran_internals as $internal) {
-        //     $pendaftaran->push($internal);
-        // }
+        $pendaftaran = collect();
+        $pendaftaran_internals = $this->getEventInternal($pengguna);
+        $pendaftaran_eksternals = $this->getEventEksternal($pengguna);
+        foreach ($pendaftaran_internals as $internal) {
+            $pendaftaran->push($internal);
+        }
 
-        // foreach ($pendaftaran_eksternals as $eksternal) {
-        //     $pendaftaran->push($eksternal);
-        // }
+        foreach ($pendaftaran_eksternals as $eksternal) {
+            $pendaftaran->push($eksternal);
+        }
 
-        // $convert_pendaftaran = $pendaftaran->groupBy(function ($val) {
-        //     return \Carbon\Carbon::parse($val->created_at)->format('M_Y');
-        // });
+        $convert_pendaftaran = $pendaftaran->groupBy(function ($val) {
+            return \Carbon\Carbon::parse($val->created_at)->format('M_Y');
+        });
 
-        return response()->json($pengguna);
+        return response()->json($convert_pendaftaran);
     }
 
     public function getEventInternal($pengguna)

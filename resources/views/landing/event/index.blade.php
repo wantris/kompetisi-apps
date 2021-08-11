@@ -6,12 +6,11 @@
 @section('content')
     <!-- Hero Area Start-->
     <div class="slider-area ">
-        <div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="assets/img/banner/banner-komp2.jpeg">
+        <div class="single-slider section-overly slider-height2 d-flex align-items-center" style="background-position: 50% 20%; " data-background="{{asset('assets/img/service/event-banner.png')}}">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="hero-cap text-center">
-                            <h2>Ikuti Event yang Kamu Inginkan</h2>
                         </div>
                     </div>
                 </div>

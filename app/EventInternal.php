@@ -28,9 +28,8 @@ class EventInternal extends Model
 
     public function getDeskripsiExcerptAttribute()
     {
-        return Str::words($this->deskripsi, '15');
+        return Str::words($this->deskripsi, '12');
     }
-
 
     public function ormawaRef()
     {
