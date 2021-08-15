@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Ormawa;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
-use App\{CakupanOrmawa, EventEksternal, Ormawa, KategoriEvent, TipePeserta, EventEksternalDetail, FileEventEksternalDetail, EventEksternalRegistration, FileEventEksternalRegistration};
+use App\{CakupanOrmawa, EventEksternal, Ormawa, KategoriEvent, TipePeserta, EventEksternalDetail, FileEventEksternalDetail, EventEksternalRegistration, FileEventEksternalRegistration, TahapanEventEksternal};
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,6 +16,7 @@ use App\Http\Requests\EventEksternalStoreRequest;
 use App\Http\Requests\EventEksternalUpdateRequest;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\EventEksternalRegisEksport;
+use App\Http\Controllers\ormawa\TahapanEventEksternalController;
 
 class EventEksternalController extends Controller
 {
@@ -111,6 +112,12 @@ class EventEksternalController extends Controller
             $ee->banner_image = $nameBanner;
             $ee->save();
 
+            // create registration step
+            $tahapan = new TahapanEventEksternal();
+            $tahapan->event_eksternal_id = $ee->id_event_eksternal;
+            $tahapan->nama_tahapan = "Pendaftaran";
+            $tahapan->save();
+
             // Store event eksternal detail
             if ($ee) {
                 $eed = new EventEksternalDetail();
@@ -145,6 +152,7 @@ class EventEksternalController extends Controller
     public function edit($id_eventeksternal)
     {
         $ee = EventEksternal::find($id_eventeksternal);
+        $tahapan_controller = new TahapanEventEksternalController();
 
         if (!$ee) {
             return redirect()->back()->with('failed', 'Data event eksternal tidak ada');
@@ -160,6 +168,7 @@ class EventEksternalController extends Controller
 
         $kategoris = $this->kategoris;
         $tipes = $this->tipes;
+        $tahapans = $tahapan_controller->getByEvent($id_eventeksternal);
 
         $feeds = FileEventEksternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventeksternal) {
             $q->where('event_eksternal_id', '=', $id_eventeksternal);
@@ -175,7 +184,8 @@ class EventEksternalController extends Controller
             'kategoris',
             'tipes',
             'feeds',
-            'feeps'
+            'feeps',
+            'tahapans'
         ));
     }
 
@@ -385,17 +395,19 @@ class EventEksternalController extends Controller
 
     public function lihatPendaftar($id_eventeksternal)
     {
+        $tahapan_controller = new TahapanEventEksternalController;
         $ee = EventEksternal::find($id_eventeksternal);
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Pendaftar ' . $ee->nama_event;
         $pendaftaran = $this->getPendaftarById($ee);
         $feeds = $this->getAllFilePendaftaran($ee->id_event_eksternal);
+        $tahapans = $tahapan_controller->getByEvent($id_eventeksternal);
 
-        return view('ormawa.event_eksternal.list_peserta', compact('navTitle', 'navTitle', 'pendaftaran', 'ee', 'feeds'));
+        return view('ormawa.event_eksternal.list_peserta', compact('navTitle', 'navTitle', 'pendaftaran', 'ee', 'feeds', 'tahapans'));
     }
 
     public function getPendaftarById($event)
     {
-        $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef', 'prestasiRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
+        $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventEksternal')->where('event_eksternal_id', $event->id_event_eksternal)->get();
 
         if ($event->role != "Team") {
             foreach ($registrations as $item) {

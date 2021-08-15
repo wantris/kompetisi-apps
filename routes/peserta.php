@@ -92,6 +92,9 @@ Route::group(['namespace' => 'peserta'], function () {
             Route::patch('/save', 'AccountController@postAccount')->name('peserta.account.save');
             Route::patch('/savephoto', 'AccountController@savePhoto')->name('peserta.account.save.photo');
             Route::patch('/save/socialmedia', 'AccountController@saveSocialMedia')->name('peserta.account.save.socialmedia');
+
+            Route::get('/changepassword', 'AccountController@changePassword')->name('peserta.account.changepassword');
+            Route::post('/changepassword', 'AccountController@processChangePassword')->name('peserta.account.changepassword.save');
         });
     });
 });

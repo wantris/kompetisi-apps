@@ -6511,6 +6511,9 @@ form.search-box .search-form a {
     }
 }
 .testimonial-area .testimonial-caption .testimonial-founder .founder-img img {
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 50% !important;
     margin-bottom: 30px;
     display: inline-block;
 }

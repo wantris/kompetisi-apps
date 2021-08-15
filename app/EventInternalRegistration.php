@@ -41,4 +41,9 @@ class EventInternalRegistration extends Model
     {
         return $this->hasOne(PrestasiEventInternal::class, 'event_internal_registration_id', 'id_event_internal_registration');
     }
+
+    public function tahapanRegisRef()
+    {
+        return $this->hasMany(TahapanEventInternalRegis::class, 'event_internal_regis_id', 'id_event_internal_registration')->orderBy('created_at', 'DESC');
+    }
 }

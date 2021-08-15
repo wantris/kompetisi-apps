@@ -37,6 +37,10 @@ $eeJson = json_encode($ee);
                         <a class="nav-link text-orange" data-toggle="tab" href="#berkas-event" role="tab"
                             aria-selected="false">Berkas Event</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-orange" data-toggle="tab" href="#tahapan-event" role="tab"
+                            aria-selected="false">Tahapan Event</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -423,6 +427,48 @@ $eeJson = json_encode($ee);
                         </div>
                     </div>
                 </div>
+                <div class="tab-pane fade" id="tahapan-event" role="tabpanel">
+                    <div class="pd-20">
+                        <div class="row mb-4">
+                            <div class="col-12 text-right">
+                                <div id="container-btn">
+                                    <a href="#" id="tambah-tahapan-btn" onclick="addTahapan({{$ee->id_event_eksternal}})"
+                                        class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"
+                                        style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                                        Tambah</a>
+                                </div>
+                            </div>
+                        </div>
+                        <table id="tahapan-table" class="stripe" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Tahapan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($tahapans as $tahapan)
+                                    <tr id="row_tahapan_{{$tahapan->id_tahapan_event_eksternal}}">
+                                        <td width="10%">{{$loop->iteration}}</td>
+                                        <td>{{$tahapan->nama_tahapan}}</td>
+                                        <td class="py-2">
+                                            @php
+                                                $json_tahapan = json_encode($tahapan);
+                                            @endphp
+                                            <a href="#" onclick="updateTahapan({{$json_tahapan}})"
+                                                class="btn btn-info btn-sm d-inline"><i
+                                                    class="icofont-ui-edit"></i></a>
+                                            <a href="#" onclick="deleteTahapan({{$json_tahapan}})"
+                                                class="btn btn-danger btn-sm d-inline"><i
+                                                    class="icofont-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -505,6 +551,41 @@ $eeJson = json_encode($ee);
         </div>
     </div>
 </div>
+
+{{-- Modal Tambah Tahapan --}}
+<div class="modal fade" id="tahapan-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-secondary" id="pendaftaran-upload-title">Tambah Tahapan Event
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <form action="" id="tahapan-event-form" method="post">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <input type="hidden" name="eventid" id="eventid-inp">
+                            <input type="hidden" name="id_tahapan" id="id-tahapan-inp">
+                            <div class="form-group">
+                                <label for="">Nama Tahapan</label>
+                                <input type="text" name="nama_tahapan" id="nama-tahapan-inp" class="form-control">
+                                @if ($errors->has('nama_tahapan'))
+                                    <span class="text-danger">{{ $errors->first('nama_tahapan') }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')
@@ -526,9 +607,9 @@ $eeJson = json_encode($ee);
         customConfig: '/public/assets/ckeditor/ckeditor_ormawa_profil.js'
     });
 
+    var table_tahapan = $('#tahapan-table').DataTable();
+
     $(document).ready( function () {
-        $('#pembina-table').DataTable();
-        $('#form-pembina').hide();
         $('.js-example-basic-single').select2();
       
     } );
@@ -658,6 +739,56 @@ $eeJson = json_encode($ee);
         } ); 
     }
 
+    const addTahapan = (id_eventeksternal) => {
+        event.preventDefault();
+        $('#eventid-inp').val(id_eventeksternal);
+        $('#tahapan-event-form').attr('action','/ormawa/tahapan/eventeksternal/save'); 
+        $('#tahapan-modal').modal('show');
+    }
+
+    const updateTahapan = (tahapan) => {
+        event.preventDefault();
+        $('#id-tahapan-inp').val(tahapan.id_tahapan_event_eksternal);
+        $('#nama-tahapan-inp').val(tahapan.nama_tahapan);
+        $('#tahapan-event-form').attr('action','/ormawa/tahapan/eventeksternal/update'); 
+        $('#tahapan-modal').modal('show');
+        
+    }
+
+    const deleteTahapan = (tahapans) => {
+        console.log(tahapans);
+        var id_tahapan = tahapans.id_tahapan_event_eksternal;
+        var url = "/ormawa/tahapan/eventeksternal/delete"
+        Notiflix.Confirm.Show( 
+            tahapans.nama_tahapan,
+            'Apakah anda yakin ingin menghapus?',
+            'Yes',
+            'No',
+        function(){ 
+            $.ajax(
+                {
+                    url: url,
+                    type: 'delete', 
+                    dataType: "JSON",
+                    data: {
+                        "id_tahapan": id_tahapan
+                    },
+                    success: function (response){
+                        console.log(response.status); 
+                        if(response.status == 1){
+                            Notiflix.Notify.Success(response.message);
+                            table_tahapan.row('#row_tahapan_'+id_tahapan).remove().draw();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                        Notiflix.Notify.Failure('Ooopss');
+                    }
+            });
+        }, function(){
+                // No button callback alert('If you say so...'); 
+        } ); 
+    } 
 
 </script>
 

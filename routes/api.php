@@ -128,4 +128,11 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/delete/{id_blog}', 'Api\blogController@delete')->name('blog.delete');
         Route::post('/update/{id_blog}', 'Api\blogController@update')->name('blog.update');
     });
+
+    Route::group(['prefix' => 'testimoni'], function () {
+        Route::get('/', 'Api\TestimoniController@index')->name('testimoni.index');
+        Route::post('/save', 'Api\TestimoniController@save')->name('testimoni.save');
+        Route::get('/delete/{id_testimoni}', 'Api\TestimoniController@delete')->name('testimoni.delete');
+        Route::post('/update/{id_testimoni}', 'Api\TestimoniController@update')->name('testimoni.update');
+    });
 });

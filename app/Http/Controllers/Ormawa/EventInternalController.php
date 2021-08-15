@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
 use App\{EventInternal, EventInternalDetail, EventInternalRegistration, FileEventInternalDetail, FileEventInternalRegistration, Ormawa, KategoriEvent, PrestasiEventInternal, TipePeserta, TimEvent};
+use App\TahapanEventInternal;
 use App\Http\Requests\EventInternalStoreRequest;
 use App\Http\Requests\EventInternalUpdateRequest;
 use Illuminate\Console\Scheduling\Event;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\EventInternalRegisEksport;
+use App\Http\Controllers\ormawa\TahapanEventInternalController;
 
 class EventInternalController extends Controller
 {
@@ -101,6 +103,12 @@ class EventInternalController extends Controller
             $ei->banner_image = $nameBanner;
             $ei->save();
 
+            // create registration step
+            $tahapan = new TahapanEventInternal();
+            $tahapan->event_internal_id = $ei->id_event_internal;
+            $tahapan->nama_tahapan = "Pendaftaran";
+            $tahapan->save();
+
             // Store event internal detail
             if ($ei) {
                 $eid = new EventInternalDetail();
@@ -135,6 +143,7 @@ class EventInternalController extends Controller
     public function edit($id_eventinternal)
     {
         $ei = EventInternal::find($id_eventinternal);
+        $tahapan_controller = new TahapanEventInternalController;
 
         if (!$ei) {
             return redirect()->back()->with('failed', 'Data event internal tidak ada');
@@ -150,6 +159,7 @@ class EventInternalController extends Controller
 
         $kategoris = $this->kategoris;
         $tipes = $this->tipes;
+        $tahapans = $tahapan_controller->getByEvent($id_eventinternal);
 
         $feids = FileEventInternalDetail::whereHas('eventDetailRef', function ($q) use ($id_eventinternal) {
             $q->where('event_internal_id', '=', $id_eventinternal);
@@ -166,7 +176,8 @@ class EventInternalController extends Controller
             'kategoris',
             'tipes',
             'feids',
-            'feips'
+            'feips',
+            'tahapans'
         ));
     }
 
@@ -238,14 +249,16 @@ class EventInternalController extends Controller
     public function lihatPendaftar($id_eventinternal)
     {
         $ei = EventInternal::find($id_eventinternal);
+        $tahapan_controller = new TahapanEventInternalController;
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Pendaftar ' . $ei->nama_event;
 
         $pendaftaran = $this->getPendaftarById($ei);
         $feeds = $this->getAllFilePendaftaran($ei->id_event_internal);
         $prestasis = $this->getPrestasiByEvent($id_eventinternal);
+        $tahapans = $tahapan_controller->getByEvent($id_eventinternal);
 
 
-        return view('ormawa.event_internal.list_peserta', compact('navTitle', 'navTitle', 'pendaftaran', 'ei', 'feeds'));
+        return view('ormawa.event_internal.list_peserta', compact('navTitle', 'navTitle', 'pendaftaran', 'ei', 'feeds', 'tahapans'));
     }
 
     public function listPeserta($slug)
@@ -383,7 +396,9 @@ class EventInternalController extends Controller
     // ======= Pendaftaran =====
     public function getPendaftarById($event)
     {
-        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'prestasiRef')->where('event_internal_id', $event->id_event_internal)->get();
+        $registrations = EventInternalRegistration::with('penggunaMhsRef', 'timRef', 'participantRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventInternal')
+            ->where('event_internal_id', $event->id_event_internal)
+            ->get();
 
         if ($event->role != "Team") {
             foreach ($registrations as $item) {

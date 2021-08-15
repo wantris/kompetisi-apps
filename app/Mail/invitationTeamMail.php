@@ -30,7 +30,7 @@ class invitationTeamMail extends Mailable
      */
     public function build()
     {
-        return $this->from('ilmucoding.com@gmail.com')
+        return $this->from('sievent@gmail.com')
             ->view('emails.invitation_mail')
             ->with(
                 [

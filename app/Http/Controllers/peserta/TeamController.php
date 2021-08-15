@@ -69,7 +69,6 @@ class TeamController extends Controller
                 if ($item->status == "Pending") {
                     $search = null;
                     $search = TimEventDetail::with('penggunaMhsRef', 'penggunaParticipantRef')->where('tim_event_id', $item->tim_event_id)->where('role', 'ketua')->first();
-
                     if ($search) {
                         $search->mahasiswaRef = null;
                         if ($search->nim) {

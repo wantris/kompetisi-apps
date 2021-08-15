@@ -45,15 +45,14 @@ class EventInternalRegisEksport implements FromView, ShouldAutoSize
 
     public function getPendaftarById($event)
     {
-        $registrations = EventInternalRegistration::with('timRef', 'participantRef')->where('event_internal_id', $event->id_event_internal)->get();
+        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'tahapanRegisRef.tahapanEventInternal')->where('event_internal_id', $event->id_event_internal)->get();
         if ($event->role != "Team") {
             foreach ($registrations as $item) {
                 $item->mahasiswaRef = null;
                 if ($item->nim) {
-                    try {
-                        $mhs = $this->api_mahasiswa->getDosenOnlySomeField($item->nim);
+                    $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
+                    if ($mhs) {
                         $item->mahasiswaRef = $mhs;
-                    } catch (\Throwable $err) {
                     }
                 }
             }
@@ -79,7 +78,6 @@ class EventInternalRegisEksport implements FromView, ShouldAutoSize
                 }
             }
         }
-
         return $registrations;
     }
 }

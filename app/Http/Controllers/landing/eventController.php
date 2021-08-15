@@ -20,6 +20,8 @@ use GuzzleHttp\Client;
 use App\TipePeserta;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
+use App\TahapanEventInternal;
+use App\TahapanEventInternalRegis;
 use App\TmpTimEventDetail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
@@ -210,7 +212,6 @@ class eventController extends Controller
                     break;
 
                 default:
-                    $is_win = array('is_win' => '0', 'position' => null);
                     $regis = new EventInternalRegistration();
                     $regis->event_internal_id = $event->id_event_internal;
                     if (Session::get('is_mahasiswa') == "1") {
@@ -220,11 +221,19 @@ class eventController extends Controller
                         $regis->nim = null;
                         $regis->participant_id = $penggunaRef;
                     }
-                    $regis->is_win = json_encode($is_win);
                     $regis->status = 0;
                     $regis->save();
 
+                    $tahapan = TahapanEventInternal::where('event_internal_id', $event->id_event_internal)->where('nama_tahapan', 'Pendaftaran')->first();
+                    if ($tahapan) {
+                        $tahapan_regis = new TahapanEventInternalRegis();
+                        $tahapan_regis->tahapan_event_internal_id = $tahapan->id_tahapan_event_internal;
+                        $tahapan_regis->event_internal_regis_id = $regis->id_event_internal_registration;
+                        $tahapan_regis->save();
+                    }
+
                     return redirect()->route('peserta.eventinternal.index');
+
                     break;
             }
         } else {
@@ -275,14 +284,21 @@ class eventController extends Controller
         if ($tim) {
 
             // registrasi event
-            $is_win = array('is_win' => '0', 'position' => null);
 
             $eir = new EventInternalRegistration();
             $eir->event_internal_id = $event->id_event_internal;
             $eir->tim_event_id = $tim->id_tim_event;
-            $eir->is_win = json_encode($is_win);
             $eir->status = 0;
             $eir->save();
+
+            // save to step
+            $tahapan = TahapanEventInternal::where('event_internal_id', $event->id_event_internal)->where('nama_tahapan', 'Pendaftaran')->first();
+            if ($tahapan) {
+                $tahapan_regis = new TahapanEventInternalRegis();
+                $tahapan_regis->tahapan_event_internal_id = $tahapan->id_tahapan_event_internal;
+                $tahapan_regis->event_internal_regis_id = $eir->id_event_internal_registration;
+                $tahapan_regis->save();
+            }
 
             // Ketua
             $pengguna = Pengguna::find($request->ketua);

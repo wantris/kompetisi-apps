@@ -46,7 +46,7 @@ class EventEksternalRegisEksport implements FromView, ShouldAutoSize
     {
         $status = $this->status;
         if ($status != "all") {
-            $registrations = EventEksternalRegistration::with('timRef')->where('event_eksternal_id', $event->id_event_eksternal)->where(function ($query) use ($status) {
+            $registrations = EventEksternalRegistration::with('timRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventEksternal')->where('event_eksternal_id', $event->id_event_eksternal)->where(function ($query) use ($status) {
                 if ($status == "1") {
                     $query->where('status', 1);
                 } else {
@@ -54,7 +54,7 @@ class EventEksternalRegisEksport implements FromView, ShouldAutoSize
                 }
             })->get();
         } else {
-            $registrations = EventEksternalRegistration::with('timRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
+            $registrations = EventEksternalRegistration::with('timRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventEksternal')->where('event_eksternal_id', $event->id_event_eksternal)->get();
         }
 
 

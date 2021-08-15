@@ -87,7 +87,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($eias as $eia)
-                                        <tr class="tr_{{$eia->nama_event}}">
+                                        <tr class="tr_{{$eia->id_event_internal}}">
                                             <td>{{$eia->nama_event}}</td>
                                             <td>{{$eia->kategoriRef->nama_kategori}}</td>
                                             <td>{{$eia->tipePesertaRef->nama_tipe}}</td>
@@ -650,7 +650,7 @@
                         console.log(response.status); 
                         if(response.status == 1){
                             Notiflix.Notify.Success(response.message);
-                            $('.tr_' + values.nama_event).remove();
+                            $('.tr_' + values.id_event_internal).remove();
                         }
                     },
                     error: function(xhr) {

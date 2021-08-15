@@ -23,6 +23,8 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
+use App\TahapanEventEksternal;
+use App\TahapanEventEksternalRegis;
 use Illuminate\Support\Facades\Cache;
 
 class eventEksternalController extends Controller
@@ -113,8 +115,6 @@ class eventEksternalController extends Controller
         $pengguna = $this->pengguna;
 
         // registrasi event
-        $is_win = array('is_win' => '0', 'position' => null);
-
         if ($event->role == "Team") {
             $tim = new TimEvent();
             $tim->status = 0;
@@ -125,9 +125,17 @@ class eventEksternalController extends Controller
                 $eir = new EventEksternalRegistration();
                 $eir->event_eksternal_id = $event->id_event_eksternal;
                 $eir->tim_event_id = $tim->id_tim_event;
-                $eir->is_win = json_encode($is_win);
                 $eir->status = 0;
                 $eir->save();
+
+                // Save to step
+                $tahapan = TahapanEventEksternal::where('event_eksternal_id', $event->id_event_eksternal)->where('nama_tahapan', 'Pendaftaran')->first();
+                if ($tahapan) {
+                    $tahapan_regis = new TahapanEventEksternalRegis();
+                    $tahapan_regis->tahapan_event_eksternal_id = $tahapan->id_tahapan_event_eksternal;
+                    $tahapan_regis->event_eksternal_regis_id = $eir->id_event_eksternal_registration;
+                    $tahapan_regis->save();
+                }
 
                 $ted = new TimEventDetail();
                 $ted->tim_event_id = $tim->id_tim_event;
@@ -169,9 +177,16 @@ class eventEksternalController extends Controller
             $regis = new EventEksternalRegistration();
             $regis->event_eksternal_id = $event->id_event_eksternal;
             $regis->nim = $pengguna->nim;
-            $regis->is_win = json_encode($is_win);
             $regis->status = 0;
             $regis->save();
+
+            $tahapan = TahapanEventEksternal::where('event_internal_id', $event->id_event_eksternal)->where('nama_tahapan', 'Pendaftaran')->first();
+            if ($tahapan) {
+                $tahapan_regis = new TahapanEventEksternalRegis();
+                $tahapan_regis->tahapan_event_eksternal_id = $tahapan->id_tahapan_event_eksternal;
+                $tahapan_regis->event_eksternal_regis_id = $regis->id_event_eksternal_registration;
+                $tahapan_regis->save();
+            }
 
             return redirect()->route('peserta.eventeksternal.index');
         }

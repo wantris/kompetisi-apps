@@ -9,8 +9,10 @@ use App\Http\Requests\PembinaStoreRequest;
 use Illuminate\Support\Facades\Session;
 use App\Ormawa;
 use App\Pembina;
+use App\Pengguna;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class settingsController extends Controller
 {
@@ -98,6 +100,37 @@ class settingsController extends Controller
     {
         $navTitle = '<i class="icon-copy dw dw-password mr-2"></i>Ganti Password';
         return view('ormawa.settings.change_password', compact('navTitle'));
+    }
+
+    public function processChangePassword(Request $request)
+    {
+        $rules = [
+            'password' =>  'required',
+            'new_password' =>  'required|min:8',
+            'confirm_new_password' =>  'required|same:new_password',
+        ];
+
+        $customMessages = [
+            'new_password.min:8' => "Minimal 8 karakter",
+            'password.required' => 'Password tidak boleh kosong',
+            'new_password.required' => 'Password baru tidak boleh kosong',
+            'confirm_new_password.required' => 'Konfirmasi Password tidak boleh kosong',
+            'confirm_new_password.same' => 'Konfirmasi password baru harus sama dengan password baru',
+        ];
+
+        $this->validate($request, $rules, $customMessages);
+
+        $ormawa = Ormawa::find(Session::get('id_ormawa'));
+        if ($ormawa) {
+            if (Hash::check($request->password, $ormawa->password)) {
+                $ormawa->password = Hash::make($request->new_password);
+                $ormawa->save();
+
+                return redirect()->back()->with('success', 'Password berhasil diganti');
+            }
+            return redirect()->back()->with('failed', 'Password lama tidak sesuai');
+        }
+        return redirect()->back()->with('failed', 'ormawa tidak ada');
     }
 
     public function tambahPembina(PembinaStoreRequest $req)

@@ -57,9 +57,12 @@ Route::group(['prefix' => 'login', 'namespace' => 'auth'], function () {
     Route::get('/ormawa', 'LoginController@index')->name('login.ormawa.index');
 });
 
-// Login 
+// reset password 
 Route::group(['prefix' => 'passwordreset', 'namespace' => 'auth'], function () {
     Route::get('/', 'PasswordResetController@index')->name('password.reset');
+    Route::post('/save', 'PasswordResetController@resetProcess')->name('password.resetProcess');
+    Route::get('/newpassword', 'PasswordResetController@newPassword')->name('password.newPassword');
+    Route::post('/newpassword', 'PasswordResetController@newPasswordSave')->name('password.newPassword.save');
 });
 
 

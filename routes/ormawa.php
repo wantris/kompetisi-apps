@@ -80,6 +80,23 @@ Route::group(['namespace' => 'ormawa'], function () {
         Route::delete('/pendaftar/delete/{id_regis}', 'EventEksternalController@deletePendaftar')->name('ormawa.eventeksternal.pendaftar.hapus');
     });
 
+    # ============== Tahapan Event ================ #
+    Route::group(['prefix' => 'tahapan', 'middleware' => 'ormawa'], function () {
+        Route::get('/eventinternal', 'TahapanEventInternalController@getByEvent')->name('ormawa.tahapan.index.byevent');
+        Route::post('/eventinternal/save', 'TahapanEventInternalController@save')->name('ormawa.tahapan.save');
+        Route::post('/eventinternal/update', 'TahapanEventInternalController@update')->name('ormawa.tahapan.update');
+        Route::delete('/eventinternal/delete', 'TahapanEventInternalController@delete')->name('ormawa.tahapan.delete');
+        Route::get('/eventinternal', 'TahapanEventInternalController@getByEvent')->name('ormawa.tahapan.index.byevent');
+        Route::get('/eventinternal/pendaftaran', 'TahapanEventInternalController@saveRegistrationStep')->name('ormawa.tahapan.eventinternal.pendaftaran.save');
+
+
+        Route::get('/eventeksternal', 'TahapanEventEksternalController@getByEvent')->name('ormawa.tahapan.index.byevent');
+        Route::post('/eventeksternal/save', 'TahapanEventEksternalController@save')->name('ormawa.tahapan.save');
+        Route::post('/eventeksternal/update', 'TahapanEventEksternalController@update')->name('ormawa.tahapan.update');
+        Route::delete('/eventeksternal/delete', 'TahapanEventEksternalController@delete')->name('ormawa.tahapan.delete');
+        Route::get('/eventeksternal/pendaftaran', 'TahapanEventEksternalController@saveRegistrationStep')->name('ormawa.tahapan.eventeksternal.pendaftaran.save');
+    });
+
     # =========== Event Registration =========== #
     Route::group(['prefix' => 'registration', 'middleware' => 'ormawa'], function () {
 
@@ -111,13 +128,6 @@ Route::group(['namespace' => 'ormawa'], function () {
         Route::patch('/ajukanpembimbing/{id_tim}', 'TeamController@ajukanPembimbing')->name('ormawa.team.detail.ajukanpembimbing');
     });
 
-    // Route::group(['prefix' => 'eventeksternal', 'middleware' => 'ormawa'], function () {
-    //     Route::get('/', 'EventEksternalController@index')->name('ormawa.eventeksternal.index');
-    //     Route::get('/add', 'EventEksternalController@add')->name('ormawa.eventeksternal.add');
-    //     Route::post('/add', 'EventEksternalController@saveForm')->name('ormawa.eventeksternal.save');
-    //     Route::get('detail/{event}/peserta', 'EventEksternalController@listPeserta')->name('ormawa.eventeksternal.peserta');
-    // });
-
 
     # =========== Timeline =========== #
 
@@ -146,7 +156,6 @@ Route::group(['namespace' => 'ormawa'], function () {
 
     # =========== Setting =========== #
 
-
     Route::group(['prefix' => 'settings', 'middleware' => 'ormawa'], function () {
         Route::get('/profile', 'settingsController@index')->name('ormawa.settings.index');
         Route::patch('/profile', 'settingsController@updateProfile')->name('ormawa.settings.index.update');
@@ -155,5 +164,6 @@ Route::group(['namespace' => 'ormawa'], function () {
         Route::patch('/profile/pembina/{id_pembina}', 'settingsController@updatePembina')->name('ormawa.settings.update.pembina');
         Route::delete('/profile/pembina/{id_pembina}', 'settingsController@deletePembina')->name('ormawa.settings.delete.pembina');
         Route::get('/changepassword', 'settingsController@changePassword')->name('ormawa.settings.changepassword');
+        Route::post('/changepassword', 'settingsController@processChangePassword')->name('ormawa.settings.changepassword.save');
     });
 });

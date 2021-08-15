@@ -5,6 +5,7 @@ namespace App\Http\Controllers\peserta;
 use App\EventEksternalRegistration;
 use App\EventInternalRegistration;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use App\Participant;
 use App\Pengguna;
 use App\TimEvent;
@@ -153,7 +154,7 @@ class AccountController extends Controller
 
         if ($tims->count() > 0) {
             foreach ($tims as $tim) {
-                $regis_tim = EventInternalRegistration::with('eventInternalRef')->where('tim_event_id', $tim->id_tim_event)->whereHas('eventInternalRef', function ($query) {
+                $regis_tim = EventInternalRegistration::with('eventInternalRef', 'eventInternalRef.ormawaRef')->where('tim_event_id', $tim->id_tim_event)->whereHas('eventInternalRef', function ($query) {
                     $query->where('status', 1);
                 })->first();
 
@@ -326,5 +327,43 @@ class AccountController extends Controller
         }
 
         return $prestasi;
+    }
+
+    public function changePassword()
+    {
+        $navTitle = '<i class="icon-copy dw dw-password mr-2"></i>Ganti Password';
+        return view('peserta.account.change_password', compact('navTitle'));
+    }
+
+
+    public function processChangePassword(Request $request)
+    {
+        $rules = [
+            'password' =>  'required',
+            'new_password' =>  'required|min:8',
+            'confirm_new_password' =>  'required|same:new_password',
+        ];
+
+        $customMessages = [
+            'new_password.min:8' => "Minimal 8 karakter",
+            'password.required' => 'Password tidak boleh kosong',
+            'new_password.required' => 'Password baru tidak boleh kosong',
+            'confirm_new_password.required' => 'Konfirmasi Password tidak boleh kosong',
+            'confirm_new_password.same' => 'Konfirmasi password baru harus sama dengan password baru',
+        ];
+
+        $this->validate($request, $rules, $customMessages);
+
+        $pengguna = Pengguna::find(Session::get('id_pengguna'));
+        if ($pengguna) {
+            if (Hash::check($request->password, $pengguna->password)) {
+                $pengguna->password = Hash::make($request->new_password);
+                $pengguna->save();
+
+                return redirect()->back()->with('success', 'Password berhasil diganti');
+            }
+            return redirect()->back()->with('failed', 'Password lama tidak sesuai');
+        }
+        return redirect()->back()->with('failed', 'pengguna tidak ada');
     }
 }

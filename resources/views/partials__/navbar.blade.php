@@ -78,14 +78,37 @@
                                     </div>
                                 </div>
                             </div>
+                            @elseif(Session::get('id_ormawa'))
+                                <div class="header-btn d-none f-right d-lg-block">
+                                    <div class="dropdown show ml-4">
+                                        <a class="dropdown-toggle" href="#" role="button" id="navbar-menu-login"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        @php
+                                            $ormawa = \App\Ormawa::select('photo')->where('id_ormawa',Session::get('id_ormawa'))->first();
+                                        @endphp
+                                        @if ($ormawa->photo)
+                                            <img src="{{url('assets/img/ormawa-logo/'.$ormawa->photo)}}" class="d-inline mr-1" style="width: 30px; height:30px; border-radius:20px" alt="">
+                                        @else
+                                            <img src="{{asset('assets/img/icon/user.svg')}}" class="d-inline mr-1" style="width: 30px; height:30px; border-radius:20px" alt="">
+                                        @endif
+                                        <i class="icofont-rounded-down d-inline mt-2 text-secondary" id="arrow-icon"></i>
+                                    </a>
+                                    <div class="dropdown-menu mt-4 mr-4" aria-labelledby="navbar-menu-login">
+                                        <a class="dropdown-item" href="{{route('ormawa.index')}}">Dashboard</a>
+                                        <a class="dropdown-item" href="{{url('user/pw/'.Auth::id())}}">Ganti
+                                            Password</a>
+                                        <a class="dropdown-item" href="{{route('ormawa.logout')}}">Sign out</a>
+                                    </div>
+                                    </div>
+                                </div>
                             @else
-                            <!-- Header-btn -->
-                            <div class="header-btn d-none f-right d-lg-block">
-                                <a href="#" data-toggle="modal" data-target="#mahasiswaLoginModal"
-                                    class="btn head-btn1">Peserta</a>
-                                <a href="#" data-toggle="modal" data-target="#ormawaLoginModal"
-                                    class="btn head-btn2">Ormawa</a>
-                            </div>
+                                <!-- Header-btn -->
+                                <div class="header-btn d-none f-right d-lg-block">
+                                    <a href="#" data-toggle="modal" data-target="#mahasiswaLoginModal"
+                                        class="btn head-btn1">Peserta</a>
+                                    <a href="#" data-toggle="modal" data-target="#ormawaLoginModal"
+                                        class="btn head-btn2">Ormawa</a>
+                                </div>
                             @endif
                         </div>
                         @endif

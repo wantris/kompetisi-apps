@@ -9,13 +9,23 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-12 mb-30">
         <div class="pd-20 card">
             <div class="card-body">
-               <div class="mb-2 col-12 col-lg-3">
-                   <select id="status-select" class="form-control">
-                       <option value="" selected>Semua Status</option>
-                       <option value="Sudah">Tervalidasi</option>
-                       <option value="Tidak">Belum Tervalidasi</option>
-                   </select>
-               </div>
+                <div class="row">
+                    <div class="mb-2 col-12 col-lg-3">
+                        <select id="status-select" class="form-control">
+                            <option value="" selected>Semua Status</option>
+                            <option value="Sudah">Tervalidasi</option>
+                            <option value="Tidak">Belum Tervalidasi</option>
+                        </select>
+                     </div>
+                     <div class="mb-2 col-12 col-lg-3">
+                         <select id="tahapan-select" class="form-control">
+                             <option value="" selected>Semua Tahapan</option>
+                             @foreach ($tahapans as $tahapan)
+                                 <option value="{{$tahapan->nama_tahapan}}">{{$tahapan->nama_tahapan}}</option>
+                             @endforeach
+                         </select>
+                     </div>
+                </div>
                  @if ($ee->role == "Individu")
                     <div class="table-responsive">
                         <table class="pendaftaran-table table stripe hover nowrap" style="width: 100%">
@@ -26,7 +36,9 @@
                                     <th>Email</th>
                                     <th>Nomor Telepon</th>
                                     <th>Status Pendaftar</th>
-                                    <th>Sudah Tervalidasi</th>
+                                    <th>Tahapan</th>
+                                    <th>Tahapan Terakhir</th>
+                                    {{-- <th>Sudah Tervalidasi</th> --}}
                                     <th>Status Juara</th>
                                     <th>Action</th>
                                 </tr>
@@ -56,10 +68,15 @@
                                             Mahasiswa Polindra
                                         </td>
                                         <td>
-                                            @if ($regis->status == "0")
-                                                <a href="#" class="btn btn-warning" style="font-size: 12px">Tidak</a> 
-                                            @else
-                                                <a href="#" class="btn btn-success" style="font-size: 12px">Sudah</a>
+                                            @if ($regis->tahapanRegisRef->count() > 0)
+                                                @foreach ($regis->tahapanRegisRef as $tahapan_regis)
+                                                    <i class="icon-copy dw dw-fire" style="color: #ff0000;font-weight:bold !important"></i>
+                                                @endforeach
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($regis->tahapanRegisRef->count() > 0)
+                                                {{$regis->tahapanRegisRef[0]->tahapanEventEksternal->nama_tahapan}}
                                             @endif
                                         </td>
                                         <td>
@@ -77,6 +94,7 @@
                                                     <a class="dropdown-item" target="_blank"
                                                             href="#"><i class="dw dw-eye"></i>Lihat Profil</a>
                                                     @if (Session::get('is_pembina') == "0")
+                                                        <a class="dropdown-item" href="{{route('ormawa.tahapan.eventeksternal.pendaftaran.save',['regisid'=>$regis->id_event_eksternal_registration,'eventid'=>$regis->event_eksternal_id])}}"><i class="icon-copy dw dw-fire"></i>Lolos ke tahapan selanjutnya</a>
                                                         @if ($regis->status == "0")
                                                             <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_eksternal_registration,'status'=>1])}}"><i class="icon-copy dw dw-checked"></i>Buat Tervalidasi</a>
                                                         @else
@@ -86,7 +104,7 @@
                                                         @php
                                                             $regis_json = json_encode($regis);
                                                         @endphp
-                                                        <a class="dropdown-item" href="#" onclick="statusJuara({{$regis_json}})"><i class="dw dw-fire"></i>Status Juara</a>
+                                                        <a class="dropdown-item" href="#" onclick="statusJuara({{$regis_json}})"><i class="dw dw-up-chevron-1"></i>Status Juara</a>
                                                     @endif
                                                     @if ($regis->count() > 0)
                                                         @if ($regis->fileEeRegisRef->count() > 0 && $feeds->count() > 0)
@@ -110,7 +128,9 @@
                                     <th class="table-plus datatable-nosort">ID Tim</th>
                                     <th>Ketua Tim</th>
                                     <th>Kelas</th>
-                                    <th>Sudah Tervalidasi</th>
+                                    <th>Tahapan</th>
+                                    <th>Tahapan Terakhir</th>
+                                    {{-- <th>Sudah Tervalidasi</th> --}}
                                     <th>Status Juara</th>
                                     <th>Action</th>
                                 </tr>
@@ -140,10 +160,15 @@
                                             @endforeach  
                                         </td>
                                         <td>
-                                            @if ($regis->status == "0")
-                                                <a href="#" class="btn btn-warning" style="font-size: 12px">Belum</a>
-                                            @else
-                                                <a href="#" class="btn btn-success" style="font-size: 12px">Sudah</a> 
+                                            @if ($regis->tahapanRegisRef->count() > 0)
+                                                @foreach ($regis->tahapanRegisRef as $tahapan_regis)
+                                                    <i class="icon-copy dw dw-fire" style="color: #ff0000;font-weight:bold !important"></i>
+                                                @endforeach
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($regis->tahapanRegisRef->count() > 0)
+                                                {{$regis->tahapanRegisRef[0]->tahapanEventEksternal->nama_tahapan}}
                                             @endif
                                         </td>
                                         <td>
@@ -158,18 +183,19 @@
                                                     <i class="dw dw-more"></i>
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                                                    <a class="dropdown-item" href="{{route('ormawa.team.detail', $regis->tim_event_id)}}"><i class="dw dw-eye"></i>Lihat Tim</a>
+                                                    @if ($regis->status == "0")
+                                                        <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_eksternal_registration,'status'=>1])}}"><i class="icon-copy dw dw-checked"></i>Buat Tervalidasi</a>
+                                                    @else
+                                                        <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_eksternal_registration,'status'=>0])}}"><i class="icon-copy dw dw-ban"></i>Buat Belum Tervalidasi</a>
+                                                    @endif
                                                     @if (Session::get('is_pembina') == "0")
-                                                        <a class="dropdown-item" href="{{route('ormawa.team.detail', $regis->tim_event_id)}}"><i class="dw dw-eye"></i>Lihat Tim</a>
-                                                        @if ($regis->status == "0")
-                                                            <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_eksternal_registration,'status'=>1])}}"><i class="icon-copy dw dw-checked"></i>Buat Tervalidasi</a>
-                                                        @else
-                                                            <a class="dropdown-item" href="{{route('ormawa.eventeksternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_eksternal_registration,'status'=>0])}}"><i class="icon-copy dw dw-ban"></i>Buat Belum Tervalidasi</a>
-                                                        @endif
-                                                            <a class="dropdown-item" href="#" onclick="deletePendaftar({{$regis->id_event_eksternal_registration}})"><i class="dw dw-delete-3"></i> Hapus</a>
+                                                        <a class="dropdown-item" href="{{route('ormawa.tahapan.eventeksternal.pendaftaran.save',['regisid'=>$regis->id_event_eksternal_registration,'eventid'=>$regis->event_eksternal_id])}}"><i class="icon-copy dw dw-fire"></i>Lolos ke tahapan selanjutnya</a>
                                                         @php
                                                             $regis_json = json_encode($regis);
                                                         @endphp
-                                                        <a class="dropdown-item" href="#" onclick="statusJuara({{$regis_json}})"><i class="dw dw-fire"></i>Status Juara</a>
+                                                        <a class="dropdown-item" href="#" onclick="statusJuara({{$regis_json}})"><i class="dw dw-up-chevron-1"></i>Status Juara</a>
+                                                        <a class="dropdown-item" href="#" onclick="deletePendaftar({{$regis->id_event_eksternal_registration}})"><i class="dw dw-delete-3"></i> Hapus</a>
                                                     @endif
                                                     @if ($regis->count() > 0)
                                                         @if ($regis->fileEeRegisRef->count() > 0 && $feeds->count() > 0)
@@ -232,6 +258,14 @@
 <script>
     let id_event = "{{$ee->id_event_eksternal}}";
     let status = "all";
+
+    $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+
     $(document).ready( function () {
         var table = $('.pendaftaran-table').DataTable({
             dom: 'Bfrtip',

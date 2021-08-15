@@ -31,8 +31,8 @@
                                     @foreach ($tims as $tim)
                                         @if ($tim->eventInternalRegisRef)
                                             <li class="col-lg-4 col-md-6 col-sm-12">
-                                                <div class="product-box">
-                                                    <div class="producct-img"><img src="{{url('assets/img/kompetisi-thumb/'.$tim->eventInternalRegisRef->eventInternalRef->poster_image)}}" alt=""></div>
+                                                <div class="product-box"  style="border-radius: 20px !important;">
+                                                    <div class="producct-img" style="border-radius: 20px !important;"><img src="{{url('assets/img/kompetisi-thumb/'.$tim->eventInternalRegisRef->eventInternalRef->poster_image)}}" alt=""></div>
                                                     <div class="product-caption">
                                                         <h4><a href="{{route('peserta.team.detail', $tim->id_tim_event)}}">{{$tim->eventInternalRegisRef->eventInternalRef->nama_event}}</a></h4>
                                                         <small class="text-muted">Oleh: <a href="#" class="text-orange" target="_blank" rel="noopener noreferrer">
@@ -68,8 +68,8 @@
                                     @foreach ($tims as $tim)
                                         @if ($tim->eventEksternalRegisRef)
                                             <li class="col-lg-4 col-md-6 col-sm-12" style="list-style-type: none">
-                                                <div class="product-box">
-                                                    <div class="producct-img"><img src="{{url('assets/img/kompetisi-thumb/'.$tim->eventEksternalRegisRef->eventEksternalRef->poster_image)}}" alt=""></div>
+                                                <div class="product-box" style="border-radius: 20px !important">
+                                                    <div class="producct-img" style="border-radius: 20px !important;"><img src="{{url('assets/img/kompetisi-thumb/'.$tim->eventEksternalRegisRef->eventEksternalRef->poster_image)}}" alt=""></div>
                                                     <div class="product-caption">
                                                         <h4><a href="{{route('peserta.team.detail', $tim->id_tim_event)}}">{{$tim->eventEksternalRegisRef->eventEksternalRef->nama_event}}</a></h4>
                                                         <small class="text-muted">Oleh: <a href="#" class="text-orange" target="_blank" rel="noopener noreferrer">

@@ -124,7 +124,7 @@
                                                 <div class="form-group">
                                                     <label>Nama Lengkap</label>
                                                     @if (Session::get('is_mahasiswa') == "1")
-                                                        <input class="form-control form-control-lg" value="{{$pengguna->nama_mhs}}" disabled type="text">
+                                                        <input class="form-control form-control-lg" value="{{$pengguna->mahasiswaRef->mahasiswa_nama}}" disabled type="text">
                                                     @else
                                                         <input class="form-control form-control-lg" name="nama" value="{{$pengguna->participantRef->nama_participant}}" type="text">
                                                     @endif

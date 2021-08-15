@@ -466,12 +466,7 @@
                     if(item.is_mahasiswa){
                         $('#select_anggota_'+id).append($('<option>', { 
                             value: item.id_pengguna,
-                            text : item.nama_mhs + " ("+item.username+")"
-                        }));
-                    }else if(item.is_participant){
-                        $('#select_anggota_'+id).append($('<option>', { 
-                            value: item.id_pengguna,
-                            text : item.participant_ref.nama_participant + " ("+item.username+")"
+                            text : item.mahasiswaRef.mahasiswa_nama + " ("+item.username+")"
                         }));
                     }
                 });

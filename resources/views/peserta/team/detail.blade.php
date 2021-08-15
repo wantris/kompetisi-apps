@@ -102,7 +102,11 @@
                                                     </div>
                                                 </div>
                                                 <div class="view-contact">
-                                                    <a href="#">Lihat Profil</a>
+                                                    @if ($detail->nim)
+                                                        <a href="{{route('peserta.account.profile.registrasi', ['nim' => $detail->nim])}}">Profil</a>
+                                                    @else
+                                                        <a href="{{route('peserta.account.profile.registrasi', ['participantid' => $detail->participant_id])}}">Profil</a>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </li>

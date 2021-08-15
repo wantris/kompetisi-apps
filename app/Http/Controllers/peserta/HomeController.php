@@ -257,7 +257,7 @@ class HomeController extends Controller
         $prestasis = collect();
 
         foreach ($registrations as $regis) {
-            $prestasi = PrestasiEventEksternal::where('event_eksternal_regis_id', $regis->id_event_eksternal_registration)->first();
+            $prestasi = PrestasiEventInternal::where('event_eksternal_regis_id', $regis->id_event_eksternal_registration)->first();
             if ($prestasi) {
                 $prestasis->push($prestasi);
             }

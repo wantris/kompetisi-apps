@@ -112,7 +112,7 @@ class ProfileController extends Controller
 
         if ($tims->count() > 0) {
             foreach ($tims as $tim) {
-                $regis_tim = EventInternalRegistration::with('eventInternalRef')->where('tim_event_id', $tim->id_tim_event)->whereHas('eventInternalRef', function ($query) {
+                $regis_tim = EventInternalRegistration::with('eventInternalRef', 'eventInternalRef.ormawaRef')->where('tim_event_id', $tim->id_tim_event)->whereHas('eventInternalRef', function ($query) {
                     $query->where('status', 1);
                 })->first();
 

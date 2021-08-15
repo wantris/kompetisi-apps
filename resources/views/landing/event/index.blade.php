@@ -281,9 +281,6 @@
                             </div>
                         </div>
                         <div class="komp-title pl-3">
-                            @php
-                                $slug = $event->slug;
-                            @endphp
                             <a href="${url_detail}"><h1 class="mt-3">
                                ${event.nama_event}
                             </h1></a>

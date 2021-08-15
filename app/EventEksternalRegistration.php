@@ -36,4 +36,9 @@ class EventEksternalRegistration extends Model
     {
         return $this->hasOne(PrestasiEventEksternal::class, 'event_eksternal_regis_id', 'id_event_eksternal_registration');
     }
+
+    public function tahapanRegisRef()
+    {
+        return $this->hasMany(TahapanEventEksternalRegis::class, 'event_eksternal_regis_id', 'id_event_eksternal_registration')->orderBy('created_at', 'DESC');
+    }
 }
