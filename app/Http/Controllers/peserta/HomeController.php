@@ -8,6 +8,9 @@ use App\TimEvent;
 use App\EventInternalRegistration;
 use App\EventEksternalRegistration;
 use App\EventEksternal;
+use App\EventEksternalFavourite;
+use App\EventInternalFavourite;
+use App\PrestasiEventEksternal;
 use App\PrestasiEventInternal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -17,7 +20,6 @@ class HomeController extends Controller
 {
     public function index()
     {
-
         $navTitle = '<span class="micon dw dw-home mr-2"></span>Dashboard';
 
         return view('peserta.dashboard', compact('navTitle'));
@@ -38,6 +40,8 @@ class HomeController extends Controller
 
             $event_active = $this->getEventActive($pengguna, $tims);
             $event_inactive = $this->getEventInactive($pengguna, $tims);
+            $event_favourites = $this->getAllEventFavourite();
+            $profil_has_filled = $this->countProfilHasFilled();
 
             $event_active_count = $event_active->event_active_total;
             $event_inactive_count = $event_inactive->event_inactive_total;
@@ -47,7 +51,9 @@ class HomeController extends Controller
             $data_dashboard = (object)[
                 'event_active_count' => $event_active_count,
                 'event_inactive_count' => $event_inactive_count,
-                'prestasi_count' => $prestasi_count
+                'prestasi_count' => $prestasi_count,
+                'event_favourites' => $event_favourites,
+                'profil_has_filled' => $profil_has_filled
             ];
 
             return response()->json($data_dashboard);
@@ -257,12 +263,36 @@ class HomeController extends Controller
         $prestasis = collect();
 
         foreach ($registrations as $regis) {
-            $prestasi = PrestasiEventInternal::where('event_eksternal_regis_id', $regis->id_event_eksternal_registration)->first();
+            $prestasi = PrestasiEventEksternal::where('event_eksternal_regis_id', $regis->id_event_eksternal_registration)->first();
             if ($prestasi) {
                 $prestasis->push($prestasi);
             }
         }
 
         return $prestasis;
+    }
+
+    public function getAllEventFavourite()
+    {
+        $eventinternal_favs = EventInternalFavourite::where('pengguna_id', Session::get('id_pengguna'))->get();
+        $eventeksternal_favs = EventEksternalFavourite::where('pengguna_id', Session::get('id_pengguna'))->get();
+
+        $event_total_fav = $eventinternal_favs->count() + $eventeksternal_favs->count();
+        return $event_total_fav;
+    }
+
+    public function countProfilHasFilled()
+    {
+        $table_name = "penggunas";
+        $model = "Pengguna";
+        $pos_info =  DB::select(DB::raw('SHOW COLUMNS FROM ' . $table_name));
+        $column = array('alamat', 'email', 'phone', 'photo', 'facebook_url', 'twitter_url', 'insta_url', 'linkedin_url');
+        $base_columns = count($column);
+        $not_null = 0;
+        foreach ($column as $col) {
+            $not_null += app('App\\' . $model)::selectRaw('SUM(CASE WHEN ' . $col . ' IS NOT NULL THEN 1 ELSE 0 END) AS not_null')->where('id_pengguna', '=', Session::get('id_pengguna'))->first()->not_null;
+        }
+
+        return ($not_null / $base_columns) * 100;
     }
 }

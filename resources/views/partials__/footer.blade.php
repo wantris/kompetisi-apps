@@ -77,7 +77,7 @@
                 <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6">
                     <!-- logo -->
                     <div class="footer-logo mb-20">
-                        <a href="index.html"><img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 100px" alt=""></a>
+                        <a href="index.html"><img src="{{url('assets/img/logo/polindra.png')}}" style="max-width: 100px" alt=""></a>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5 col-5">

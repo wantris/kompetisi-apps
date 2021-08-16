@@ -79,4 +79,20 @@ class TahapanEventInternalController extends Controller
         }
         return redirect()->back()->with('failed', 'Peserta gagal ditambahkan ke tahap selanjutnya');
     }
+
+    public function saveRegisStepMultiple(Request $request)
+    {
+        foreach ($request->regis_id as $regisid) {
+            $tahapan_regis_check = TahapanEventInternalRegis::where('tahapan_event_internal_id', $request->tahapan_id)
+                ->where('event_internal_regis_id', $regisid)->first();
+            if (!$tahapan_regis_check) {
+                $tahapan_regis = new TahapanEventInternalRegis();
+                $tahapan_regis->tahapan_event_internal_id = $request->tahapan_id;
+                $tahapan_regis->event_internal_regis_id = $regisid;
+                $tahapan_regis->save();
+            }
+        }
+
+        return redirect()->back()->with('success', 'Peserta berasil ditambahkan ke tahap selanjutnya');
+    }
 }

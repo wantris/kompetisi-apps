@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div class="card-dash-body">
-                <div class="progress mx-auto my-2" data-value='80'>
+                <div class="progress mx-auto my-2" id="profil-count-value" data-value="">
                     <span class="progress-left">
                         <span class="progress-bar border-primary"></span>
                     </span>
@@ -64,7 +64,7 @@
                         <span class="progress-bar border-primary"></span>
                     </span>
                     <div class="progress-value w-100 h-100 rounded-circle d-flex align-items-center justify-content-center">
-                        <div class="h2 font-weight-bold">80<sup class="small">%</sup></div>
+                        <div class="h2 font-weight-bold" id="profil-count-text">0<sup class="small">%</sup></div>
                     </div>
                   </div>
             </div>
@@ -103,7 +103,7 @@
                 </div>
             </div>
             <div class="card-dash-body mt-4">
-                <span class="d-inline card-body-number ml-2" >0</span>
+                <span class="d-inline card-body-number ml-2" id="event-favourite-text">0</span>
                 <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Event</span>
             </div>
         </div>
@@ -133,33 +133,50 @@
 @push('script')
     
 <script>
-    $(function() {
-
+    const profilePrecentage = () => {
         $(".progress").each(function() {
+            var value = $(this).data('value');
+            var left = $(this).find('.progress-left .progress-bar');
+            var right = $(this).find('.progress-right .progress-bar');
 
-        var value = $(this).attr('data-value');
-        var left = $(this).find('.progress-left .progress-bar');
-        var right = $(this).find('.progress-right .progress-bar');
-
-        if (value > 0) {
-            if (value <= 50) {
-            right.css('transform', 'rotate(' + percentageToDegrees(value) + 'deg)')
-            } else {
-            right.css('transform', 'rotate(180deg)')
-            left.css('transform', 'rotate(' + percentageToDegrees(value - 50) + 'deg)')
+            if (value > 0) {
+                if (value <= 50) {
+                right.css('transform', 'rotate(' + percentageToDegrees(value) + 'deg)')
+                } else {
+                right.css('transform', 'rotate(180deg)')
+                left.css('transform', 'rotate(' + percentageToDegrees(value - 50) + 'deg)')
+                }
             }
-        }
-
         })
 
         function percentageToDegrees(percentage) {
             return percentage / 100 * 360
         }
+    }
 
-    });
+    const profilePrecentageAfter = (value) => {
+        $(".progress").each(function() {
+            var left = $(this).find('.progress-left .progress-bar');
+            var right = $(this).find('.progress-right .progress-bar');
+
+            if (value > 0) {
+                if (value <= 50) {
+                right.css('transform', 'rotate(' + percentageToDegrees(value) + 'deg)')
+                } else {
+                right.css('transform', 'rotate(180deg)')
+                left.css('transform', 'rotate(' + percentageToDegrees(value - 50) + 'deg)')
+                }
+            }
+        })
+
+        function percentageToDegrees(percentage) {
+            return percentage / 100 * 360
+        }
+    }
 
     $(document).ready( function () {
         getAllData();
+        profilePrecentage();
     });
 
     const getAllData = () => {
@@ -169,9 +186,16 @@
             dataType: "json",
             success: function(values){
                 console.log(values);
+                let profile_html = `${values.profil_has_filled}<sup class="small">%</sup>`;
+
                 $('#event-active-text').text(values.event_active_count);
                 $('#event-total-text').text(values.event_active_count + values.event_inactive_count);
                 $('#event-prestasi-text').text(values.prestasi_count);
+                $('#event-favourite-text').text(values.event_favourites);
+                // $('#profil-count-value').data("value", values.profil_has_filled);
+                $('#profil-count-text').html(profile_html);
+                profilePrecentageAfter(values.profil_has_filled);
+                
             },
             error:function(err){
                 console.log(err);

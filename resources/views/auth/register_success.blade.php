@@ -5,7 +5,7 @@
     @push('cs-css')
     <style>
         h1 {
-            color: #88B04B;
+            color: #126AFE;
             font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
             font-weight: 900;
             font-size: 40px;
@@ -18,15 +18,17 @@
             margin: 0;
         }
         i.checkmark {
-            color: #9ABC66;
+            color: #126AFE;
             font-size: 100px;
             line-height: 200px;
             margin-left:-15px;
         }
         .card-success {
             background: white;
+            border:none;
+            border-radius: 20px !important;
+            border-top: 3px solid #126AFE;
             padding: 60px;
-            border-radius: 4px;
             box-shadow: 0 2px 3px #C8D0D8;
             display: inline-block;
             margin: 0 auto;

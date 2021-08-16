@@ -79,4 +79,20 @@ class TahapanEventEksternalController extends Controller
         }
         return redirect()->back()->with('failed', 'Peserta gagal ditambahkan ke tahap selanjutnya');
     }
+
+    public function saveRegisStepMultiple(Request $request)
+    {
+        foreach ($request->regis_id as $regisid) {
+            $tahapan_regis_check = TahapanEventEksternalRegis::where('tahapan_event_eksternal_id', $request->tahapan_id)
+                ->where('event_eksternal_regis_id', $regisid)->first();
+            if (!$tahapan_regis_check) {
+                $tahapan_regis = new TahapanEventEksternalRegis();
+                $tahapan_regis->tahapan_event_eksternal_id = $request->tahapan_id;
+                $tahapan_regis->event_eksternal_regis_id = $regisid;
+                $tahapan_regis->save();
+            }
+        }
+
+        return redirect()->back()->with('success', 'Peserta berasil ditambahkan ke tahap selanjutnya');
+    }
 }

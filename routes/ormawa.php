@@ -88,6 +88,7 @@ Route::group(['namespace' => 'ormawa'], function () {
         Route::delete('/eventinternal/delete', 'TahapanEventInternalController@delete')->name('ormawa.tahapan.delete');
         Route::get('/eventinternal', 'TahapanEventInternalController@getByEvent')->name('ormawa.tahapan.index.byevent');
         Route::get('/eventinternal/pendaftaran', 'TahapanEventInternalController@saveRegistrationStep')->name('ormawa.tahapan.eventinternal.pendaftaran.save');
+        Route::post('/eventinternal/pendaftaran/multiple', 'TahapanEventInternalController@saveRegisStepMultiple')->name('ormawa.tahapan.eventinternal.pendaftaran.save.multiple');
 
 
         Route::get('/eventeksternal', 'TahapanEventEksternalController@getByEvent')->name('ormawa.tahapan.index.byevent');
@@ -95,6 +96,7 @@ Route::group(['namespace' => 'ormawa'], function () {
         Route::post('/eventeksternal/update', 'TahapanEventEksternalController@update')->name('ormawa.tahapan.update');
         Route::delete('/eventeksternal/delete', 'TahapanEventEksternalController@delete')->name('ormawa.tahapan.delete');
         Route::get('/eventeksternal/pendaftaran', 'TahapanEventEksternalController@saveRegistrationStep')->name('ormawa.tahapan.eventeksternal.pendaftaran.save');
+        Route::post('/eventeksternal/pendaftaran/multiple', 'TahapanEventEksternalController@saveRegisStepMultiple')->name('ormawa.tahapan.eventeksternal.pendaftaran.save.multiple');
     });
 
     # =========== Event Registration =========== #

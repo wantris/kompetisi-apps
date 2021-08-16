@@ -8,7 +8,7 @@
                         <!-- Logo -->
                         <div class="logo">
                             <a href="{{url('/')}}">
-                                <img src="{{url('assets/img/logo/logo.png')}}" style="width: 100%;
+                                <img src="{{url('assets/img/logo/polindra.png')}}" style="width: 100%;
                               height: auto;
                               /* Recommended - Limit maximum width */
                               max-width: 100px;" class="mt-2" alt="">

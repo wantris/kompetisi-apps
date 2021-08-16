@@ -381,28 +381,28 @@
                 <div id="accordion" class="accordion">
                     <div class="card mb-0">
                         <div class="card-header collapsed" data-toggle="collapse" href="#collapseOne">
-                            <a class="card-title">Apa itu website SIEVENT?</a>
+                            <a class="card-title">Apa itu website Sievent?</a>
                         </div>
                         <div id="collapseOne" class="card-body collapse" data-parent="#accordion">
-                            <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS. </p>
+                            <p>Sievent adalah portal digital yang mennyatukan seluruh event Organisasi Mahasiswa yang berada di lingkup Politeknik Negeri Indramayu</p>
                         </div>
                         <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                            <a class="card-title"> Bagaimana cara mendaftar akun di sistem kegiatan perlombaan polindra?</a>
+                            <a class="card-title"> Bagaimana cara mendaftar akun di Sievent?</a>
                         </div>
                         <div id="collapseTwo" class="card-body collapse" data-parent="#accordion">
-                            <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS. </p>
+                            <p>Cara mendaftar akun pada Sievent adalah dengan klik tombol Daftar pada bar navigasi </p>
                         </div>
                         <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                            <a class="card-title"> Apa kemudahan yang saya dapat dengan sistem ini ? </a>
+                            <a class="card-title"> Mengapa saya harus menggunakan website ini ? </a>
                         </div>
                         <div id="collapseThree" class="collapse" data-parent="#accordion">
-                            <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. samus labore sustainable VHS. </div>
+                            <div class="card-body">Karena dengan webiste Sievent, jika anda sebagai peserta akan diberikan kemudahan dalam mendaftar dan memantau pendaftaran anda. Dan jika sebagai Organisasi Mahasiswa maka anda akan mendapatkan akses pengelolaan event yang sederhana dan terstruktur</div>
                         </div>
-                        <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                            <a class="card-title"> Bagaimana cara untuk mendaftar kompetisi ? </a>
+                        <div class="card-header collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+                            <a class="card-title"> Bagaimana cara untuk mendaftar event ? </a>
                         </div>
-                        <div id="collapseThree" class="collapse" data-parent="#accordion">
-                            <div class="card-body">Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. samus labore sustainable VHS. </div>
+                        <div id="collapseFour" class="collapse" data-parent="#accordion">
+                            <div class="card-body">Mendaftar event pada website Sievent sangatlah mudah, anda hanya login dan masuk ke halaman event, kemudian pilih event sesuai minat anda dan klik Daftar</div>
                         </div>
                     </div>
                 </div>

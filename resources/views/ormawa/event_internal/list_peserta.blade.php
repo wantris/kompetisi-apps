@@ -2,6 +2,31 @@
 
 @section('title','Event')
 
+@push('css')
+    <style>
+        .select2-container--default .select2-selection--multiple {
+            min-height: 40px;
+            border-color: #d4d4d4;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #e86b32 !important;
+            color: #fff !important;
+            border-color: #e86b32 !important;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #e4e4e4;
+            font-size: 12px;
+            padding: 0px 20px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding-top: 3px;
+        }
+        .select2-selection__choice__remove {
+            color: #fff !important;
+        }
+    </style>
+@endpush
+
 @section('content')
 
 
@@ -12,8 +37,12 @@
                 <div class="tab">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active text-orange" data-toggle="tab" href="#list" role="tab"
+                            <a class="nav-link active text-orange" data-toggle="tab" href="#list-tab" role="tab"
                                 aria-selected="true">Daftar Peserta</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-orange" data-toggle="tab" href="#tahapan-tab" role="tab"
+                                aria-selected="true">Tambahkan Ke Tahapan</a>
                         </li>
                         {{-- <li class="nav-item">
                             <a class="nav-link text-orange" data-toggle="tab" href="#status-juara" role="tab"
@@ -26,7 +55,7 @@
         <div class="pd-20 card">
             <div class="card-body">
                 <div class="tab-content">
-                    <div class="tab-pane fade show active" id="list" role="tabpanel">
+                    <div class="tab-pane fade show active" id="list-tab" role="tabpanel">
                         <div class="row">
                             <div class="mb-2 col-12 col-lg-3">
                                 <select id="status-select" class="form-control">
@@ -105,8 +134,12 @@
                                                             <i class="dw dw-more"></i>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                                                            <a class="dropdown-item" target="_blank"
-                                                                    href="#"><i class="dw dw-eye"></i>Lihat Profil</a>
+                                                            @php
+                                                                $regis_json = json_encode($regis);
+                                                                $tahapan_json = json_encode($regis->tahapanRegisRef);
+                                                            @endphp
+                                                            <a class="dropdown-item" target="_blank" href="#"><i class="dw dw-eye"></i>Lihat Profil</a>
+                                                            <a class="dropdown-item" href="#" onclick="seeTahapanHistory({{$tahapan_json}})"><i class="dw dw-clipboard1"></i>Riwayat Tahapan</a>
                                                             @if (Session::get('is_pembina') == "0")
                                                                 @if ($regis->status == "0")
                                                                     <a class="dropdown-item" href="{{route('ormawa.eventinternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_internal_registration,'status'=>1])}}"><i class="icon-copy dw dw-checked"></i>Buat Tervalidasi</a>
@@ -114,9 +147,6 @@
                                                                     <a class="dropdown-item" href="{{route('ormawa.eventinternal.pendaftar.updatestatus', ['id_regis'=>$regis->id_event_internal_registration,'status'=>0])}}"><i class="icon-copy dw dw-ban"></i>Buat Belum Tervalidasi</a>
                                                                 @endif
                                                                 <a class="dropdown-item" href="{{route('ormawa.tahapan.eventinternal.pendaftaran.save',['regisid'=>$regis->id_event_internal_registration,'eventid'=>$regis->event_internal_id])}}"><i class="icon-copy dw dw-fire"></i>Lolos ke tahapan selanjutnya</a>
-                                                                @php
-                                                                    $regis_json = json_encode($regis);
-                                                                @endphp
                                                                 <a class="dropdown-item" href="#" onclick="statusJuara({{$regis_json}})"><i class="dw dw-up-chevron-1"></i>Status Juara</a>
                                                                 <a class="dropdown-item" href="#" onclick="deletePendaftar({{$regis->id_event_internal_registration}})"><i class="dw dw-delete-3"></i> Hapus</a>
                                                             @endif
@@ -216,6 +246,75 @@
                             </div>
                         @endif
                     </div>
+                    <div class="tab-pane fade" id="tahapan-tab" role="tabpanel">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <p class="h5 text-orange"><i class="icon-copy dw dw-up-chevron-1 mr-2"></i>
+                                    Tambakan Pendaftaran Ke Tahap Selanjutnya
+                                </p>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <form action="{{route('ormawa.tahapan.eventinternal.pendaftaran.save.multiple')}}" method="post">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="">Tahapan</label>
+                                        <select class="form-control" name="tahapan_id" style="width: 100%" >
+                                            <option selected>Pilih Tahapan</option>
+                                            @foreach ($tahapans as $tahapan)
+                                                <option value="{{$tahapan->id_tahapan_event_internal}}">{{$tahapan->nama_tahapan}}</option>
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->has('tahapan_id'))
+                                            <span class="text-danger">{{ $errors->first('tahapan_id') }}</span>
+                                        @endif
+                                    </div>
+                                     <div class="form-group">
+                                        <label>Pilih Pendaftar</label>
+                                        <select class="custom-select2 form-control" name="regis_id[]" style="width: 100%" multiple="multiple" >
+                                            @if ($ei->role == "Individu")
+                                                @foreach ($pendaftaran as $regis)
+                                                    <option value="{{$regis->id_event_internal_registration}}">
+                                                        @if ($regis->nim)
+                                                            @if ($regis->mahasiswaRef)
+                                                                {{$regis->mahasiswaRef->mahasiswa_nama}} 
+                                                            @else
+                                                                {{$regis->penggunaMshRef->username}}
+                                                            @endif
+                                                        @else
+                                                            {{$regis->participantRef->nama_participant}}
+                                                        @endif
+                                                    </option>
+                                                @endforeach
+                                            @else
+                                                @foreach ($pendaftaran as $regis)
+                                                    @foreach ($regis->timRef->timDetailRef as $detail)
+                                                        @if ($detail->role == "ketua")
+                                                            @if ($detail->nim)
+                                                                @if ($detail->mahasiswaRef)
+                                                                    <option value="{{$regis->id_event_eksternal_registration}}">{{$detail->mahasiswaRef->mahasiswa_nama}}</option>
+                                                                @else
+                                                                    <option value="{{$regis->id_event_eksternal_registration}}">{{$detail->penggunaMshRef->username}}</option>
+                                                                @endif
+                                                            @else
+                                                                <option value="{{$regis->id_event_eksternal_registration}}">{{$detail->participantRef->nama_participant}}</option>
+                                                            @endif
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                        @if ($errors->has('regis_id'))
+                                            <span class="text-danger">{{ $errors->first('regis_id') }}</span>
+                                        @endif
+                                    </div>
+                                    <input type="submit"  class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"  style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important" value="Submit">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -258,6 +357,26 @@
         </div>
     </div>
 </div>
+
+{{-- modal tahapan history --}}
+<div style="border: none !important" class="modal fade" id="tahapan-modal"  role="dialog" aria-labelledby="tahapanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-orange" id="myLargeModalLabel"><i class="icon-copy dw-fire1 mr-2"></i>Riwayat Tahapan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-timeline">
+                    <div class="profile-timeline-list">
+                        <ul id="tahapan-list">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')
@@ -271,8 +390,8 @@
         }
     });
 
-    
     $(document).ready( function () {
+        $('.regis-select').select2();
         var table = $('.pendaftaran-table').DataTable({
             "columnDefs": [
                 {
@@ -378,6 +497,23 @@
         }, function(){
                 // No button callback alert('If you say so...'); 
         } ); 
+    }
+
+    const seeTahapanHistory = (tahapans) => {
+        event.preventDefault();
+        let html = ``;
+        tahapans.forEach(function(tahapan,index) {
+            let date = new Date(tahapan.created_at);
+            let created_at = date.getFullYear()+'-' + (date.getMonth()+1) + '-'+date.getDate();
+            html += `
+                <li>
+                    <div class="task-name ml-2"><i class="icon-copy dw dw-checked" style="left: -27px;" ></i>${tahapan.tahapan_event_internal.nama_tahapan}</div>
+                    <div class="task-time ml-2">${created_at}</div>
+                </li>
+            `;
+        });
+        $('#tahapan-list').html(html);
+        $('#tahapan-modal').modal('show');
     }
 </script>
 @endpush
