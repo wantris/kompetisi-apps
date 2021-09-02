@@ -278,6 +278,7 @@ class EventEksternalController extends Controller
     {
         EventEksternal::where('id_event_eksternal', $id_eventeksternal)->update([
             'status' => 1,
+            'status_validasi' => 1,
         ]);
     }
 }

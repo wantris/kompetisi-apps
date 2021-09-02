@@ -23,14 +23,16 @@ class EventInternalStoreRequest extends FormRequest
      */
     public function rules()
     {
-         return [
+        return [
             'category' => 'required|integer',
             'event_title' => 'required',
             'peserta' => 'required|integer',
             'tgl_mulai' => 'required',
             'tgl_tutup' => 'required',
             'jenis' => 'required',
-            'jenis_peserta' => 'required|integer'
+            'jenis_peserta' => 'required|integer',
+            'poster' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'banner' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 

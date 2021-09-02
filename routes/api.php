@@ -107,11 +107,15 @@ Route::group(['prefix' => 'v1'], function () {
         Route::delete('/delete/{id_team}', 'Api\teamController@edit')->name('team.delete');
     });
 
+    // ==================== Registration ========================
+
     Route::group(['prefix' => 'registration'], function () {
         // eventinternal 
         Route::get('/eventinternal', 'Api\EventInternalRegisController@index')->name('registrations.eventinternal.index');
+        Route::get('/eventinternal/export', 'Api\EventInternalRegisController@exportPendaftar')->name('registrations.eventinternal.exportPendaftar');
 
         Route::get('/eventeksternal', 'Api\EventEksternalRegisController@index')->name('registrations.eventeksternal.index');
+        Route::get('/eventeksternal/export', 'Api\EventEksternalRegisController@exportPendaftar')->name('registrations.eventeksternal.exportPendaftar');
     });
 
     Route::group(['prefix' => 'slider'], function () {
@@ -134,5 +138,23 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/save', 'Api\TestimoniController@save')->name('testimoni.save');
         Route::get('/delete/{id_testimoni}', 'Api\TestimoniController@delete')->name('testimoni.delete');
         Route::post('/update/{id_testimoni}', 'Api\TestimoniController@update')->name('testimoni.update');
+    });
+
+    # ============== Tahapan Event ================ #
+    Route::group(['prefix' => 'tahapan'], function () {
+        Route::get('/eventinternal', 'Api\TahapanEventInternalController@getByEvent')->name('ormawa.tahapan.index.byevent');
+        Route::post('/eventinternal/save', 'Api\TahapanEventInternalController@save')->name('ormawa.tahapan.save');
+        Route::post('/eventinternal/update', 'Api\TahapanEventInternalController@update')->name('ormawa.tahapan.update');
+        Route::delete('/eventinternal/delete', 'Api\TahapanEventInternalController@delete')->name('ormawa.tahapan.delete');
+        Route::get('/eventinternal/pendaftaran', 'Api\TahapanEventInternalController@saveRegistrationStep')->name('ormawa.tahapan.eventinternal.pendaftaran.save');
+        Route::post('/eventinternal/pendaftaran/multiple', 'Api\TahapanEventInternalController@saveRegisStepMultiple')->name('ormawa.tahapan.eventinternal.pendaftaran.save.multiple');
+
+
+        Route::get('/eventeksternal', 'Api\TahapanEventEksternalController@getByEvent')->name('ormawa.tahapan.index.byevent');
+        Route::post('/eventeksternal/save', 'Api\TahapanEventEksternalController@save')->name('ormawa.tahapan.save');
+        Route::post('/eventeksternal/update', 'Api\TahapanEventEksternalController@update')->name('ormawa.tahapan.update');
+        Route::delete('/eventeksternal/delete', 'Api\TahapanEventEksternalController@delete')->name('ormawa.tahapan.delete');
+        Route::get('/eventeksternal/pendaftaran', 'Api\TahapanEventEksternalController@saveRegistrationStep')->name('ormawa.tahapan.eventeksternal.pendaftaran.save');
+        Route::post('/eventeksternal/pendaftaran/multiple', 'Api\TahapanEventEksternalController@saveRegisStepMultiple')->name('ormawa.tahapan.eventeksternal.pendaftaran.save.multiple');
     });
 });

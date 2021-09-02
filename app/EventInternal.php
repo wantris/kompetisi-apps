@@ -50,4 +50,9 @@ class EventInternal extends Model
     {
         return $this->hasOne(EventInternalDetail::class, 'event_internal_id',  'id_event_internal');
     }
+
+    public function tahapanRef()
+    {
+        return $this->hasMany(TahapanEventInternal::class, 'event_internal_id', 'id_event_internal');
+    }
 }

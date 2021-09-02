@@ -12,6 +12,7 @@ use App\EventEksternalRegistration;
 use App\EventEksternal;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
+use App\SertifikatEventEksternal;
 
 class EventEksternalRegisController extends Controller
 {
@@ -89,6 +90,30 @@ class EventEksternalRegisController extends Controller
             }
 
             return $registrations;
+        }
+    }
+
+    public function saveSertificate(Request $request)
+    {
+        $validated = $request->validate([
+            'regisid' => 'required',
+        ]);
+
+        try {
+            if ($request->file('file')) {
+                $resorceFile = $request->file('file');
+                $nameFile   = "sertificate_" . rand(0000, 9999) . "." . $resorceFile->getClientOriginalExtension();
+                $resorceFile->move(\base_path() . "/public/assets/file/berkas-sertifikat/", $nameFile);
+            }
+
+            $sertif = new SertifikatEventEksternal();
+            $sertif->event_eksternal_regis_id = $request->regisid;
+            $sertif->filename = $nameFile;
+            $sertif->save();
+
+            return redirect()->back();
+        } catch (\Throwable $err) {
+            return $err;
         }
     }
 }

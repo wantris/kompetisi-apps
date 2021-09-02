@@ -13,6 +13,7 @@
         <div class="container-fluid">
           <form action="{{route('peserta.login.post')}}" method="post">
             @csrf
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <div class="row">
               <div class="col-12">
                 <div class="form-group">
@@ -75,6 +76,7 @@
         <div class="container-fluid">
           <form action="{{route('ormawa.login.post')}}" method="post">
             @csrf
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <div class="row">
               <div class="col-lg-12">
                 <div class="form-group">

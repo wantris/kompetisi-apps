@@ -44,7 +44,6 @@ class eventInternalController extends Controller
         $kategoris = KategoriEvent::all();
         $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>Daftar Event Internal';
 
-
         if (Session::get('id_pengguna') != null) {
 
             $pengguna = $this->pengguna;
@@ -187,6 +186,7 @@ class eventInternalController extends Controller
             $navTitle = '<span class="micon dw dw-up-chevron-1 mr-2"></span>' . $event->nama_event;
             $registrations = EventInternalRegistration::with('timRef', 'participantRef')->where('event_internal_id', $event->id_event_internal)->get();
             $check_regis = $this->checkIsRegis($pengguna, $event);
+
             $feeds = $this->getAllFilePendaftaran($event->id_event_internal);
 
             if ($event->role != "Team") {
@@ -304,7 +304,7 @@ class eventInternalController extends Controller
         $id_eventinternal = $event->id_event_internal;
 
         if ($event->role == "Team") {
-            $check_regis = TimEvent::whereHas('eventInternalRegisRef', function ($query) use ($id_eventinternal) {
+            $check_regis = TimEvent::with('eventInternalRegisRef.sertifikatRef', 'eventInternalRegisRef.tahapanRegisRef')->whereHas('eventInternalRegisRef', function ($query) use ($id_eventinternal) {
                 $query->where('event_internal_id', $id_eventinternal);
             })->whereHas('timDetailRef', function ($query) use ($pengguna) {
                 if ($pengguna->is_mahasiswa) {
@@ -315,10 +315,10 @@ class eventInternalController extends Controller
             })->first();
         } else {
             if ($pengguna->is_mahasiswa) {
-                $check_regis = EventInternalRegistration::where('nim', $pengguna->nim)
+                $check_regis = EventInternalRegistration::with('tahapanRegisRef', 'sertifikatRef')->where('nim', $pengguna->nim)
                     ->where('event_internal_id', $id_eventinternal)->first();
             } else {
-                $check_regis = EventInternalRegistration::where('participant_id', $pengguna->participant_id)
+                $check_regis = EventInternalRegistration::with('tahapanRegisRef', 'sertifikatRef')->where('participant_id', $pengguna->participant_id)
                     ->where('event_internal_id', $id_eventinternal)->first();
             }
         }

@@ -31,7 +31,6 @@ class ApiDosenController extends Controller
 
             return $dosen->data;
         } catch (\Throwable $err) {
-            dd($err);
             return $dosen;
         }
     }

@@ -339,13 +339,13 @@ class eventEksternalController extends Controller
         $id_eventeksternal = $event->id_event_eksternal;
 
         if ($event->role == "Team") {
-            $check_regis = TimEvent::whereHas('eventEksternalRegisRef', function ($query) use ($id_eventeksternal) {
+            $check_regis = TimEvent::with('eventEksternalRegisRef.sertifikatRef', 'eventEksternalRegisRef.tahapanRegisRef')->whereHas('eventEksternalRegisRef', function ($query) use ($id_eventeksternal) {
                 $query->where('event_eksternal_id', $id_eventeksternal);
             })->whereHas('timDetailRef', function ($query) use ($pengguna) {
                 $query->where('nim', $pengguna->nim);
             })->first();
         } else {
-            $check_regis = EventEksternalRegistration::where('nim', $pengguna->nim)
+            $check_regis = EventEksternalRegistration::with('tahapanRegisRef', 'sertifikatRef')->where('nim', $pengguna->nim)
                 ->where('event_eksternal_id', $id_eventeksternal)->first();
         }
 

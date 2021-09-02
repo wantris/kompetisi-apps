@@ -38,6 +38,10 @@ Route::group(['prefix' => 'event', 'namespace' => 'landing', 'middleware' => 'op
     Route::post('/registration/team/save/{slug}', 'eventController@saveRegistrationTeam')->name('event.registration.team.save');
     Route::get('/registration/team/invite/sendmail', 'eventController@sendMail')->name('event.registration.team.sendmail');
     Route::get('/invitation/team/{id_detail}', 'eventController@lookInvitation')->name('event.invitation.look');
+
+    Route::get('/sertificate/download', 'eventController@downloadSertificate')->name('event.sertificate.download');
+    Route::get('/sertificate/eventinternal/{filename}', 'eventController@sertificateEventinternal')->name('eventinternal.sertificate.download');
+    Route::get('/sertificate/eventeksternal/{filename}', 'eventController@sertificateEventeksternal')->name('eventeksternal.sertificate.download');
 });
 
 // Blog
@@ -64,7 +68,6 @@ Route::group(['prefix' => 'passwordreset', 'namespace' => 'auth'], function () {
     Route::get('/newpassword', 'PasswordResetController@newPassword')->name('password.newPassword');
     Route::post('/newpassword', 'PasswordResetController@newPasswordSave')->name('password.newPassword.save');
 });
-
 
 
 # ======= Admin =========== #

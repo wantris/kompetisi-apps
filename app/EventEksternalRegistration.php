@@ -41,4 +41,9 @@ class EventEksternalRegistration extends Model
     {
         return $this->hasMany(TahapanEventEksternalRegis::class, 'event_eksternal_regis_id', 'id_event_eksternal_registration')->orderBy('created_at', 'DESC');
     }
+
+    public function sertifikatRef()
+    {
+        return $this->hasOne(SertifikatEventEksternal::class, 'event_eksternal_regis_id', 'id_event_eksternal_registration');
+    }
 }

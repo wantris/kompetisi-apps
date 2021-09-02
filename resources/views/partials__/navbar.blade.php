@@ -41,23 +41,21 @@
                                                 </a>
                                                 <ul class="submenu">
                                                     <li><a href="{{route('peserta.index')}}">Dashboard</a></li>
-                                                    <li><a href="single-blog.html">Ganti Password</a></li>
-                                                    <li><a href="elements.html">Profil Publik</a></li>
-                                                    <li><a href="job_details.html">Sign out</a></li>
+                                                    <li><a href="{{route('peserta.account.changepassword')}}">Ganti Password</a></li>
+                                                    <li><a href="{{route('peserta.logout')}}">Sign out</a></li>
                                                 </ul>
                                             </li>
                                         @elseif(Session::get('id_ormawa'))
                                             <li class="d-lg-none "><a href="#"><img src="" style="width: 50px; height:50px; border-radius:20px" alt=""></a>
                                                 <ul class="submenu">
                                                     <li><a href="{{route('ormawa.index')}}">Dashboard</a></li>
-                                                    <li><a href="single-blog.html">Ganti Password</a></li>
-                                                    <li><a href="elements.html">Profil Publik</a></li>
+                                                    <li><a href="{{route('ormawa.settings.changepassword')}}">Ganti Password</a></li>
                                                     <li><a href="{{route('ormawa.logout')}}">Sign out</a></li>
                                                 </ul>
                                             </li>
                                         @else
-                                            <li class="d-block d-sm-none"><a href="#" data-toggle="modal" data-target="#mahasiswaLoginModal" class="btn-login-mobile bg-app btn-round text-white mb-2">Peserta</a></li>
-                                            <li class="d-block d-sm-none"><a href="#" data-toggle="modal" data-target="#ormawaLoginModal" class="btn-login-mobile bg-app-secondary btn-round text-white">Ormawa</a></li>
+                                            <li class="d-block d-sm-block d-md-block d-lg-none"><a href="#" data-toggle="modal" data-target="#mahasiswaLoginModal" class="btn-login-mobile bg-app btn-round text-white mb-2">Peserta</a></li>
+                                            <li class="d-block d-sm-block d-md-block d-lg-none"><a href="#" data-toggle="modal" data-target="#ormawaLoginModal" class="btn-login-mobile bg-app-secondary btn-round text-white">Ormawa</a></li>
                                         @endif
                                     </ul>
                                 </nav>

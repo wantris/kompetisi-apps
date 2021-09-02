@@ -95,7 +95,7 @@ body {
      <td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;height:4px;font-size:4px;line-height:4px" bgcolor="#6b4fbb"></td> 
     </tr> 
     <tr class="header"> 
-     <td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:13px;line-height:1.6;color:#5C5C5C;padding:25px 0"><img alt="GitLab" src="https://gitlab.com/assets/mailers/gitlab_header_logo-153749eaa7ea6fafcb995161abd3247bc4c4500f31498b0c4024f50093983ac0.gif" width="55" height="50"></td> 
+     <td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:13px;line-height:1.6;color:#5C5C5C;padding:25px 0"><img alt="Sievent" src="https://gitlab.com/assets/mailers/gitlab_header_logo-153749eaa7ea6fafcb995161abd3247bc4c4500f31498b0c4024f50093983ac0.gif" width="55" height="50"></td> 
     </tr> 
     <tr> 
      <td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif"> 

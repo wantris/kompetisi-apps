@@ -166,6 +166,7 @@
                         <h2><a href="#" onclick="uploadBanner()"><i class="fas fa-plus-circle"></i></a></h2>
                         <h3 class="text-white" style="font-szie:12px !important">Unggah gambar/banner</h3>
                         <h5 class="text-white">Direkomendasikan 724 x 340px dan tidak lebih dari 2MB</h5>
+                        <h5 class="text-white bg-danger" id="banner-error-text"></h5>
                     </div>
                 </div>
             </div>
@@ -190,7 +191,7 @@
                                     </div>
                                     <div class="col-lg-9 border-bottom">
                                         <h1 class="detail-komp__title red-tooltip mt-4"><input type="text"
-                                                onkeyup="changeText()" id="komp-title_inp" placeholder="Nama Event*">
+                                                onkeyup="changeText()" id="komp-title_inp" style="width: 100%" placeholder="Nama Event*">
                                         </h1>
                                         <h2 class="detail-komp__category" id="div-category"><a href="#"
                                                 data-toggle="modal" data-target="#category-modal" type="button"
@@ -200,9 +201,7 @@
                                             <a href="#" class="detail-komp__const float-left" data-toggle="modal"
                                                 data-target="#peserta-modal" type="button" id="peserta-text">0/0
                                                 Peserta</a>
-                                            <a class="detail-komp__verified float-right" data-toggle="modal"
-                                                type="button" data-target="#berkas-perijinan-modal"
-                                                style="text-decoration: none !important" href="#">Upload Perijinan</a>
+                                            <a class="detail-komp__verified float-right" style="text-decoration: none !important" href="#">Belum Tervalidasi</a>
                                         </div>
                                     </div>
                                 </div>
@@ -343,6 +342,7 @@
             <div class="col-lg-4" id="div-poster">
                 <div class="card shadow-sm" id="poster-bg-upload">
                     <a href="#" id="poster-upload" onclick="posterUpload()"><i class="fas fa-plus-square"></i></a>
+                    <a href="#" class="bg-danger text-white mt-5 px-2" style="font-size: 16px" id="poster-error-text"></a>
                 </div>
             </div>
         </div>
@@ -366,12 +366,6 @@
                         <div class="col-lg-2 col-md-12 col-12 text-center mt-2">
                             <a href="#" onclick="submitForm()" class="detail-komp__footer-btn">
                                 Simpan
-                            </a>
-                        </div>
-                        <div class="col-lg-2 col-md-12 col-12 text-center mt-2">
-                            <a href="#" onclick="submitForm()" style="background-color: #FF6E66"
-                                class="detail-komp__footer-btn">
-                                Draft
                             </a>
                         </div>
                     </div>
@@ -888,9 +882,21 @@
 @if ($errors->has('event_title'))
 <script>
     $(document).ready(function(){
-            $('#komp-title_inp').tooltip('dispose').tooltip({title: "Nama Event Internal Required"}).tooltip('show');
+            $('#komp-title_inp').tooltip('dispose').tooltip({title: "Nama Event Wajib Diisi !"}).tooltip('show');
         });
 </script>
+@endif
+
+@if ($errors->has('banner'))
+<script>
+    $('#banner-error-text').text('Banner Wajib Diisi !');
+</script>
+@endif
+
+@if ($errors->has('poster'))
+    <script>
+        $('#poster-error-text').text('Poster Wajib Diisi !');
+    </script>
 @endif
 
 @if ($errors->has('category'))
@@ -904,7 +910,7 @@
 @if ($errors->has('peserta'))
 <script>
     $(document).ready(function(){
-            $('.detail-komp__const').tooltip('dispose').tooltip({title: "Kuota Peserta Required"}).tooltip('show');
+            $('.detail-komp__const').tooltip('dispose').tooltip({title: "Kuota Peserta Wajib Diisi !"}).tooltip('show');
         });
 </script>
 @endif
@@ -912,7 +918,7 @@
 @if ($errors->has('tgl_mulai') && $errors->has('tgl_tutup'))
 <script>
     $(document).ready(function(){
-            $('#pilih-tanggal').tooltip('dispose').tooltip({title: "Tanggal Mulai & Tutup Pendaftaran Required"}).tooltip('show');
+            $('#pilih-tanggal').tooltip('dispose').tooltip({title: "Tanggal Mulai & Tutup Pendaftaran Wajib Diisi !"}).tooltip('show');
         });
 </script>
 @endif
@@ -920,7 +926,7 @@
 @if ($errors->has('jenis'))
 <script>
     $(document).ready(function(){
-            $('#jenis-text').tooltip('dispose').tooltip({title: "Jenis Event Required"}).tooltip('show');
+            $('#jenis-text').tooltip('dispose').tooltip({title: "Jenis Event Wajib Diisi !"}).tooltip('show');
         });
 </script>
 @endif
@@ -928,7 +934,7 @@
 @if ($errors->has('jenis_peserta'))
 <script>
     $(document).ready(function(){
-            $('#jenis-peserta').tooltip('dispose').tooltip({title: "Jenis Peserta Required"}).tooltip('show');
+            $('#jenis-peserta').tooltip('dispose').tooltip({title: "Jenis Peserta Wajib Diisi !"}).tooltip('show');
         });
 </script>
 @endif
@@ -936,7 +942,7 @@
 @if ($errors->has('deskripsi'))
 <script>
     $(document).ready(function(){
-            $('#jdeskripsi-inp').tooltip('dispose').tooltip({title: "Deskripsi Event Internal Required"}).tooltip('show');
+            $('#jdeskripsi-inp').tooltip('dispose').tooltip({title: "Deskripsi Event Internal Wajib Diisi !"}).tooltip('show');
         });
 </script>
 @endif

@@ -101,7 +101,7 @@ class ApiMahasiswaController extends Controller
 
             return $mahasiswa;
         } catch (\Throwable $err) {
-            return $mahasiswa;
+            return $err;
         }
     }
 }

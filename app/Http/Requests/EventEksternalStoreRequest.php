@@ -32,6 +32,8 @@ class EventEksternalStoreRequest extends FormRequest
             'tgl_mulai' => 'required',
             'tgl_tutup' => 'required',
             'deskripsi' => 'required',
+            'poster' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'banner' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 }

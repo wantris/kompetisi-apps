@@ -98,7 +98,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="profile-sort-desc">
-                                                        Lorem ipsum dolor sit amet, consectetur adipisicing magna aliqua.
+                                                        @if ($pengguna_detail->nim)
+                                                            Mahasiswa
+                                                        @else
+                                                            Partisipan Eksternal
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="view-contact">

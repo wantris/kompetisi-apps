@@ -76,7 +76,7 @@
                 <div class="row mt-2">
                     <div class="col-8">
                         <img src="{{url('assets/deskapp/vendors/images/icon/win.svg')}}" width="20" class="img-fluid ml-2 d-inline" alt="">
-                        <span class="d-inline ml-2 text-secondary mt-2">Event Menang</span>
+                        <span class="d-inline ml-2 text-secondary mt-2">Prestasi Event</span>
                     </div>
                     <div class="col-4 text-right ">
                         <a href="#" class="card-dash-link">Detail <i class="icofont-caret-right"></i></a>
@@ -114,7 +114,7 @@
                 <div class="row mt-2">
                     <div class="col-8">
                         <img src="{{url('assets/deskapp/vendors/images/icon/group.svg')}}" width="20" class="img-fluid ml-2 d-inline" alt="">
-                        <span class="d-inline ml-2 text-secondary mt-2">Jumlah Pengikut</span>
+                        <span class="d-inline ml-2 text-secondary mt-2">Total Tim</span>
                     </div>
                     <div class="col-4 text-right ">
                         <a href="#" class="card-dash-link">Detail <i class="icofont-caret-right"></i></a>
@@ -122,8 +122,8 @@
                 </div>
             </div>
             <div class="card-dash-body mt-4">
-                <span class="d-inline card-body-number ml-2" >0</span>
-                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Orang</span>
+                <span class="d-inline card-body-number ml-2" id="tim-event-text">0</span>
+                <span class="d-inline ml-1 text-secondary" style="font-size: 20px">Tim</span>
             </div>
         </div>
     </div>
@@ -195,6 +195,7 @@
                 // $('#profil-count-value').data("value", values.profil_has_filled);
                 $('#profil-count-text').html(profile_html);
                 profilePrecentageAfter(values.profil_has_filled);
+                $('#tim-event-text').text(values.tim_count);
                 
             },
             error:function(err){

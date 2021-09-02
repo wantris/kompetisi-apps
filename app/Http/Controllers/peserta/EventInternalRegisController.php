@@ -13,6 +13,7 @@ use App\Pengguna;
 use App\TimEvent;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
+use App\SertifikatEventInternal;
 
 class EventInternalRegisController extends Controller
 {
@@ -122,5 +123,29 @@ class EventInternalRegisController extends Controller
         }
 
         return $registrations;
+    }
+
+    public function saveSertificate(Request $request)
+    {
+        $validated = $request->validate([
+            'regisid' => 'required',
+        ]);
+
+        try {
+            if ($request->file('file')) {
+                $resorceFile = $request->file('file');
+                $nameFile   = "sertificate_" . rand(0000, 9999) . "." . $resorceFile->getClientOriginalExtension();
+                $resorceFile->move(\base_path() . "/public/assets/file/berkas-sertifikat/", $nameFile);
+            }
+
+            $sertif = new SertifikatEventInternal();
+            $sertif->event_internal_regis_id = $request->regisid;
+            $sertif->filename = $nameFile;
+            $sertif->save();
+
+            return redirect()->back();
+        } catch (\Throwable $err) {
+            return $err;
+        }
     }
 }

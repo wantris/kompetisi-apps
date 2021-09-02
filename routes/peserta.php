@@ -78,6 +78,9 @@ Route::group(['namespace' => 'peserta'], function () {
             // eventinternal
             Route::get('/eventinternal', 'EventInternalRegisController@index')->name('peserta.regis.eventinternal.index');
             Route::get('/eventinternal/list', 'EventInternalRegisController@getAllRegistration')->name('peserta.regis.eventinternal.list');
+            Route::post('/eventinternal/sertificate', 'EventInternalRegisController@saveSertificate')->name('peserta.regis.eventinternal.saveSertificate');
+
+            Route::post('/eventeksternal/sertificate', 'EventEksternalRegisController@saveSertificate')->name('peserta.regis.eventeksternal.saveSertificate');
         });
 
         Route::group(['prefix' => 'account'], function () {

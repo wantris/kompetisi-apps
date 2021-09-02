@@ -44,10 +44,14 @@
                             <a class="nav-link text-orange" data-toggle="tab" href="#tahapan-tab" role="tab"
                                 aria-selected="true">Tambahkan Ke Tahapan</a>
                         </li>
-                        {{-- <li class="nav-item">
-                            <a class="nav-link text-orange" data-toggle="tab" href="#status-juara" role="tab"
-                                aria-selected="false">Status Juara</a>
-                        </li> --}}
+                        @foreach ($ei->tahapanRef as $cekTahapan)
+                            @if ($cekTahapan->nama_tahapan == "Upload Sertifikat")
+                                 <li class="nav-item">
+                                    <a class="nav-link text-orange" data-toggle="tab" href="#sertifikat-tab" role="tab"
+                                        aria-selected="false">Peraih Sertifikat</a>
+                                </li>
+                            @endif
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -187,7 +191,7 @@
                                                                 @if ($detail->mahasiswaRef)
                                                                     {{$detail->mahasiswaRef->mahasiswa_nama}}
                                                                 @else
-                                                                    {{$detail->penggunaMshRef->username}}
+                                                                    {{$detail->nim}}
                                                                 @endif
                                                             @else
                                                                 {{$detail->participantRef->nama_participant}}
@@ -208,7 +212,7 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    @if ($regis->prestasiRef->count() > 0)
+                                                    @if ($regis->prestasiRef->count() > 0 || $regis->prestasiRef)
                                                     {{$regis->prestasiRef->posisi}}
                                                     @endif
                                                 </td>
@@ -219,7 +223,11 @@
                                                             <i class="dw dw-more"></i>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                                                            @php
+                                                                $tahapan_json = json_encode($regis->tahapanRegisRef);
+                                                            @endphp
                                                             <a class="dropdown-item" href="{{route('ormawa.team.detail', $regis->tim_event_id)}}"><i class="dw dw-eye"></i>Lihat Tim</a>
+                                                            <a class="dropdown-item" href="#" onclick="seeTahapanHistory({{$tahapan_json}})"><i class="dw dw-clipboard1"></i>Riwayat Tahapan</a>
                                                             @if (Session::get('is_pembina') == "0")
                                                             <a class="dropdown-item" href="{{route('ormawa.tahapan.eventinternal.pendaftaran.save',['regisid'=>$regis->id_event_internal_registration,'eventid'=>$regis->event_internal_id])}}"><i class="icon-copy dw dw-fire"></i>Lolos ke tahapan selanjutnya</a>
                                                                 @if ($regis->status == "0")
@@ -296,7 +304,7 @@
                                                                 @if ($detail->mahasiswaRef)
                                                                     <option value="{{$regis->id_event_eksternal_registration}}">{{$detail->mahasiswaRef->mahasiswa_nama}}</option>
                                                                 @else
-                                                                    <option value="{{$regis->id_event_eksternal_registration}}">{{$detail->penggunaMshRef->username}}</option>
+                                                                    <option value="{{$regis->id_event_eksternal_registration}}">{{$detail->nim}}</option>
                                                                 @endif
                                                             @else
                                                                 <option value="{{$regis->id_event_eksternal_registration}}">{{$detail->participantRef->nama_participant}}</option>
@@ -312,6 +320,126 @@
                                     </div>
                                     <input type="submit"  class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2"  style="border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important" value="Submit">
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="sertifikat-tab" role="tabpanel">
+                        <div class="row">
+                            <div class="col-12">
+                                @if ($ei->role == "Individu")
+                                    <div class="table-responsive">
+                                        <table class="sertifikat-table table stripe hover nowrap" style="width: 100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nama</th>
+                                                    <th>Status Upload</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($pendaftaran as $regis)
+                                                    @foreach ($regis->tahapanRegisRef as $tahapan_regis)
+                                                        @if ($tahapan_regis->tahapanEventInternal->nama_tahapan == "Upload Sertifikat")
+                                                            <tr id="tr_{{$regis->id_event_internal_registration}}">
+                                                                <td>{{$regis->id_event_internal_registration}}</td>
+                                                                <td>
+                                                                    @if ($regis->nim)
+                                                                        @if ($regis->mahasiswaRef)
+                                                                            {{$regis->mahasiswaRef->mahasiswa_nama}}
+                                                                        @else
+                                                                            {{$regis->mahasiswaRef}}
+                                                                        @endif
+                                                                    @else
+                                                                        {{$regis->participantRef->nama_participant}}
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    @if ($regis->sertifikatRef)
+                                                                        <i class="icon-copy dw dw-checked text-primary"></i>
+                                                                    @else
+                                                                        <i class="icon-copy dw dw-ban text-danger"></i>
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    asdasd
+                                                                    <div class="dropdown">
+                                                                        <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle"
+                                                                            href="#" role="button" data-toggle="dropdown">
+                                                                            <i class="dw dw-more"></i>
+                                                                        </a>
+                                                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                                                                            <a class="dropdown-item" href="{{route('event.sertificate.download',['sertificateId' =>$regis->sertifikatRef->id_sertif_internal,'type'=>"eventinternal" ])}}"><i class="icon-copy dw dw-download1"></i>Download</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="table-responsive">
+                                        <table class="sertifikat-table table stripe hover nowrap" style="width: 100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th class="table-plus datatable-nosort">ID Tim</th>
+                                                    <th>Ketua Tim</th>
+                                                    <th>Status Upload</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($pendaftaran as $regis)
+                                                    @foreach ($regis->tahapanRegisRef as $tahapan_regis)
+                                                        @if ($tahapan_regis->tahapanEventInternal->nama_tahapan == "Upload Sertifikat")
+                                                            <tr id="tr_{{$regis->id_event_internal_registration}}">
+                                                                <td>{{$regis->id_event_internal_registration}}</td>
+                                                                <td>{{$regis->tim_event_id}}</td>
+                                                                <td>
+                                                                    @foreach ($regis->timRef->timDetailRef as $detail)
+                                                                        @if ($detail->role == "ketua")
+                                                                            @if ($detail->nim)
+                                                                                @if ($detail->mahasiswaRef)
+                                                                                    {{$detail->mahasiswaRef->mahasiswa_nama}}
+                                                                                @else
+                                                                                    {{$detail->nim}}
+                                                                                @endif
+                                                                            @else
+                                                                                {{$detail->participantRef->nama_participant}}
+                                                                            @endif
+                                                                        @endif
+                                                                    @endforeach    
+                                                                </td>
+                                                                <td>
+                                                                    @if ($regis->sertifikatRef)
+                                                                        <i class="icon-copy dw dw-checked text-primary"></i>
+                                                                    @else
+                                                                        <i class="icon-copy dw dw-ban text-danger"></i>
+                                                                    @endif
+                                                                </td>
+                                                                <td>
+                                                                    <div class="dropdown">
+                                                                        <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle"
+                                                                            href="#" role="button" data-toggle="dropdown">
+                                                                            <i class="dw dw-more"></i>
+                                                                        </a>
+                                                                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                                                                            <a class="dropdown-item" href="{{route('event.sertificate.download',['sertificateId' =>$regis->sertifikatRef->id_sertif_internal,'type'=>"eventinternal" ])}}"><i class="icon-copy dw dw-download1"></i>Download</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -392,6 +520,7 @@
 
     $(document).ready( function () {
         $('.regis-select').select2();
+        $('.sertifikat-table').DataTable();
         var table = $('.pendaftaran-table').DataTable({
             "columnDefs": [
                 {
@@ -429,7 +558,14 @@
                 {
                     text: 'Export Excel',
                     action: function ( e, dt, node, config ) {
-                        let url = "/ormawa/eventinternal/pendaftar/export/"+id_event+"/"+status;
+                        let url = "/ormawa/eventinternal/pendaftar/export/excel/"+id_event+"/"+status;
+                        window.location = url;
+                    }
+                },
+                {
+                    text: 'Export PDF',
+                    action: function ( e, dt, node, config ) {
+                        let url = "/ormawa/eventinternal/pendaftar/export/pdf/"+id_event+"/"+status;
                         window.location = url;
                     }
                 }

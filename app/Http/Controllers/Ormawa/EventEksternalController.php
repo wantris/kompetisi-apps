@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\EventEksternalStoreRequest;
 use App\Http\Requests\EventEksternalUpdateRequest;
 use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 use App\Exports\EventEksternalRegisEksport;
 use App\Http\Controllers\ormawa\TahapanEventEksternalController;
 
@@ -42,12 +43,12 @@ class EventEksternalController extends Controller
     {
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Event Eksternal';
         $cakupan = $this->cakupan;
-
         $cakupanAll = CakupanOrmawa::where('role', 'All')->first();
         if ($cakupan) {
-            $eeas = EventEksternal::with('kategoriRef', 'tipePesertaRef')->where('cakupan_ormawa_id', $cakupan->ormawa_id)->where('status', 1)->get();
-            $ees = EventEksternal::with('kategoriRef', 'tipePesertaRef')->where('cakupan_ormawa_id', $cakupan->ormawa_id)->get();
-            $eess = EventEksternal::with('kategoriRef', 'tipePesertaRef')->where('cakupan_ormawa_id', $cakupan->ormawa_id)->where('status', 0)->get();
+            $eeas = EventEksternal::with('kategoriRef', 'tipePesertaRef')->where('cakupan_ormawa_id', $cakupan->id_cakupan_ormawa)->where('status', 1)->get();
+            $ees = EventEksternal::with('kategoriRef', 'tipePesertaRef')->where('cakupan_ormawa_id', $cakupan->id_cakupan_ormawa)->get();
+            $eess = EventEksternal::with('kategoriRef', 'tipePesertaRef')->where('cakupan_ormawa_id', $cakupan->id_cakupan_ormawa)->get();
+
             $eescs = EventEksternal::with('kategoriRef', 'tipePesertaRef')->where('cakupan_ormawa_id', $cakupanAll->id_cakupan_ormawa)->get();
             return view('ormawa.event_eksternal.index', compact('ees', 'navTitle', 'eeas', 'eess', 'eescs'));
         }
@@ -396,7 +397,7 @@ class EventEksternalController extends Controller
     public function lihatPendaftar($id_eventeksternal)
     {
         $tahapan_controller = new TahapanEventEksternalController;
-        $ee = EventEksternal::find($id_eventeksternal);
+        $ee = EventEksternal::with('tahapanRef')->find($id_eventeksternal);
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Pendaftar ' . $ee->nama_event;
         $pendaftaran = $this->getPendaftarById($ee);
         $feeds = $this->getAllFilePendaftaran($ee->id_event_eksternal);
@@ -407,7 +408,7 @@ class EventEksternalController extends Controller
 
     public function getPendaftarById($event)
     {
-        $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventEksternal')->where('event_eksternal_id', $event->id_event_eksternal)->get();
+        $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventEksternal', 'sertifikatRef')->where('event_eksternal_id', $event->id_event_eksternal)->get();
 
         if ($event->role != "Team") {
             foreach ($registrations as $item) {
@@ -440,11 +441,22 @@ class EventEksternalController extends Controller
         return $registrations;
     }
 
-    public function exportPendaftar($id_eventeksternal, $status)
+    public function exportPendaftarExcel($id_eventeksternal, $status)
     {
         $event = EventEksternal::find($id_eventeksternal);
 
         return Excel::download(new EventEksternalRegisEksport($id_eventeksternal, $status), 'Peserta ' . $event->nama_event . '.xlsx');
+    }
+
+    public function exportPendaftarPdf($id_eventeksternal, $status)
+    {
+        $event = EventEksternal::find($id_eventeksternal);
+
+        $pendaftaran = $this->getPendaftarById($event);
+
+        $pdf = PDF::loadview('ormawa.exports.pdf.list_peserta_eksternal_pdf', ['event' => $event, 'pendaftaran' => $pendaftaran])->setPaper('a4', 'landscape');
+
+        return $pdf->download('data_peserta.pdf');
     }
 
     public function getAllFilePendaftaran($id_eventeksternal)

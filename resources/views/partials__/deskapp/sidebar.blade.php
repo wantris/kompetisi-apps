@@ -48,8 +48,8 @@
 <div class="left-side-bar">
     <div class="brand-logo">
         <a href="index.html" class="text-center">
-            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="dark-logo">
-            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="light-logo">
+            <img src="{{url('assets/img/logo/polindra.png')}}" style="max-width: 70px" alt="" class="dark-logo">
+            <img src="{{url('assets/img/logo/polindra.png')}}" style="max-width: 70px" alt="" class="light-logo">
         </a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
             <i class="ion-close-round"></i>
@@ -63,12 +63,12 @@
                         <span class="micon dw dw-house-1"></span><span class="mtext">Home</span>
                     </a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="{{route('peserta.event.submission','Design-Competition')}}"
                         class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-startup"></span><span class="mtext">Submission</span>
                     </a>
-                </li>
+                </li> --}}
                 <li>
                     <a href="{{route('peserta.eventinternal.notification', $slug)}}"
                         class="dropdown-toggle no-arrow">
@@ -91,8 +91,8 @@
 <div class="left-side-bar">
     <div class="brand-logo">
         <a href="index.html" class="text-center">
-            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="dark-logo">
-            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="light-logo">
+            <img src="{{url('assets/img/logo/polindra.png')}}" style="max-width: 70px" alt="" class="dark-logo">
+            <img src="{{url('assets/img/logo/polindra.png')}}" style="max-width: 70px" alt="" class="light-logo">
         </a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
             <i class="ion-close-round"></i>
@@ -106,12 +106,12 @@
                         <span class="micon dw dw-house-1"></span><span class="mtext">Home</span>
                     </a>
                 </li>
-                <li>
+                {{-- <li>
                     <a href="{{route('peserta.event.submission','Design-Competition')}}"
                         class="dropdown-toggle no-arrow">
                         <span class="micon dw dw-startup"></span><span class="mtext">Submission</span>
                     </a>
-                </li>
+                </li> --}}
                 <li>
                     <a href="{{route('peserta.eventeksternal.notification', $slug)}}"
                         class="dropdown-toggle no-arrow">
@@ -136,8 +136,8 @@
 <div class="left-side-bar">
     <div class="brand-logo">
         <a href="index.html" class="text-center">
-            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="dark-logo">
-            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="light-logo">
+            <img src="{{url('assets/img/logo/polindra.png')}}" style="max-width: 70px" alt="" class="dark-logo">
+            <img src="{{url('assets/img/logo/polindra.png')}}" style="max-width: 70px" alt="" class="light-logo">
         </a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
             <i class="ion-close-round"></i>
@@ -204,8 +204,8 @@
 <div class="left-side-bar">
     <div class="brand-logo">
         <a href="index.html" class="text-center">
-            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="dark-logo">
-            <img src="{{url('assets/img/logo/logo.png')}}" style="max-width: 70px" alt="" class="light-logo">
+            <img src="{{url('assets/img/logo/polindra.png')}}" style="max-width: 70px" alt="" class="dark-logo">
+            <img src="{{url('assets/img/logo/polindra.png')}}" style="max-width: 70px" alt="" class="light-logo">
         </a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
             <i class="ion-close-round"></i>

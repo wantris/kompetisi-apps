@@ -49,4 +49,9 @@ class EventEksternal extends Model
     {
         return $this->hasOne(EventEksternalDetail::class, 'event_eksternal_id',  'id_event_eksternal');
     }
+
+    public function tahapanRef()
+    {
+        return $this->hasMany(TahapanEventEksternal::class, 'event_eksternal_id', 'id_event_eksternal');
+    }
 }

@@ -39,7 +39,8 @@ Route::group(['namespace' => 'ormawa'], function () {
         Route::patch('/vallidasipembina', 'EventInternalController@updateValidasiPembina')->name('ormawa.eventinternal.validasi.pembina');
 
         // Registrasi
-        Route::get('/pendaftar/export/{id_eventinternal}/{status}', 'EventInternalController@exportPendaftar')->name('ormawa.eventinternal.pendaftar.export');
+        Route::get('/pendaftar/export/excel/{id_eventinternal}/{status}', 'EventInternalController@exportPendaftarExcel')->name('ormawa.eventinternal.pendaftar.export.excel');
+        Route::get('/pendaftar/export/pdf/{id_eventinternal}/{status}', 'EventInternalController@exportPendaftarPdf')->name('ormawa.eventinternal.pendaftar.export.pdf');
         Route::get('/pendaftar/downloadberkas/{id_regis}', 'EventInternalController@downloadBerkas')->name('ormawa.eventinternal.pendaftar.downloadberkas');
         Route::get('/pendaftar/validasiregis/{id_regis}/{status}', 'EventInternalController@updateStatusRegis')->name('ormawa.eventinternal.pendaftar.updatestatus');
         Route::get('/pendaftar/validasisemua/{id_event}', 'EventInternalController@validasiSemua')->name('ormawa.eventinternal.pendaftar.validasisemua');
@@ -73,7 +74,8 @@ Route::group(['namespace' => 'ormawa'], function () {
         Route::patch('/vallidasipembina', 'EventEksternalController@updateValidasiPembina')->name('ormawa.eventeksternal.validasi.pembina');
 
         // Registrasi
-        Route::get('/pendaftar/export/{id_eventeksternal}/{status}', 'EventEksternalController@exportPendaftar')->name('ormawa.eventeksternal.pendaftar.export');
+        Route::get('/pendaftar/export/excel/{id_eventeksternal}/{status}', 'EventEksternalController@exportPendaftarExcel')->name('ormawa.eventeksternal.pendaftar.export.excel');
+        Route::get('/pendaftar/export/pdf/{id_eventeksternal}/{status}', 'EventEksternalController@exportPendaftarPdf')->name('ormawa.eventeksternal.pendaftar.export.pdf');
         Route::get('/pendaftar/downloadberkas/{id_regis}', 'EventEksternalController@downloadBerkas')->name('ormawa.eventeksternal.pendaftar.downloadberkas');
         Route::get('/pendaftar/validasiregis/{id_regis}/{status}', 'EventEksternalController@updateStatusRegis')->name('ormawa.eventeksternal.pendaftar.updatestatus');
         Route::get('/pendaftar/validasisemua/{id_event}', 'EventEksternalController@validasiSemua')->name('ormawa.eventeksternal.pendaftar.validasisemua');

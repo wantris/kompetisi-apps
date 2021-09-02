@@ -211,7 +211,6 @@
                             @else
                                 <td></td>
                             @endif
-                                
                         </tr>
                 @endfor
             @endforeach

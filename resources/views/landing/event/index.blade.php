@@ -132,7 +132,7 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="count-job mb-35">
-                                        <span>39, 782 Event Ditemukan</span>
+                                        <span>{{$events->count()}} Event Ditemukan</span>
                                         <!-- Select job items start -->
                                         <div class="select-job-items">
                                             <span>Sort by</span>

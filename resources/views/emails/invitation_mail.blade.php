@@ -96,7 +96,7 @@ padding:null!important;
 <td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;height:4px;font-size:4px;line-height:4px" bgcolor="#6b4fbb"></td>
 </tr>
 <tr class="header">
-<td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:13px;line-height:1.6;color:#5c5c5c;padding:25px 0"><img alt="GitLab" src="https://ollfkb.stripocdn.email/content/guids/CABINET_8f4a8f56f2974e87665255aa5566756d/images/86591626431293027.png" width="55" height="50"></td>
+<td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:13px;line-height:1.6;color:#5c5c5c;padding:25px 0"><img alt="Sievent" src="https://ollfkb.stripocdn.email/content/guids/CABINET_8f4a8f56f2974e87665255aa5566756d/images/87831629247716616.png" width="55" height="50"></td>
 </tr>
 <tr>
 <td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
@@ -112,7 +112,7 @@ padding:null!important;
 </table></td>
 </tr>
 <tr class="footer">
-<td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:13px;line-height:1.6;color:#5c5c5c;padding:25px 0"><img alt="GitLab" class="footer-logo" src="https://ollfkb.stripocdn.email/content/guids/CABINET_8f4a8f56f2974e87665255aa5566756d/images/86591626431293027.png" style="display:block;width:90px;height:90px;margin:0 auto 1em">
+<td style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:13px;line-height:1.6;color:#5c5c5c;padding:25px 0"><img alt="GitLab" class="footer-logo" src="https://ollfkb.stripocdn.email/content/guids/CABINET_8f4a8f56f2974e87665255aa5566756d/images/87831629247716616.png" style="display:block;width:90px;height:90px;margin:0 auto 1em">
 <div>
 Kamu menerima email ini karena email kamu telah terdaftar di sievent.polindra.ac.id
 </div></td>

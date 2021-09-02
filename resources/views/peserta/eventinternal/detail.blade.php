@@ -60,8 +60,8 @@
                         @if ($check_regis && $feeds->count() > 0)
                             <a class="nav-link" data-toggle="tab" href="#berkas-pendaftaran" role="tab" aria-selected="false">Upload Berkas</a>
                         @endif
-                        
                     </div>
+
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="deskripsi" role="tabpanel">
                             <div class="pd-20">
@@ -254,29 +254,66 @@
                         </div>
                     </div>
                     <div class="col-12">
-                            @if ($check_regis)
-                                @if ($check_regis->eventInternalRegisRef)
-                                    @if ($check_regis->eventInternalRegisRef->status == "0")
-                                    <div class="alert alert-danger">
-                                        Pendaftaran belum tervalidasi
-                                    </div>
-                                    @else
-                                    <div class="alert alert-success">
-                                        Pendaftaran tervalidasi
-                                    </div>
-                                    @endif
+                        @if ($check_regis)
+                            @if ($check_regis->eventInternalRegisRef)
+                                @if ($check_regis->eventInternalRegisRef->status == "0")
+                                <div class="alert alert-danger">
+                                    Pendaftaran belum tervalidasi
+                                </div>
                                 @else
-                                    @if ($check_regis->status == "0")
-                                    <div class="alert alert-danger">
-                                        Pendaftaran belum tervalidasi
+                                <div class="alert alert-success">
+                                    Pendaftaran tervalidasi
+                                </div>
+                                @endif
+                            @else
+                                @if ($check_regis->status == "0")
+                                <div class="alert alert-danger">
+                                    Pendaftaran belum tervalidasi
+                                </div>
+                                @else
+                                <div class="alert alert-success">
+                                    Pendaftaran tervalidasi
+                                </div>
+                                @endif
+                            @endif
+                        @endif
+                    </div>
+                    <div class="col-12">
+                        @if ($check_regis)
+                            @if ($check_regis->eventInternalRegisRef)
+                                <div class="alert alert-primary">
+                                    Tahapan {{$check_regis->eventInternalRegisRef->tahapanRegisRef[0]->tahapanEventInternal->nama_tahapan}}
+                                </div>
+                                @if ($check_regis->eventInternalRegisRef->sertifikatRef)
+                                    <div class="alert alert-success mt-2">
+                                        <i class="icon-copy dw dw-checked mr-2"></i>
+                                        Sudah upload sertifikat
                                     </div>
-                                    @else
-                                    <div class="alert alert-success">
-                                        Pendaftaran tervalidasi
+                                @else
+                                    @if ($check_regis->eventInternalRegisRef->tahapanRegisRef[0]->tahapanEventInternal->nama_tahapan == "Upload Sertifikat")
+                                        <div class="mt-2">
+                                            <button type="button" onclick="uploadSertificate({{$check_regis->eventInternalRegisRef->id_event_internal_registration}})" class="btn btn-primary btn-block" style="font-size: 13px; background-color:#0079ff; border-color:#0079ff">Upload Sertifikat</button>
+                                        </div>
+                                    @endif
+                                @endif
+                            @else
+                                <div class="alert alert-primary">
+                                    Tahapan {{$check_regis->tahapanRegisRef[0]->tahapanEventInternal->nama_tahapan}}
+                                </div>
+                                @if ($check_regis->sertifikatRef)
+                                    <div class="alert alert-success mt-2">
+                                        <i class="icon-copy dw dw-checked mr-2"></i>
+                                        Sudah upload sertifikat
                                     </div>
+                                @else
+                                    @if ($check_regis->tahapanRegisRef[0]->tahapanEventInternal->nama_tahapan == "Upload Sertifikat")
+                                        <div class="mt-2">
+                                            <button type="button" onclick="uploadSertificate({{$check_regis->id_event_internal_registration}})" class="btn btn-primary btn-block" style="font-size: 13px; background-color:#0079ff; border-color:#0079ff">Upload Sertifikat</button>
+                                        </div>
                                     @endif
                                 @endif
                             @endif
+                        @endif
                     </div>
                     <div class="col-lg-12 col-md-4 mt-3">
                         <div class="card-box text-center " style="padding: 0 !important">
@@ -288,29 +325,54 @@
         </div>
     </div>
 
-    {{-- Modal Berkas --}}
-    <div style="border: none !important" class="modal fade" id="modal-upload-berkas"  role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-orange" id="myLargeModalLabel"><i class="icon-copy dw dw-file mr-2"></i>Upload Berkas Pendaftaran</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                </div>
-                <form action="" id="form-upload-berkas" enctype="multipart/form-data" method="post">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="">Berkas Pendaftaran</label>
-                            <input type="file" id="upload-berkas-inp" name="file" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" value="Upload Berkas" class="dcd-btn dcd-btn-sm dcd-btn-primary d-print-inline-block mr-2" style="width:100%;border:none;padding:10px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
-                        </div>
+        {{-- Modal Berkas --}}
+        <div style="border: none !important" class="modal fade" id="modal-upload-berkas"  role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-orange" id="myLargeModalLabel"><i class="icon-copy dw dw-file mr-2"></i>Upload Berkas Pendaftaran</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     </div>
-                </form>
+                    <form action="" id="form-upload-berkas" enctype="multipart/form-data" method="post">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="">Berkas Pendaftaran</label>
+                                <input type="file" id="upload-berkas-inp" name="file" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Upload Berkas" class="dcd-btn dcd-btn-sm dcd-btn-primary d-print-inline-block mr-2" style="width:100%;border:none;padding:10px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+
+        {{-- Modal Sertifikat --}}
+        <div style="border: none !important" class="modal fade" id="modal-upload-sertifikat"  role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-orange" id="myLargeModalLabel"><i class="icon-copy dw dw-file mr-2"></i>Upload Sertifikat</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <form action="{{route('peserta.regis.eventinternal.saveSertificate')}}" id="form-upload-sertifikat" enctype="multipart/form-data" method="post">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input type="hidden" id="regis-id-inp" name="regisid">
+                                <label for="">Sertifikat</label>
+                                <input type="file" id="upload-sertifikat-inp" name="file" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Upload Berkas" class="dcd-btn dcd-btn-sm dcd-btn-primary d-print-inline-block mr-2" style="width:100%;border:none;padding:10px 15px;font-size:12px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
     <a href="#" class="like-btn">
         <i class="icon-copy fa fa-heart-o my-like-btn" aria-hidden="true"></i>
@@ -440,6 +502,11 @@
             $('.like-btn').addClass('not-liked');
             $('.like-btn').html('<i class="icon-copy fa fa-heart-o  my-like-btn" aria-hidden="true"></i>');
         }
+    }
+
+    const uploadSertificate = (regisid) =>{
+        $('#modal-upload-sertifikat').modal('show');
+        $('#regis-id-inp').val(regisid);
     }
 </script>
 @endpush

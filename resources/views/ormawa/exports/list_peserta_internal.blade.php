@@ -12,7 +12,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($pendaftaran as $regis)\
+            @foreach ($pendaftaran as $regis)
                 @php
                     $tahapan_count = $regis->tahapanRegisRef->count();
                 @endphp
@@ -116,10 +116,14 @@
                         @endif
                     </td>
                     <td valign="center">
-                        @if ($regis->timRef->timDetailRef[0]->mahasiswaRef)
-                            {{$regis->timRef->timDetailRef[0]->mahasiswaRef->mahasiswa_nama}}
+                        @if ($regis->timRef->timDetailRef[0]->nim)
+                            @if ($regis->timRef->timDetailRef[0]->mahasiswaRef)
+                                {{$regis->timRef->timDetailRef[0]->mahasiswaRef->mahasiswa_nama}}
+                            @else
+                                {{$regis->timRef->timDetailRef[0]->nim}}
+                            @endif
                         @else
-                            {{$regis->timRef->timDetailRef[0]->nim}}
+                            {{$regis->timRef->timDetailRef[0]->participantRef->nama_participant}}
                         @endif
                     </td>
                     <td  valign="center">
@@ -141,7 +145,7 @@
                     </td>
                     <td rowspan="{{$total_count}}" valign="center">
                         @if ($regis->status == "0")
-                            Belum</a> 
+                            Belum 
                         @else
                             Tervalidasi
                         @endif
@@ -157,10 +161,14 @@
                         @if (!empty($regis->timRef->timDetailRef[$i]))
                             @if ($regis->timRef->timDetailRef[$i]->status == "Done")
                                 <td valign="center">
-                                    @if ($regis->timRef->timDetailRef[$i]->mahasiswaRef)
-                                        {{$regis->timRef->timDetailRef[$i]->mahasiswaRef->mahasiswa_nama}}
+                                    @if ($regis->timRef->timDetailRef[$i]->nim)
+                                        @if ($regis->timRef->timDetailRef[$i]->mahasiswaRef)
+                                            {{$regis->timRef->timDetailRef[$i]->mahasiswaRef->mahasiswa_nama}}
+                                        @else
+                                            {{$regis->timRef->timDetailRef[$i]->nim}}
+                                        @endif
                                     @else
-                                        {{$regis->timRef->timDetailRef[$i]->nim}}
+                                        {{$regis->timRef->timDetailRef[$i]->participantRef->nama_participant}}
                                     @endif
                                 </td>
                                 <td valign="center">

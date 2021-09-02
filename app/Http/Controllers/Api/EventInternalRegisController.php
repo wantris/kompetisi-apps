@@ -46,7 +46,7 @@ class EventInternalRegisController extends Controller
 
     public function getAllData()
     {
-        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'timRef.timDetailRef.participantRef')
+        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'timRef.timDetailRef.participantRef', 'tahapanRegisRef.tahapanEventInternal')
             ->with(array('eventInternalRef' => function ($query) {
                 $query->select('id_event_internal', 'nama_event', 'role');
             }))->get();
@@ -84,7 +84,7 @@ class EventInternalRegisController extends Controller
 
     public function getDataByEvent($id_eventinternal)
     {
-        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'timRef.timDetailRef.participantRef')
+        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'timRef.timDetailRef.participantRef', 'tahapanRegisRef.tahapanEventInternal')
             ->with(array('eventInternalRef' => function ($query) {
                 $query->select('id_event_internal', 'nama_event', 'role');
             }))
@@ -119,5 +119,77 @@ class EventInternalRegisController extends Controller
         }
 
         return $registrations;
+    }
+
+
+    public function exportPendaftar()
+    {
+        if (request()->eventid) {
+            try {
+                $event = EventInternal::find(request()->eventid);
+                if ($event) {
+                    $registrations = EventInternalRegistration::with('timRef.timDetailRef.participantRef', 'timRef.timDetailRef.penggunaMhsRef', 'timRef.timDetailRef.penggunaParticipantRef', 'participantRef', 'tahapanRegisRef.tahapanEventInternal')->where('event_internal_id', $event->id_event_internal)->get();
+
+                    if ($event->role != "Team") {
+                        foreach ($registrations as $item) {
+                            $item->mahasiswa_ref = null;
+                            if ($item->nim) {
+                                $mhs = $this->api_mahasiswa->getMahasiswaSomeField($item->nim);
+                                if ($mhs) {
+                                    $item->mahasiswa_ref = $mhs;
+                                }
+                            }
+                        }
+                    } else {
+                        foreach ($registrations as $item) {
+                            $item->timRef->pembimbing_ref = null;
+                            if ($item->timRef->nidn) {
+                                $dosen = $this->api_dosen->getDosenOnlySomeField($item->timRef->nidn);
+                                $item->timRef->pembimbing_ref = $dosen;
+                            }
+
+                            foreach ($item->timRef->timDetailRef as $detail) {
+                                $detail->mahasiswa_ref = null;
+                                if ($detail->nim) {
+                                    try {
+                                        $mhs = $this->api_mahasiswa->getMahasiswaSomeField($detail->nim);
+                                        $detail->mahasiswa_ref = $mhs;
+                                    } catch (\Throwable $err) {
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return response()->json([
+                        "code" => 200,
+                        "status" => 1,
+                        "message" => "Get data success",
+                        "data" => $registrations
+                    ], 200);
+                }
+
+                return response()->json([
+                    "code" => 404,
+                    "status" => 1,
+                    "message" => "Event not found",
+                    "data" => null
+                ], 404);
+            } catch (\Throwable $err) {
+                return response()->json([
+                    "code" => 500,
+                    "status" => 1,
+                    "message" => $err,
+                    "data" => null
+                ], 500);
+            }
+        }
+
+        return response()->json([
+            "code" => 500,
+            "status" => 1,
+            "message" => "Event id required",
+            "data" => null
+        ], 500);
     }
 }

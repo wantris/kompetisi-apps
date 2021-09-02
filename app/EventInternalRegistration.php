@@ -46,4 +46,9 @@ class EventInternalRegistration extends Model
     {
         return $this->hasMany(TahapanEventInternalRegis::class, 'event_internal_regis_id', 'id_event_internal_registration')->orderBy('created_at', 'DESC');
     }
+
+    public function sertifikatRef()
+    {
+        return $this->hasOne(SertifikatEventInternal::class, 'event_internal_regis_id', 'id_event_internal_registration');
+    }
 }

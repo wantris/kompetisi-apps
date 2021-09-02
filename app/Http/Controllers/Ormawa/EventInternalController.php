@@ -18,6 +18,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 use App\Exports\EventInternalRegisEksport;
 use App\Http\Controllers\ormawa\TahapanEventInternalController;
 
@@ -143,6 +144,7 @@ class EventInternalController extends Controller
     public function edit($id_eventinternal)
     {
         $ei = EventInternal::find($id_eventinternal);
+
         $tahapan_controller = new TahapanEventInternalController;
 
         if (!$ei) {
@@ -248,7 +250,7 @@ class EventInternalController extends Controller
 
     public function lihatPendaftar($id_eventinternal)
     {
-        $ei = EventInternal::find($id_eventinternal);
+        $ei = EventInternal::with('tahapanRef')->find($id_eventinternal);
         $tahapan_controller = new TahapanEventInternalController;
         $navTitle = '<span class="micon dw dw-rocket mr-2"></span>Pendaftar ' . $ei->nama_event;
 
@@ -396,10 +398,9 @@ class EventInternalController extends Controller
     // ======= Pendaftaran =====
     public function getPendaftarById($event)
     {
-        $registrations = EventInternalRegistration::with('penggunaMhsRef', 'timRef', 'participantRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventInternal')
+        $registrations = EventInternalRegistration::with('penggunaMhsRef', 'timRef', 'participantRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventInternal', 'sertifikatRef')
             ->where('event_internal_id', $event->id_event_internal)
             ->get();
-
         if ($event->role != "Team") {
             foreach ($registrations as $item) {
                 $item->mahasiswaRef = null;
@@ -485,11 +486,21 @@ class EventInternalController extends Controller
 
 
 
-    public function exportPendaftar($id_eventinternal, $status)
+    public function exportPendaftarExcel($id_eventinternal, $status)
     {
         $event = EventInternal::find($id_eventinternal);
 
         return Excel::download(new EventInternalRegisEksport($id_eventinternal, $status), 'Peserta ' . $event->nama_event . '.xlsx');
+    }
+
+    public function exportPendaftarPdf($id_eventinternal, $status)
+    {
+        $event = EventInternal::find($id_eventinternal);
+        $pendaftaran = $this->getPendaftarById($event);
+
+        $pdf = PDF::loadview('ormawa.exports.pdf.list_peserta_internal_pdf', ['event' => $event, 'pendaftaran' => $pendaftaran])->setPaper('a4', 'landscape');
+
+        return $pdf->download('data_peserta.pdf');
     }
 
     public function deletePendaftar($id_regis)

@@ -42,6 +42,8 @@ class HomeController extends Controller
             $event_inactive = $this->getEventInactive($pengguna, $tims);
             $event_favourites = $this->getAllEventFavourite();
             $profil_has_filled = $this->countProfilHasFilled();
+            $tim_count = $this->getTeamByUser();
+
 
             $event_active_count = $event_active->event_active_total;
             $event_inactive_count = $event_inactive->event_inactive_total;
@@ -53,7 +55,8 @@ class HomeController extends Controller
                 'event_inactive_count' => $event_inactive_count,
                 'prestasi_count' => $prestasi_count,
                 'event_favourites' => $event_favourites,
-                'profil_has_filled' => $profil_has_filled
+                'profil_has_filled' => $profil_has_filled,
+                'tim_count' => $tim_count
             ];
 
             return response()->json($data_dashboard);
@@ -294,5 +297,21 @@ class HomeController extends Controller
         }
 
         return ($not_null / $base_columns) * 100;
+    }
+
+    public function getTeamByUser()
+    {
+        $pengguna = Pengguna::select(['nim', 'participant_id'])->where('id_pengguna', Session::get('id_pengguna'))->first();
+
+        $tims = TimEvent::whereHas('timDetailRef', function ($query) use ($pengguna) {
+            if ($pengguna->nim) {
+                $query->where('nim', $pengguna->nim);
+            } else {
+                $query->where('participant_id', $pengguna->participant_id);
+            }
+            $query->where('status', 'Done');
+        })->get();
+
+        return $tims->count();
     }
 }

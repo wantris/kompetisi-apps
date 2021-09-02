@@ -23,7 +23,6 @@
         @include('partials__.navbar')
     @endif
     
-
     <main>
         @yield('content')
     </main>

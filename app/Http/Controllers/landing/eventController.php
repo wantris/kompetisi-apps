@@ -20,6 +20,8 @@ use GuzzleHttp\Client;
 use App\TipePeserta;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
+use App\SertifikatEventEksternal;
+use App\SertifikatEventInternal;
 use App\TahapanEventInternal;
 use App\TahapanEventInternalRegis;
 use App\TmpTimEventDetail;
@@ -317,27 +319,29 @@ class eventController extends Controller
             foreach ($request->anggota as $key => $item) {
                 $anggota = Pengguna::find($item);
 
-                // insert to temporary team detail
-                $ted = new TimEventDetail();
-                $ted->tim_event_id = $tim->id_tim_event;
-                if ($anggota->is_mahasiswa) {
-                    $ted->nim = $anggota->nim;
-                } else {
-                    $ted->participant_id = $anggota->participant_id;
-                }
-                $ted->role = "anggota";
-                $ted->status = "Pending";
-                $ted->save();
-
-                // send email
-                try {
+                if ($anggota) {
+                    // insert to temporary team detail
+                    $ted = new TimEventDetail();
+                    $ted->tim_event_id = $tim->id_tim_event;
                     if ($anggota->is_mahasiswa) {
-                        $nama = $this->api_mahasiswa->getMahasiswaByNim($anggota->nim)->mahasiswa_nama;
+                        $ted->nim = $anggota->nim;
                     } else {
-                        $nama = $anggota->participantRef->nama_participant;
+                        $ted->participant_id = $anggota->participant_id;
                     }
-                    Mail::to($anggota->email)->send(new invitationTeamMail($nama, $slug, $ted->id_tim_event_detail));
-                } catch (\Throwable $err) {
+                    $ted->role = "anggota";
+                    $ted->status = "Pending";
+                    $ted->save();
+
+                    // send email
+                    try {
+                        if ($anggota->is_mahasiswa) {
+                            $nama = $this->api_mahasiswa->getMahasiswaByNim($anggota->nim)->mahasiswa_nama;
+                        } else {
+                            $nama = $anggota->participantRef->nama_participant;
+                        }
+                        Mail::to($anggota->email)->send(new invitationTeamMail($nama, $slug, $ted->id_tim_event_detail));
+                    } catch (\Throwable $err) {
+                    }
                 }
             }
 
@@ -404,5 +408,48 @@ class eventController extends Controller
         });
 
         return response()->json($penggunas);
+    }
+
+    public function downloadSertificate()
+    {
+        $sertif_id = request()->sertificateId;
+        $type = request()->type;
+
+        if ($sertif_id && $type) {
+            if ($type == "eventinternal") {
+                $sertif = SertifikatEventInternal::find($sertif_id);
+                $file = public_path() . "/assets/file/berkas-sertifikat/" . $sertif->filename;
+
+                return response()->download($file, $sertif->filename);
+            } else {
+                $sertif = SertifikatEventEksternal::find($sertif_id);
+                $file = public_path() . "/assets/file/berkas-sertifikat/" . $sertif->filename;
+
+                return response()->download($file, $sertif->filename);
+            }
+        } else {
+            return redirect()->back();
+        }
+    }
+
+    public function sertificateEventinternal($filename)
+    {
+        $sertif = SertifikatEventInternal::where('filename', $filename)->first();
+        if ($sertif) {
+            $file = public_path() . "/assets/file/berkas-sertifikat/" . $sertif->filename;
+
+            return response()->download($file, $sertif->filename);
+        }
+    }
+
+
+    public function sertificateEventeksternal($filename)
+    {
+        $sertif = SertifikatEventEksternal::where('filename', $filename)->first();
+        if ($sertif) {
+            $file = public_path() . "/assets/file/berkas-sertifikat/" . $sertif->filename;
+
+            return response()->download($file, $sertif->filename);
+        }
     }
 }

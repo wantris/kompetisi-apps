@@ -571,10 +571,15 @@ $eeJson = json_encode($ee);
                             <input type="hidden" name="id_tahapan" id="id-tahapan-inp">
                             <div class="form-group">
                                 <label for="">Nama Tahapan</label>
-                                <input type="text" name="nama_tahapan" id="nama-tahapan-inp" class="form-control">
+                                <input type="text" name="nama_tahapan" onkeyup="checkType()" id="nama-tahapan-inp" class="form-control">
                                 @if ($errors->has('nama_tahapan'))
                                     <span class="text-danger">{{ $errors->first('nama_tahapan') }}</span>
                                 @endif
+                            </div>
+                            <div class="form-group">
+                                <button id="tahapan-upload-sertif-btn" type="button"
+                                class="dcd-btn dcd-btn-sm dcd-btn-primary mr-2 text-white"
+                                style="font-size:12px;border:none;padding:7px 20px;background: linear-gradient(60deg,#f5a461,#e86b32) !important">Tahapan Upload Sertifikat</button>
                             </div>
                         </div>
                     </div>
@@ -752,7 +757,17 @@ $eeJson = json_encode($ee);
         $('#nama-tahapan-inp').val(tahapan.nama_tahapan);
         $('#tahapan-event-form').attr('action','/ormawa/tahapan/eventeksternal/update'); 
         $('#tahapan-modal').modal('show');
-        
+    }
+
+    $('#tahapan-upload-sertif-btn').on('click', function(){
+        $('#nama-tahapan-inp').val("Upload Sertifikat");
+        $('#tahapan-upload-sertif-btn').addClass("d-none");
+    });
+
+    const checkType = () => {
+        if($('#tahapan-upload-sertif-btn').hasClass("d-none")){
+            $('#tahapan-upload-sertif-btn').removeClass("d-none");
+        }
     }
 
     const deleteTahapan = (tahapans) => {
