@@ -11,6 +11,11 @@
                 <th>Status Pendaftar</th>
                 <th>Status Validasi</th>
                 <th>Tahapan</th>
+                @foreach ($event->tahapanRef as $checkTahapan)
+                    @if ($checkTahapan->nama_tahapan == "Upload Sertifikat")
+                        <th>Sertifikat</th>
+                    @endif
+                @endforeach
             </tr>
         </thead>
         <tbody>
@@ -58,6 +63,13 @@
                             {{$regis->tahapanRegisRef[0]->tahapanEventEksternal->nama_tahapan}}
                         @endif
                     </td>
+                    @foreach ($regis->tahapanRegisRef as $tahapan_regis)
+                        @if ($tahapan_regis->tahapanEventEksternal->nama_tahapan == "Upload Sertifikat")
+                            @if ($regis->sertifikatRef)
+                                <td rowspan="{{$tahapan_count}}">{{route('eventeksternal.sertificate.download', $regis->sertifikatRef->filename)}}</td>
+                            @endif
+                        @endif
+                    @endforeach
                 </tr>
                 @for($i=1;$i<$tahapan_count;$i++)
                     <tr>
@@ -86,6 +98,11 @@
                 <th>Nomor Telepon</th>
                 <th>Status Validasi</th>
                 <th>Tahapan</th>
+                @foreach ($event->tahapanRef as $checkTahapan)
+                    @if ($checkTahapan->nama_tahapan == "Upload Sertifikat")
+                        <th>Sertifikat</th>
+                    @endif
+                @endforeach
             </tr>
         </thead>
         <tbody>
@@ -154,6 +171,13 @@
                             {{$regis->tahapanRegisRef[0]->tahapanEventEksternal->nama_tahapan}}
                         @endif
                     </td>
+                    @foreach ($regis->tahapanRegisRef as $tahapan_regis)
+                        @if ($tahapan_regis->tahapanEventEksternal->nama_tahapan == "Upload Sertifikat")
+                            @if ($regis->sertifikatRef)
+                                <td rowspan="{{$total_count}}">{{route('eventeksternal.sertificate.download', $regis->sertifikatRef->filename)}}</td>
+                            @endif
+                        @endif
+                    @endforeach
                 </tr>
                 @for($i=1;$i<$total_count;$i++)
                         <tr>

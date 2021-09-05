@@ -8,6 +8,7 @@ use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
 use App\EventInternal;
 use App\EventInternalRegistration;
+use App\SertifikatEventInternal;
 
 class EventInternalRegisController extends Controller
 {
@@ -84,7 +85,7 @@ class EventInternalRegisController extends Controller
 
     public function getDataByEvent($id_eventinternal)
     {
-        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'timRef.timDetailRef.participantRef', 'tahapanRegisRef.tahapanEventInternal')
+        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'timRef.timDetailRef.participantRef', 'tahapanRegisRef.tahapanEventInternal', 'sertifikatRef')
             ->with(array('eventInternalRef' => function ($query) {
                 $query->select('id_event_internal', 'nama_event', 'role');
             }))
@@ -128,7 +129,7 @@ class EventInternalRegisController extends Controller
             try {
                 $event = EventInternal::find(request()->eventid);
                 if ($event) {
-                    $registrations = EventInternalRegistration::with('timRef.timDetailRef.participantRef', 'timRef.timDetailRef.penggunaMhsRef', 'timRef.timDetailRef.penggunaParticipantRef', 'participantRef', 'tahapanRegisRef.tahapanEventInternal')->where('event_internal_id', $event->id_event_internal)->get();
+                    $registrations = EventInternalRegistration::with('timRef.timDetailRef.participantRef', 'timRef.timDetailRef.penggunaMhsRef', 'timRef.timDetailRef.penggunaParticipantRef', 'participantRef', 'tahapanRegisRef.tahapanEventInternal', 'sertifikatRef')->where('event_internal_id', $event->id_event_internal)->get();
 
                     if ($event->role != "Team") {
                         foreach ($registrations as $item) {
@@ -191,5 +192,27 @@ class EventInternalRegisController extends Controller
             "message" => "Event id required",
             "data" => null
         ], 500);
+    }
+
+    public function downloadSertificate()
+    {
+        $sertif_id = request()->sertificateid;
+        if ($sertif_id) {
+            $sertif = SertifikatEventInternal::find($sertif_id);
+
+            return response()->json([
+                "code" => 200,
+                "status" => 1,
+                "message" => "Get data success",
+                "data" => $sertif
+            ], 200);
+        } else {
+            return response()->json([
+                "code" => 404,
+                "status" => 1,
+                "message" => "Sertificate id required",
+                "data" => null
+            ], 404);
+        }
     }
 }

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\Http\Controllers\endpoint\ApiDosenController;
-use App\{EventInternal, EventInternalDetail, EventInternalRegistration, FileEventInternalDetail, FileEventInternalRegistration, Ormawa, KategoriEvent, PrestasiEventInternal, TipePeserta, TimEvent};
+use App\{EventInternal, EventInternalDetail, EventInternalRegistration, FileEventInternalDetail, FileEventInternalRegistration, Ormawa, KategoriEvent, Pembina, Pengguna, PrestasiEventInternal, TipePeserta, TimEvent, Wadir3};
 use App\TahapanEventInternal;
 use App\Http\Requests\EventInternalStoreRequest;
 use App\Http\Requests\EventInternalUpdateRequest;
@@ -18,6 +18,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendEmailPembina;
+use App\Mail\SendEmailWadir3;
 use PDF;
 use App\Exports\EventInternalRegisEksport;
 use App\Http\Controllers\ormawa\TahapanEventInternalController;
@@ -104,6 +107,11 @@ class EventInternalController extends Controller
             $ei->banner_image = $nameBanner;
             $ei->save();
 
+            if ($ei) {
+                $this->sendNotifPembina($ei);
+                $this->sendNotifWadir($ei);
+            }
+
             // create registration step
             $tahapan = new TahapanEventInternal();
             $tahapan->event_internal_id = $ei->id_event_internal;
@@ -138,6 +146,34 @@ class EventInternalController extends Controller
             return redirect()->route('ormawa.eventinternal.index')->with('success', 'Event internal berhasil disimpan');
         } catch (\Throwable $err) {
             dd($err);
+        }
+    }
+
+    public function sendNotifPembina($event)
+    {
+        $pembina = Pembina::where('ormawa_id', Session::get('id_ormawa'))->where('status', 1)->first();
+        if ($pembina) {
+            $pengguna = Pengguna::where('nidn', $pembina->nidn)->first();
+            if ($pengguna) {
+                $ormawa = Ormawa::find($event->ormawa_id);
+                if ($pengguna->email) {
+                    Mail::to($pengguna->email)->send(new SendEmailPembina($event, $ormawa));
+                }
+            }
+        }
+    }
+
+    public function sendNotifWadir($event)
+    {
+        $wadir3 = Wadir3::where('status', 1)->first();
+        if ($wadir3) {
+            $pengguna = Pengguna::where('nidn', $wadir3->nidn)->first();
+            if ($pengguna) {
+                if ($pengguna->email) {
+                    $ormawa = Ormawa::find($event->ormawa_id);
+                    Mail::to($pengguna->email)->send(new SendEmailWadir3($event, $ormawa));
+                }
+            }
         }
     }
 

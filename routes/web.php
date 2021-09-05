@@ -40,9 +40,11 @@ Route::group(['prefix' => 'event', 'namespace' => 'landing', 'middleware' => 'op
     Route::get('/invitation/team/{id_detail}', 'eventController@lookInvitation')->name('event.invitation.look');
 
     Route::get('/sertificate/download', 'eventController@downloadSertificate')->name('event.sertificate.download');
-    Route::get('/sertificate/eventinternal/{filename}', 'eventController@sertificateEventinternal')->name('eventinternal.sertificate.download');
-    Route::get('/sertificate/eventeksternal/{filename}', 'eventController@sertificateEventeksternal')->name('eventeksternal.sertificate.download');
 });
+
+// Sertificate
+Route::get('/eventinternal/sertificate/{filename}', 'eventController@sertificateEventinternal')->name('eventinternal.sertificate.download');
+Route::get('/eventeksternal/sertificate/{filename}', 'eventController@sertificateEventeksternal')->name('eventeksternal.sertificate.download');
 
 // Blog
 Route::group(['prefix' => 'blog', 'namespace' => 'landing'], function () {
@@ -85,5 +87,11 @@ Route::group(['prefix' => 'dosen', 'namespace' => 'Dosen'], function () {
 
     Route::group(['prefix' => 'riwayat'], function () {
         Route::get('/', 'riwayatController@index')->name('riwayat.dosen.index');
+    });
+
+    Route::group(['prefix' => 'profile'], function () {
+        Route::get('/', 'profileController@index')->name('profile.dosen.index');
+        Route::patch('/', 'profileController@updateProfile')->name('profile.dosen.update');
+        Route::get('/changepassword', 'profileController@changePassword')->name('profile.dosen.changePassword');
     });
 });

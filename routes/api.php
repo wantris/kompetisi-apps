@@ -113,9 +113,11 @@ Route::group(['prefix' => 'v1'], function () {
         // eventinternal 
         Route::get('/eventinternal', 'Api\EventInternalRegisController@index')->name('registrations.eventinternal.index');
         Route::get('/eventinternal/export', 'Api\EventInternalRegisController@exportPendaftar')->name('registrations.eventinternal.exportPendaftar');
+        Route::get('/eventinternal/sertificate', 'Api\EventInternalRegisController@downloadSertificate')->name('registrations.eventinternal.sertificate.download');
 
         Route::get('/eventeksternal', 'Api\EventEksternalRegisController@index')->name('registrations.eventeksternal.index');
         Route::get('/eventeksternal/export', 'Api\EventEksternalRegisController@exportPendaftar')->name('registrations.eventeksternal.exportPendaftar');
+        Route::get('/eventeksternal/sertificate', 'Api\EventEksternalRegisController@downloadSertificate')->name('registrations.eventeksternal.sertificate.download');
     });
 
     Route::group(['prefix' => 'slider'], function () {
@@ -156,5 +158,13 @@ Route::group(['prefix' => 'v1'], function () {
         Route::delete('/eventeksternal/delete', 'Api\TahapanEventEksternalController@delete')->name('ormawa.tahapan.delete');
         Route::get('/eventeksternal/pendaftaran', 'Api\TahapanEventEksternalController@saveRegistrationStep')->name('ormawa.tahapan.eventeksternal.pendaftaran.save');
         Route::post('/eventeksternal/pendaftaran/multiple', 'Api\TahapanEventEksternalController@saveRegisStepMultiple')->name('ormawa.tahapan.eventeksternal.pendaftaran.save.multiple');
+    });
+
+    Route::group(['prefix' => 'prestasi'], function () {
+        // eventinternal
+        Route::get('/eventinternal', 'Api\prestasiEventInternalController@index')->name('prestasi.eventinternal.index');
+
+        // eventeksternal
+        Route::get('/eventeksternal', 'Api\prestasiEventEksternalController@index')->name('prestasi.eventeksternal.index');
     });
 });

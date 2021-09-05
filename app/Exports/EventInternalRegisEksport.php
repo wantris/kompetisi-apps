@@ -45,7 +45,7 @@ class EventInternalRegisEksport implements FromView, ShouldAutoSize
 
     public function getPendaftarById($event)
     {
-        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'tahapanRegisRef.tahapanEventInternal')->where('event_internal_id', $event->id_event_internal)->get();
+        $registrations = EventInternalRegistration::with('timRef', 'participantRef', 'tahapanRegisRef.tahapanEventInternal', 'sertifikatRef')->where('event_internal_id', $event->id_event_internal)->get();
         if ($event->role != "Team") {
             foreach ($registrations as $item) {
                 $item->mahasiswaRef = null;

@@ -8,6 +8,7 @@ use App\Http\Controllers\endpoint\ApiDosenController;
 use App\Http\Controllers\endpoint\ApiMahasiswaController;
 use App\EventEksternal;
 use App\EventEksternalRegistration;
+use App\SertifikatEventEksternal;
 
 class EventEksternalRegisController extends Controller
 {
@@ -82,7 +83,7 @@ class EventEksternalRegisController extends Controller
 
     public function getDataByEvent($id_eventeksternal)
     {
-        $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventEksternal')->with(array('eventEksternalRef' => function ($query) {
+        $registrations = EventEksternalRegistration::with('timRef', 'fileEeRegisRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventEksternal', 'sertifikatRef')->with(array('eventEksternalRef' => function ($query) {
             $query->select('id_event_eksternal', 'nama_event', 'role');
         }))->where('event_eksternal_id', $id_eventeksternal)->get();
 
@@ -120,7 +121,7 @@ class EventEksternalRegisController extends Controller
         if (request()->eventid) {
             try {
                 $event = EventEksternal::find(request()->eventid);
-                $registrations = EventEksternalRegistration::with('timRef', 'timRef.timDetailRef.penggunaMhsRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventEksternal')->where('event_eksternal_id', request()->eventid)->get();
+                $registrations = EventEksternalRegistration::with('timRef', 'timRef.timDetailRef.penggunaMhsRef', 'prestasiRef', 'tahapanRegisRef.tahapanEventEksternal', 'sertifikatRef')->where('event_eksternal_id', request()->eventid)->get();
 
                 if ($event) {
                     if ($event->role != "Team") {
@@ -187,5 +188,27 @@ class EventEksternalRegisController extends Controller
             "message" => "Event id required",
             "data" => null
         ], 500);
+    }
+
+    public function downloadSertificate()
+    {
+        $sertif_id = request()->sertificateid;
+        if ($sertif_id) {
+            $sertif = SertifikatEventEksternal::find($sertif_id);
+
+            return response()->json([
+                "code" => 200,
+                "status" => 1,
+                "message" => "Get data success",
+                "data" => $sertif
+            ], 200);
+        } else {
+            return response()->json([
+                "code" => 404,
+                "status" => 1,
+                "message" => "Sertificate id required",
+                "data" => null
+            ], 404);
+        }
     }
 }
